@@ -5,9 +5,8 @@ let cidSchema = new Schema(
   {
     ID: { type: Number, required: true },
     fullName: { type: String, default:null },
-    serialNumber:{type:String, default:null },
-    sex:{type:String, default:null},
-    endDate:{type:Date, default:null},
+    cIdNumber:{type:String, default:null },
+    status:{type:String, default:"safe"},
     DOB:{type:Date, default:null}
   },
   { timestamps: true }

@@ -7,6 +7,7 @@ let xGobolkaSchema = new Schema(
     fullName: { type: String, default:null },
     serialNumber:{type:String, default:null },
     sex:{type:String, default:null},
+    registerDate:{type:Date, default:null},
     endDate:{type:Date, default:null},
     DOB:{type:Date, default:null}
   },
@@ -19,4 +20,5 @@ xGobolkaSchema.plugin(autoIncrement.plugin, {
   startAt: 1,
   incrementBy: 1,
 });
-module.exports = mongoose.model("Gobolka",xGobolkaSchema)
+const Gobolka = mongoose.model("Gobolka",xGobolkaSchema)
+module.exports = Gobolka
