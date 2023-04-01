@@ -13,12 +13,12 @@ let xGobolkaSchema = new Schema(
   },
   { timestamps: true }
 );
-autoIncrement.initialize(mongoose.connection); // This is important. You can remove initialization in different file
-xGobolkaSchema.plugin(autoIncrement.plugin, {
-  model: "Gobolka",
-  field: "ID",
-  startAt: 1,
-  incrementBy: 1,
-});
-const Gobolka = mongoose.model("Gobolka",xGobolkaSchema)
-module.exports = Gobolka
+// autoIncrement.initialize(mongoose.connection); // This is important. You can remove initialization in different file
+// xGobolkaSchema.plugin(autoIncrement.plugin, {
+//   model: "Gobolka",
+//   field: "ID",
+//   startAt: 1,
+//   incrementBy: 1,
+// });
+const Region = mongoose.model("Region",xGobolkaSchema)
+module.exports = Region
