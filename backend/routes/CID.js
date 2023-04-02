@@ -1,10 +1,9 @@
 const express = require('express');
+const CidController = require("../controllers/CID")
 
 
 const router = express.Router();
 
-router.get('/',async(req,res)=>{
-    return res.send("welcome")
-})
-
+router.post('/add',CidController.createData);
+router.get('/',CidController.getCidData);
 module.exports = router;

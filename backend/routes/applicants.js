@@ -1,7 +1,7 @@
 const express = require('express');
-const GobolkaController = require("../controllers/xgobolka")
+const ApplicantController = require("../controllers/applicants")
 
 const router = express.Router();
 
-router.get('/add',GobolkaController.insertData)
+router.post('/add',ApplicantController.createApplicant)
 module.exports = router;
