@@ -22,11 +22,22 @@ exports.insertData = async(req,res)=>{
     }
 }
 
+// get all regional data
 exports.getAllData = async(req, res) => {
     try {
         const data = await Region.find({});
         return res.json(data)
     } catch (err) {
         return res.status(500).json({ message: err.message  });
+    }
+}
+
+// get single person data
+exports.getSinglePerson = async(req, res) => {
+    try {
+        const person = await Region.findOne({serialNumber: req.params.serialNumber});
+        return res.json(person);
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
     }
 }

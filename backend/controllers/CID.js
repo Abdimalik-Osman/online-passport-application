@@ -28,3 +28,14 @@ exports.getCidData = async(req,res)=>{
         
     }
 }
+
+// get single person 
+exports.getSinglePerson = async(req,res)=>{
+    try {
+        const person = await CID.findOne({cIdNumber:req.params.cIdNumber});
+        return res.json(person);
+    } catch (err) {
+       return  res.status(500).json({message:err.message});
+        
+    }
+}
