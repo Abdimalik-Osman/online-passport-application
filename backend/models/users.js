@@ -1,17 +1,26 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
-let autoIncrement = require("mongoose-auto-increment");
-let applicantSchema = new Schema(
+let UserSchema = new Schema(
   {
-    ID: { type: Number, required: true },
+   empId:{type:Schema.Types.ObjectId,ref:"Employee", default:null},
+   username:{type: String,default:null},
+   password:{type: String,default:null},
+   isManger:{type:Boolean,default:false},
+  token:{type: String, default:null}
   },
   { timestamps: true }
 );
-autoIncrement.initialize(mongoose.connection); // This is important. You can remove initialization in different file
-applicantSchema.plugin(autoIncrement.plugin, {
-  model: "Applicant",
-  field: "ID",
-  startAt: 1,
-  incrementBy: 1,
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+  }
+  next();
 });
-module.exports = mongoose.model("Applicant", applicantSchema)
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model("User", UserSchema);

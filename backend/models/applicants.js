@@ -18,7 +18,8 @@ let applicantSchema = new Schema(
     expireDate:{type:Date, default:null},
     CIDNumber:{type:Number, default:null},
     regionalID:{type:Number, default:null},
-    isExpired:{type:Boolean, default:false}
+    isExpired:{type:Boolean, default:false},
+    isTaken:{type:Boolean, default:false}
   },
   { timestamps: true }
 );

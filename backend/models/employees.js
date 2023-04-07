@@ -1,17 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 let autoIncrement = require("mongoose-auto-increment");
-let applicantSchema = new Schema(
+let EmployeeSchema = new Schema(
   {
-    ID: { type: Number, required: true },
+    empName: { type:String, default: null},
+    empPhone: { type:String, default: null},
+    sex: { type:String, default:Male},
+    isManager: { type:Boolean, default: false},
+    isActive: { type:Boolean, default: true}
   },
   { timestamps: true }
 );
-autoIncrement.initialize(mongoose.connection); // This is important. You can remove initialization in different file
-applicantSchema.plugin(autoIncrement.plugin, {
-  model: "Applicant",
-  field: "ID",
-  startAt: 1,
-  incrementBy: 1,
-});
-module.exports = mongoose.model("Applicant", applicantSchema)
+const Employee = mongoose.model("Employee",EmployeeSchema)
+module.exports = Employee;

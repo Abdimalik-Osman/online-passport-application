@@ -5,11 +5,13 @@ const Appointment = require("../models/appointment");
 const mongoose = require("mongoose");
 exports.createApplicant = async (req, res) => {
   try {
+    //initialize the passport expiration date
     let passportExpirationData = new Date();
     passportExpirationData.setFullYear(
       passportExpirationData.getFullYear() + 5
     );
 
+    // create an appointment time
     const options = { timeZone: "Africa/Nairobi" };
     let appointmentDate = new Date().toLocaleString("en-US", options);
     appointmentDate = new Date(appointmentDate); // convert the date string to a Date object
@@ -18,6 +20,10 @@ exports.createApplicant = async (req, res) => {
     //    console.log(appointmentDate.toLocaleString('en-US', options));
     (appointmentDate.getDay() === 5 ? new Date(appointmentDate.setDate(appointmentDate.getDate() + 1)).toLocaleString('en-US', options) : appointmentDate.toLocaleString('en-US', options)) + "."
     let appointmentNumber = Math.floor(100000 + Math.random() * 900000);
+
+    // check if the applicant is already existing
+    const oldCidNumber = await Applicant.findOne({CIDNumber:req.body.CIDNumber})
+    const oldRegionalId = await Applicant.findOne({regionalID:req.body.regionalID})
 
     // get cid data
     const cIdData = await CID.findOne({
@@ -39,6 +45,10 @@ exports.createApplicant = async (req, res) => {
             cIdData.status == true ||
             cIdData.status == "true"
           ) {
+            if(oldRegionalId || oldCidNumber){
+              return res.status(404).json({message:"Sorry, qofkan mar hore ayaa la diiwangaliyey😜😜"})
+            }
+           
             const newApplicant = new Applicant({
               fullname: regionalData?.fullName,
               motherName: req.body.motherName,
@@ -63,27 +73,27 @@ exports.createApplicant = async (req, res) => {
               });
               await newAppointment.save();
               return res.status(201).json({
-                message: "new Applicant has been created",
+                message: "new Applicant has been created🤣🤣🤣",
                 newApplicant,
               });
             } else {
               return res
                 .status(404)
                 .json({
-                  message: "error occurred while creating new applicant",
+                  message: "error occurred while creating new applicant😜😜",
                 });
             }
           } else {
             return res
               .status(404)
-              .json({ message: "Fadlan adiga waxaa tahay dambiile.." });
+              .json({ message: "Fadlan adiga waxaa tahay dambiile😜😜" });
           }
         } else {
           return res
             .status(404)
             .json({
               message:
-                "CID numberkan majiro,Fadlan marka hore iska soo diiwan gali CID-da",
+                "CID numberkan majiro,Fadlan marka hore iska soo diiwan gali CID-da😜😜",
             });
         }
       }
@@ -92,7 +102,7 @@ exports.createApplicant = async (req, res) => {
         .status(404)
         .json({
           message:
-            "Dhalasho numberkan majiro, fadlan marka hore iska soo diiwan gali xarunta gobolka",
+            "Dhalasho numberkan majiro, fadlan marka hore iska soo diiwan gali xarunta gobolka😜😜",
         });
     }
   } catch (err) {
@@ -125,7 +135,7 @@ exports.getSingleApplicant = async(req,res)=>{
 exports.deleteApplicant = async(req, res)=>{
     try {
         await Applicant.findByIdAndRemove({_id:mongoose.Types.ObjectId(req.params.id)});
-        return res.status(200).json({message:"Successfully deleted applicant.."})
+        return res.status(200).json({message:"Successfully deleted applicant🤣"})
     } catch (err) {
         return res.status(500).json({ message:err.message});
     }
