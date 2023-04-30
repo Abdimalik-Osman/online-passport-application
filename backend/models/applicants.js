@@ -10,14 +10,15 @@ let applicantSchema = new Schema(
     sex:{type:String, default:null},
     POB:{type:String, default:null},
     occupation:{type:String, default:null},
-    applyingPlace:{type:String, default:null},
+    appointmentDate:{type:Date, default:null},
     // passportType:
-    applyingDate:{type:Date, default:Date.now()},
-    serialNO:{type:Number, default:null}, 
+    applyingDate:{type:Date, default:new Date()},
+  
     status:{type:String, default:null},
     expireDate:{type:Date, default:null},
-    CIDNumber:{type:Number, default:null},
-    regionalID:{type:Number, default:null},
+    districtId:{type:Schema.Types.ObjectId,ref:"districts", default:null},
+    nID:{type:Number, default:null},
+    type:{type:String, default:"Ordinary"},
     isExpired:{type:Boolean, default:false},
     isTaken:{type:Boolean, default:false}
   },

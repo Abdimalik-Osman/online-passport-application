@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Region = require("../models/region");
+const Region = require("../models/nationalProfile");
 
 exports.insertData = async(req,res)=>{
     try {
@@ -7,6 +7,7 @@ exports.insertData = async(req,res)=>{
             const newData = new Region({
                 ID:arr.ID,
                 fullName:arr.fullName,
+                motherName:arr.motherName,
                 serialNumber:arr.serialNumber,
                 sex:arr.sex,
                 registerDate:arr.registerDate,
