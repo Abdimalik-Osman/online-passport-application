@@ -5,11 +5,7 @@ const districtSchema = new Schema({
     type: String,
     required: true
   },
-  availableSlots: {
-    type: Number,
-    required: true,
-    default: 50
-  },
+
   dailySlots: {
     type: Number,
     required: true,
@@ -19,7 +15,12 @@ const districtSchema = new Schema({
     type: Number,
     required: true,
     default: 5
-  }
+  },
+  startTime: {
+    type: String,
+    default:"08:00"
+  },
+  endTime: {type:String, default:"12:00"}
 },{timestamps:true});
   const District = mongoose.model("District",districtSchema)
   module.exports = District;

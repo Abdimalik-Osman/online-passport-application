@@ -44,27 +44,27 @@ exports.createApplicant = async(req,res)=>{
        return res.status(404).json({ message: 'District not found' });
      }
      
-     // Check if the selected time falls within the office hours
+    //  Check if the selected time falls within the office hours
     //  const selectedHour = new Date(req.body.appointmentDate).getHours();
     //  if (selectedHour < 8 || selectedHour >= 12) {
     //    return res.status(400).json({ message: 'Appointments can only be booked between 8:00am and 12:00pm' });
     //  }
+     
+     // get the filtered date from database
     const formattedDate = moment(req.body.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD');
-    
-    // console.log(formattedDate)
-    const givenDate = new Date(req.body.appointmentDate); // Create a Date object representing the given date and time
-const momentObj = moment(req.body.appointmentDate, 'h:mm').format('h:mm');
- 
-     const applicantInfo = await Applicant.find({appointmentDate:new Date('2023-10-21T19:09:54.129Z')});
-    //  console.log(new Date(applicantInfo[0]?.appointmentDate))
-    // let info= applicantInfo?.find((data)=>data.appointmentDate);
-    //  console.log(info)
-    //  console.log( moment(applicantInfo[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD'))
-     if(districtInfo?.dailySlots == applicantInfo?.length){
-        return  res.status(400).json({ message: 'this day is reached the limit' });
+     const applicantInfo = await Applicant.find({});
+     const filteredData = applicantInfo?.filter((info)=>{
+      return moment(info.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') === formattedDate
+     });
+     console.log(moment(req.body.appointmentDate, 'hh:mm').format('hh:mm a'))
+     console.log(new Date().getUTCHours())
+    //  console.log()
+     // check if the selected date is reached the limit of that day
+     if(districtInfo?.dailySlots <= filteredData?.length){
+        return  res.status(400).json({ message: 'the district you selected have reached the daily limit' });
      }
-     const selectedTime = new Date(req.body.appointmentDate).getTime();
    
+    
     // // get the national ID
       const nationalData = await NationalID.findOne({
       serialNumber: Number(req.body.nID),
