@@ -56,8 +56,17 @@ exports.createApplicant = async(req,res)=>{
      const filteredData = applicantInfo?.filter((info)=>{
       return moment(info.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') === formattedDate
      });
-     console.log(moment(req.body.appointmentDate, 'hh:mm').format('hh:mm a'))
-     console.log(new Date().getUTCHours())
+     const filteredTime= applicantInfo?.filter((info)=>{
+      return info?.appointmentTime == req.body.appointmentTime
+     });
+     
+     console.log( moment(applicantInfo[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD'))
+     console.log(filteredData[0]?.appointmentDate)
+     console.log(filteredTime.length)
+     if(districtInfo?.hourlySlots <= filteredTime.length && moment(filteredData[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') == formattedDate ){
+      return  res.status(400).json({ message: 'the hour you selected reached the hourly limit' });
+   }
+ 
     //  console.log()
      // check if the selected date is reached the limit of that day
      if(districtInfo?.dailySlots <= filteredData?.length){
@@ -70,9 +79,7 @@ exports.createApplicant = async(req,res)=>{
       serialNumber: Number(req.body.nID),
     });
     const nIdExists = await Applicant.findOne({nID:req.body.nID})
-    if(nIdExists?.nID){
-      return res.status(400).json({message:"this National ID already exists"})
-    }
+    
     const newApplicant = new Applicant({
                     fullname: nationalData?.fullName,
                     motherName: nationalData?.motherName,
@@ -83,6 +90,7 @@ exports.createApplicant = async(req,res)=>{
                     occupation: req.body.occupation,
                     districtId: req.body.districtId,
                     appointmentDate:req.body.appointmentDate,
+                    appointmentTime:req.body.appointmentTime,
                     applyingDate: new Date(),
                     expireDate: passportExpirationData,
                     nID:req.body.nID

@@ -13,7 +13,7 @@ let applicantSchema = new Schema(
     appointmentDate:{type:Date, default:null},
     // passportType:
     applyingDate:{type:Date, default:new Date()},
-  
+    appointmentTime:{type:String, default:"10:00",required:true},
     status:{type:String, default:null},
     expireDate:{type:Date, default:null},
     districtId:{type:Schema.Types.ObjectId,ref:"districts", default:null},
