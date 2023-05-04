@@ -8,7 +8,11 @@ const NationalID = require("./backend/routes/nationalProfile");
 const CidRouter = require("./backend/routes/CID");
 const ApplicantRouter = require("./backend/routes/applicants")
 const DistrictRouter = require("./backend/routes/district")
+// const HolyDayRouter = require("./backend/routes/holydays")
+// const DistrictRouter = require("./backend/routes/district")
 const HolyDayRouter = require("./backend/routes/holydays")
+const EmployeeRouter = require("./backend/routes/employees")
+const WorkingHoursRouter = require("./backend/routes/workingHours")
 
 const PORT = process.env.PORT || 3000
 connectDB();
@@ -23,6 +27,8 @@ app.use("/api/cid",CidRouter);
 app.use("/api/applicants",ApplicantRouter);
 app.use("/api/districts",DistrictRouter);
 app.use("/api/holydays",HolyDayRouter);
+app.use("/api/employees",EmployeeRouter);
+app.use("/api/workingHours",WorkingHoursRouter);
 
 
 app.listen(PORT,()=>{

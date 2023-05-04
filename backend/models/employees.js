@@ -5,7 +5,7 @@ let EmployeeSchema = new Schema(
   {
     empName: { type:String, default: null},
     empPhone: { type:String, default: null},
-    sex: { type:String, default:Male},
+    sex: { type:String, default:"Male"},
     isManager: { type:Boolean, default: false},
     isActive: { type:Boolean, default: true}
   },

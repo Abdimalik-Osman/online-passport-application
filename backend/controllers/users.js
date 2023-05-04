@@ -71,3 +71,29 @@ exports.updateUser = async(req,res)=>{
         return res.status(500).json({ error: error.message })
     }
 }
+
+// get single user
+exports.getSingleUser = async(req,res)=>{
+  try {
+      const user = await User.findById(req.params.id);
+      if (!user) {
+        return res.status(400).json({message: 'User not found'});
+      }
+      return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}
+
+// get all users
+exports.getAllUsers = async(req,res)=>{
+  try {
+    const users = await find({}).sort({createdAt:-1});
+    if(!users){
+      return res.status(400).json({message:"no users found.."})
+    }
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(500).json({ error: error.message })
+  }
+}

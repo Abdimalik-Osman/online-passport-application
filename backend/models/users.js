@@ -3,11 +3,10 @@ const bcrypt = require("bcryptjs");
 const Schema = mongoose.Schema;
 let UserSchema = new Schema(
   {
-   empId:{type:Schema.Types.ObjectId,ref:"Employee", default:null},
+   empId:{type:Schema.Types.ObjectId,ref:"employees", default:null},
    username:{type: String,default:null},
    password:{type: String,default:null},
    isManger:{type:Boolean,default:false},
-  token:{type: String, default:null}
   },
   { timestamps: true }
 );

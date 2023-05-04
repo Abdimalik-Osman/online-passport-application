@@ -1,20 +1,18 @@
+const mongoose = require('mongoose');
 const District = require('../models/district');
-
+const WorkingHours = require('../models/workingHours');
+//create a new district
 exports.createDistrict = async(req,res)=>{
     try {
     
-            const newDistrict = new District({
-                districtName:req.body.districtName,
-              
-        });
-        await newDistrict.save();
+            const newDistrict = await District.create(req.body)
 
     return res.status(201).json({message: 'district successfully inserted'})
     } catch (error) {
         return res.status(500).json({message:error.message});
     }
 }
-
+// get district Dat
 exports.getDistrictData = async(req,res)=>{
     try {
         const data = await District.find({});
@@ -28,14 +26,14 @@ exports.getDistrictData = async(req,res)=>{
 // get single District 
 exports.getSingleDistrict = async(req,res)=>{
     try {
-        const districtInfo = await CID.findOne({_id:req.params.id});
+        const districtInfo = await District.findOne({"districtInfo._id":req.params.id})
         return res.json(districtInfo);
     } catch (err) {
        return  res.status(500).json({message:err.message});
         
     }
 }
-
+// update District
  exports.updateDistrict = async (req, res) => {
     const { id } = req.params;
   
@@ -64,3 +62,22 @@ exports.getSingleDistrict = async(req,res)=>{
       res.status(500).json({ message: 'Failed to update district' });
     }
   };
+
+// get state information
+exports.getStateData = async(req,res)=>{
+  try {
+    const state = await District.aggregate([
+      {
+        $unwind:"$districtInfo"
+      },
+      {$match:{
+        _id:req.params.id
+      }}
+    ])
+    if (!state) return res.status(400).json({message: 'no state data found'});
+    return res.status(200).json(state);
+  } catch (error) {
+    return res.status(500).json({ message:error.message });
+  }
+}
+

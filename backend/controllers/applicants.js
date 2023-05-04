@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const District = require("../models/district");
 const HolyDay = require("../models/holydays");
 const moment = require("moment");
-
+const PaymentLog = require("../models/paymentLog")
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -59,20 +59,15 @@ exports.createApplicant = async(req,res)=>{
      const filteredTime= applicantInfo?.filter((info)=>{
       return info?.appointmentTime == req.body.appointmentTime
      });
-     
-     console.log( moment(applicantInfo[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD'))
-     console.log(filteredData[0]?.appointmentDate)
-     console.log(filteredTime.length)
+     if(districtInfo?.dailySlots <= filteredData?.length){
+      return  res.status(400).json({ message: 'the district you selected have reached the daily limit' });
+   }
+    //  console.log( moment(applicantInfo[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD'))
+    //  console.log(filteredData[0]?.appointmentDate)
+    //  console.log(filteredTime.length)
      if(districtInfo?.hourlySlots <= filteredTime.length && moment(filteredData[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') == formattedDate ){
       return  res.status(400).json({ message: 'the hour you selected reached the hourly limit' });
    }
- 
-    //  console.log()
-     // check if the selected date is reached the limit of that day
-     if(districtInfo?.dailySlots <= filteredData?.length){
-        return  res.status(400).json({ message: 'the district you selected have reached the daily limit' });
-     }
-   
     
     // // get the national ID
       const nationalData = await NationalID.findOne({
@@ -97,6 +92,17 @@ exports.createApplicant = async(req,res)=>{
                   });
                      // Save the appointment and update the bookedSlots count for the selected date
     await newApplicant.save();
+    if(newApplicant){
+      const newPayment = new PaymentLog({
+        applicantId:newApplicant._id,
+        amount:req.body.amount,
+        type:req.body.type
+      });
+      await newPayment.save();
+    }
+    else{
+      return res.status(400).json({message:"new appointment can not be created"})
+    }
     // selectedDate.bookedSlots += 1;
     // await districtInfo.save();
 
