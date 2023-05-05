@@ -1,0 +1,2 @@
+::1 - - [05/May/2023:16:25:01 +0000] "GET /api/districts/single/6453f9a38c68ff5855bbca12 HTTP/1.1" 200 4 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+::1 - - [05/May/2023:16:25:04 +0000] "GET /api/districts/single/6453f9a38c68ff5855bbca12 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"

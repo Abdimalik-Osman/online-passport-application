@@ -27,7 +27,7 @@ exports.getDistrictData = async(req,res)=>{
 exports.getSingleDistrict = async(req,res)=>{
     try {
         const districtInfo = await District.findOne({"districtInfo._id":req.params.id})
-        return res.json(districtInfo);
+        return res.json(districtInfo?.districtInfo);
     } catch (err) {
        return  res.status(500).json({message:err.message});
         
@@ -65,15 +65,8 @@ exports.getSingleDistrict = async(req,res)=>{
 
 // get state information
 exports.getStateData = async(req,res)=>{
-  try {
-    const state = await District.aggregate([
-      {
-        $unwind:"$districtInfo"
-      },
-      {$match:{
-        _id:req.params.id
-      }}
-    ])
+  try {z
+    const state = await District.findById(req.params.id);
     if (!state) return res.status(400).json({message: 'no state data found'});
     return res.status(200).json(state);
   } catch (error) {

@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
 const connectDB = require('./backend/config/db');
 require('dotenv').config();
@@ -21,7 +24,12 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-
+// Log only the route
+app.use(morgan('tiny', {
+    skip: (req, res) => {
+      return !req.url.startsWith('/'); // Skip logging if the URL does not start with a slash
+    }
+  }))
 app.use("/api/gobolka",NationalID);
 app.use("/api/cid",CidRouter);
 app.use("/api/applicants",ApplicantRouter);
