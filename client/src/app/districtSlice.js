@@ -10,6 +10,7 @@ const initialState = {
   selectedState:[],
   districtData: {},
   workingHours: [],
+  unavailableDates: [],
   status: 'idle',
   error: null
 };
@@ -33,6 +34,11 @@ export const getDistrictData = createAsyncThunk('districts/data', async (id) => 
 // get the selected district working hours
 export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours', async (id) => {
   const response = await axios.get(url+`/workingHours/hours/single/${id}`);
+  return response.data;
+});
+// get the un available date every district
+export const getUnavailableDates = createAsyncThunk('applicants/unavailable', async (id) => {
+  const response = await axios.get(url+`/applicants/date/unavailable/all/${id}`);
   return response.data;
 });
 
@@ -101,6 +107,17 @@ export const districtSlice = createSlice({
         state.workingHours = action.payload;
       })
       .addCase(getDistrictWorkingHours.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(getUnavailableDates.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getUnavailableDates.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.unavailableDates = action.payload;
+      })
+      .addCase(getUnavailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })

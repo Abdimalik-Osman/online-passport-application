@@ -5,10 +5,13 @@ import {
   getSingleDistrict,
   getDistrictData,
   getDistrictWorkingHours,
+  getUnavailableDates,
   useAppDispatch,
 } from "./app/districtSlice";
 import DistrictDetail from "./components/districtDetail";
 import Select from "react-select";
+import Stepper from './components/stepper/stepper';
+import Appointment from "./components/appointment";
 function App() {
 
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -21,6 +24,7 @@ function App() {
   const status = useSelector((state) => state.district.status);
   const error = useSelector((state) => state.district.error);
   const selectedDistrict = useSelector((state) => state.district.selectedState);
+  const unavailableDates = useSelector((state) => state.district.unavailableDates);
   const selectedDistrictData = useSelector(
     (state) => state.district.districtData
   );
@@ -72,6 +76,7 @@ function App() {
     setSelectedOptions2(selected);
     dispatch(getDistrictData(selected.value));
     dispatch(getDistrictWorkingHours(selected.value));
+    dispatch(getUnavailableDates(selected.value));
     // console.log(selectedOptions2)
   };
   const handleSubmit = async () => {
@@ -84,69 +89,75 @@ function App() {
   console.log(selectedTime);
   return (
     <div className="container">
-      <h1>hello </h1>
-      <div className="row">
-        <Select
-          className="w-50"
-          options={options}
-          value={selectedOptions}
-          onChange={handleChange1}
-        />
-        <Select
-          className="w-50"
-          options={options2}
-          value={selectedOptions2}
-          onChange={handleChange2}
-        />
-      </div>
-      <hr />
-      <br />
-      {/* <button className='btn btn-sm btn-dark mt-3' onClick={handleSubmit}>GET DATA</button> */}
-      {/* <DistrictDetail district={selectedDistrict}/> */}
+ <Stepper  />
+    </div>
+    // <div className="container">
+    //   <h1>hello </h1>
+    //   <div className="row">
+    //     <Select
+    //       className="w-50"
+    //       options={options}
+    //       value={selectedOptions}
+    //       onChange={handleChange1}
+    //     />
+    //     <Select
+    //       className="w-50"
+    //       options={options2}
+    //       value={selectedOptions2}
+    //       onChange={handleChange2}
+    //     />
+    //   </div>
+    //   <hr />
+    //   <br />
+    //   {/* <button className='btn btn-sm btn-dark mt-3' onClick={handleSubmit}>GET DATA</button> */}
+    //   {/* <DistrictDetail district={selectedDistrict}/> */}
 
-      <div className="row">
-        <div className="col">
-          {selectedDistrict.length > 0 &&
-            selectedDistrict?.map((item) => (
-              <div className="">
-                <h5>District Name: {item.districtName}</h5>
-                <p>Office Name: {item.office}</p>
-                <p>Location: {item.location}</p>
-                <p>contact Number: {item.contactNumber}</p>
-                <p>start Time: {item.startTime}</p>
-                <p>End Time: {item.endTime}</p>
-                <p>
-                  Number of people to be worked every day: {item.dailySlots}
-                </p>
-                <p>Hourly Slots: {item.hourlySlots}</p>
-                <p>start Time: {item.startTime}</p>
-              </div>
-            ))}
-        </div>
-        <div className="col">
-      <h5>working hours</h5>
-      {workingHours.length > 0 &&
-        workingHours?.map((item) => (
-          <div key={item.startTime} className="">
-            <div className="form-group">
-              <input
-                type="radio"
-                name="time"
-                value={item.startTime}
-                id={item.startTime}
-                className="mx-2"
-                checked={selectedTime === item.startTime}
-                onChange={handleTimeChange}
-              />
-              <label htmlFor={item.startTime}>
-                {item.startTime} ------- {item.endTime}{" "}
-              </label>
-            </div>
-          </div>
-        ))}
-    </div>
-      </div>
-    </div>
+    //   <div className="row">
+    //     <div className="col">
+    //       {selectedDistrict.length > 0 &&
+    //         selectedDistrict?.map((item) => (
+    //           <div className="">
+    //             <h5>District Name: {item.districtName}</h5>
+    //             <p>Office Name: {item.office}</p>
+    //             <p>Location: {item.location}</p>
+    //             <p>contact Number: {item.contactNumber}</p>
+    //             <p>start Time: {item.startTime}</p>
+    //             <p>End Time: {item.endTime}</p>
+    //             <p>
+    //               Number of people to be worked every day: {item.dailySlots}
+    //             </p>
+    //             <p>Hourly Slots: {item.hourlySlots}</p>
+    //             <p>start Time: {item.startTime}</p>
+    //           </div>
+    //         ))}
+    //     </div>
+    //     <div className="col">
+    //   <h5>working hours</h5>
+    //   {workingHours.length > 0 &&
+    //     workingHours?.map((item) => (
+    //       <div key={item.startTime} className="">
+    //         <div className="form-group">
+    //           <input
+    //             type="radio"
+    //             name="time"
+    //             value={item.startTime}
+    //             id={item.startTime}
+    //             className="mx-2"
+    //             checked={selectedTime === item.startTime}
+    //             onChange={handleTimeChange}
+    //           />
+    //           <label htmlFor={item.startTime}>
+    //             {item.startTime} ------- {item.endTime}{" "}
+    //           </label>
+    //         </div>
+    //       </div>
+    //     ))}
+    // </div>
+    // <div className="col">
+    //   <Appointment unavailableDates={unavailableDates} />
+    // </div>
+    //   </div>
+    // </div>
   );
 }
 

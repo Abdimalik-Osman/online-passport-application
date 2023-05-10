@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 let autoIncrement = require("mongoose-auto-increment");
 let paymentSchema = new Schema(
   {
-    ID: { type: Number, required: true },
+    
     applicantId:{type: mongoose.Schema.Types.ObjectId,ref:"applicants", default:null},
     amount: {type: Number, default:100},
     type:{type:String, default:'Ordinary'}
