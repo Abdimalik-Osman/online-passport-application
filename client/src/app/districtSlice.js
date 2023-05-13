@@ -11,35 +11,73 @@ const initialState = {
   districtData: {},
   workingHours: [],
   unavailableDates: [],
+  nationalID:{},
   status: 'idle',
+  message:"",
   error: null
 };
 
 // Define your async actions using createAsyncThunk
-export const fetchData = createAsyncThunk('districts/all', async () => {
-  const response = await axios.get(url+"/districts/all");
-  return response.data;
+export const fetchData = createAsyncThunk('districts/all', async (_,thunkAPI) => {
+  try{
+    const response = await axios.get(url+"/districts/all");
+    return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
 });
 // get single distinct
-export const getSingleDistrict = createAsyncThunk('districts/single', async (id) => {
+export const getSingleDistrict = createAsyncThunk('districts/single', async (id,thunkAPI) => {
+  try{
   const response = await axios.get(url+`/districts/single/${id}`);
   return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
 });
 // get selected district data
-export const getDistrictData = createAsyncThunk('districts/data', async (id) => {
+export const getDistrictData = createAsyncThunk('districts/data', async (id,thunkAPI) => {
+  try{
   const response = await axios.get(url+`/districts/single/${id}`);
   return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
 });
 
 // get the selected district working hours
-export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours', async (id) => {
+export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours', async (id,thunkAPI) => {
+  try{
   const response = await axios.get(url+`/workingHours/hours/single/${id}`);
   return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
 });
 // get the un available date every district
-export const getUnavailableDates = createAsyncThunk('applicants/unavailable', async (id) => {
+export const getUnavailableDates = createAsyncThunk('applicants/unavailable', async (id,thunkAPI) => {
+  try{
   const response = await axios.get(url+`/applicants/date/unavailable/all/${id}`);
   return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
+});
+// get national ID
+export const getNationalId = createAsyncThunk('profile/national', async (id,thunkAPI) => {
+  try{
+  const response = await axios.get(url+`/profile/person/${id}`);
+  return response.data;
+  }catch (err) {
+    console.log(err.message);
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
 });
 
 // export const addItem = createAsyncThunk('items/addItem', async (item) => {
@@ -118,6 +156,17 @@ export const districtSlice = createSlice({
         state.unavailableDates = action.payload;
       })
       .addCase(getUnavailableDates.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(getNationalId.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getNationalId.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.nationalID = action.payload;
+      })
+      .addCase(getNationalId.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })

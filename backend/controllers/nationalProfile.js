@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
-const Region = require("../models/nationalProfile");
+const NationalID = require('../models/nationalProfile');
 
 exports.insertData = async(req,res)=>{
     try {
         let promise = req.body.data.map(async(arr)=>{
-            const newData = new Region({
+            const newData = new NationalID ({
                 ID:arr.ID,
                 fullName:arr.fullName,
                 motherName:arr.motherName,
@@ -23,10 +23,10 @@ exports.insertData = async(req,res)=>{
     }
 }
 
-// get all regional data
+// get all NationalID  data
 exports.getAllData = async(req, res) => {
     try {
-        const data = await Region.find({});
+        const data = await NationalID.find({});
         return res.json(data)
     } catch (err) {
         return res.status(500).json({ message: err.message  });
@@ -36,8 +36,12 @@ exports.getAllData = async(req, res) => {
 // get single person data
 exports.getSinglePerson = async(req, res) => {
     try {
-        const person = await Region.findOne({serialNumber: req.params.serialNumber});
-        return res.json(person);
+        const person = await NationalID.findOne({serialNumber: req.params.id});
+        if (person) {
+        return res.status(200).json(person);
+        }else{
+            return res.status(400).json({message: 'This ID does not exist.'});
+        }
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }

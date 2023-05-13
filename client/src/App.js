@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+
 import { useSelector } from "react-redux";
 import {
   fetchData,
@@ -12,8 +13,14 @@ import DistrictDetail from "./components/districtDetail";
 import Select from "react-select";
 import Stepper from './components/stepper/stepper';
 import Appointment from "./components/appointment";
+import StepperOne from './components/stepper/stepper1';
+import StepperTwo from './components/stepper/stepper2';
 function App() {
+  const steps = [
+   <StepperOne />,
+    <StepperTwo />,
 
+  ];
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [selectedId, setSelectedId] = useState("");
@@ -89,7 +96,7 @@ function App() {
   console.log(selectedTime);
   return (
     <div className="container">
- <Stepper  />
+ <Stepper steps={steps}  />
     </div>
     // <div className="container">
     //   <h1>hello </h1>

@@ -30,7 +30,7 @@ app.use(morgan('tiny', {
       return !req.url.startsWith('/'); // Skip logging if the URL does not start with a slash
     }
   }))
-app.use("/api/gobolka",NationalID);
+app.use("/api/profile",NationalID);
 app.use("/api/cid",CidRouter);
 app.use("/api/applicants",ApplicantRouter);
 app.use("/api/districts",DistrictRouter);

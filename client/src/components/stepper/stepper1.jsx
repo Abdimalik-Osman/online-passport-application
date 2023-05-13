@@ -1,6 +1,53 @@
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getNationalId, useAppDispatch } from "../../app/districtSlice";
 
 export default function StepperOne() {
+  const dispatch = useAppDispatch();
+  const [nId, setId] = useState();
+  const [selectedSex, setSelectedSex] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const status = useSelector((state) => state.district.status);
+  const error = useSelector((state) => state.district.error);
+  const message = useSelector((state) => state.district.message);
+  const nationalID = useSelector((state) => state.district.nationalID);
+
+  let mFirstName = "";
+  let mLastName = "";
+  let firstName = "";
+  let lastName = "";
+  if (nationalID) {
+    if (status != "failed" || status === "loading") {
+      const text = nationalID?.fullName;
+      const fullname = text?.split(" ");
+      const motherName = nationalID?.motherName;
+      const motherFullname = motherName?.split(" ");
+
+      const fname = fullname?.[0];
+      const secondName = fullname?.[1];
+      firstName = fname?.concat(" ", secondName);
+      lastName = fullname?.[2];
+      // ----------------
+      const mFname = motherFullname?.[0];
+      const mSecondName = motherFullname?.[1];
+      mFirstName = mFname?.concat(" ", mSecondName);
+      mLastName = motherFullname?.[2];
+    }
+  }
+
+  const handleChange = (e) => {
+    setId(e.target.value);
+  };
+  const handleClick = async () => {
+    dispatch(getNationalId(nId));
+    const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
+    setSelectedSex(defaultSex);
+    const apiDate = new Date(nationalID?.DOB); // convert date string to date object
+    setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+  };
+  console.log(message);
+
   return (
     <form>
       <div className="border-b border-gray-900/10 pb-12">
@@ -14,27 +61,30 @@ export default function StepperOne() {
         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div className="sm:col-span-4 sm:col-start-1">
             <label
-              htmlFor="city"
+              htmlFor="nID"
               className="block text-sm font-medium leading-6 text-gray-900">
               NATIONAL ID
             </label>
             <div className="mt-2">
               <input
                 type="text"
-                name="city"
-                id="city"
+                name="nID"
+                value={nId}
+                onChange={handleChange}
                 autoComplete="address-level2"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
           </div>
 
-          <div class="sm:col-span-2">
-  <button type="button"
-    class="w-full sm:w-auto rounded-md bg-indigo-600 px-5 py-2 mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-    check
-  </button>
-</div>
+          <div className="sm:col-span-2">
+            <button
+              type="button"
+              onClick={handleClick}
+              className="w-full sm:w-auto rounded-md bg-indigo-600 px-5 py-2 mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              check
+            </button>
+          </div>
 
           {/* //FIRST NAME */}
           <div className="sm:col-span-3">
@@ -43,11 +93,11 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               First name
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 type="text"
-                name="first-name"
-                id="first-name"
+                name="fname"
+                value={firstName}
                 autoComplete="given-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -60,11 +110,11 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               Last name
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 type="text"
-                name="last-name"
-                id="last-name"
+                name="lname"
+                value={lastName}
                 autoComplete="family-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -77,11 +127,11 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               MOTHER'S FIRST NAME
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 type="text"
                 name="mFname"
-                id="mFname"
+                value={mFirstName}
                 autoComplete="given-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -94,11 +144,11 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               MOTHER'S LAST NAME
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 type="text"
                 name="mLname"
-                id="mLname"
+                value={mLastName}
                 autoComplete="family-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -110,9 +160,10 @@ export default function StepperOne() {
               SELECT YOUR SEX.
             </p>
             <input
-              id="push-everything"
-              name="push-notifications"
               type="radio"
+              name="sex"
+              checked={selectedSex === "Male"}
+              onChange={(event) => setSelectedSex(event.target.value)}
               className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
             />
             <label
@@ -121,15 +172,17 @@ export default function StepperOne() {
               MALE
             </label>
             <input
-              id="push-everything"
-              name="push-notifications"
               type="radio"
+              name="sex"
+              // value={nationalID?.sex}
+              checked={selectedSex === "Female"}
+              onChange={(event) => setSelectedSex(event.target.value)}
               className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
             />
             <label
               htmlFor="mLname"
               className="text-sm font-medium leading-6 mx-2 text-gray-900">
-              MALE
+              FEMALE
             </label>
           </div>
           {/* occupation */}
@@ -196,7 +249,7 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               SELECT COUNTRY
             </label>
-            <div className="mt-2">
+            <div className="">
               <select
                 id="country"
                 name="country"
@@ -216,7 +269,7 @@ export default function StepperOne() {
               className="block text-sm font-medium leading-6 text-gray-900">
               MARITAL STATUS
             </label>
-            <div className="mt-2">
+            <div className="">
               <select
                 id="country"
                 name="country"
@@ -229,18 +282,20 @@ export default function StepperOne() {
             </div>
           </div>
           {/* place of birth */}
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-2">
             <label
               htmlFor="country"
               className="block text-sm font-medium leading-6 text-gray-900">
               DATE OF BIRTH
             </label>
-         
-            <div className="mt-2">
+
+            <div className="">
               <input
-                id="email"
-                name="email"
                 type="date"
+                id="DOB"
+                name="DOB"
+                value={selectedDate}
+                onChange={(event) => setSelectedDate(event.target.value)}
                 autoComplete="email"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -248,13 +303,13 @@ export default function StepperOne() {
           </div>
 
           {/* place of birth */}
-          <div className="sm:col-span-3">
+          <div className="sm:col-span-2">
             <label
               htmlFor="email"
               className="block text-sm font-medium leading-6 text-gray-900">
               PLACE OF BIRTH
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 id="email"
                 name="email"
@@ -333,6 +388,14 @@ export default function StepperOne() {
             </div>
           </div> */}
         </div>
+        {/* <div className="sm:col-span-6 flex justify-center">
+  <button
+    type="button"
+    onClick={handleClick}
+    className="w-full sm:w-auto rounded-md bg-indigo-600 w-50 py-2 mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    Next
+  </button>
+</div> */}
       </div>
     </form>
   );
