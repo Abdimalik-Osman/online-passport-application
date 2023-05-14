@@ -26,8 +26,14 @@ exports.getDistrictData = async(req,res)=>{
 // get single District 
 exports.getSingleDistrict = async(req,res)=>{
     try {
-        const districtInfo = await District.findOne({"districtInfo._id":req.params.id})
-        return res.json(districtInfo?.districtInfo);
+      const districtInfo = await District.findOne({"districtInfo._id":new mongoose.Types.ObjectId(req.params.id)})
+      const filtered = districtInfo?.districtInfo?.filter((info)=>{
+        console.log(info._id)
+        console.log(new mongoose.Types.ObjectId(req.params.id))
+
+        return info._id.equals(new mongoose.Types.ObjectId(req.params.id))
+      })
+      return res.json(filtered);
     } catch (err) {
        return  res.status(500).json({message:err.message});
         

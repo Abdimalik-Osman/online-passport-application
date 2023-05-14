@@ -1,41 +1,159 @@
+import React,{useState, useEffect} from 'react'
+import Appointment from '../appointment';
+import { useSelector } from "react-redux";
+import {
+  fetchData,
+  getSingleDistrict,
+  getDistrictData,
+  getDistrictWorkingHours,
+  getUnavailableDates,
+  useAppDispatch,
+} from "../../app/districtSlice";
+import DistrictDetail from "../../components/districtDetail";
+import Select from "react-select";
+const StepperFour = () => {
+    const [selectedOptions, setSelectedOptions] = useState([]);
+    const [selectedOptions2, setSelectedOptions2] = useState([]);
+    const [selectedId, setSelectedId] = useState("");
+     const [selectedTime, setSelectedTime] = useState("");
+  
+    const dispatch = useAppDispatch();
+    const items = useSelector((state) => state.district.districts);
+    const status = useSelector((state) => state.district.status);
+    const error = useSelector((state) => state.district.error);
+    const selectedDistrict = useSelector((state) => state.district.selectedState);
+    const unavailableDates = useSelector((state) => state.district.unavailableDates);
+    const selectedDistrictData = useSelector(
+      (state) => state.district.districtData
+    );
+    const workingHours = useSelector((state) => state.district.workingHours);
+    useEffect(() => {
+      if (status === "idle") {
+        dispatch(fetchData());
+      }
+    }, [status, dispatch]);
+  
+    // console.log(items)
+    // // const handleAddItem = async (item) => {
+    // //   await dispatch(addItem(item));
+    // // };
+  
+    // // const handleUpdateItem = async (item) => {
+    // //   await dispatch(updateItem(item));
+    // // };
+  
+    // // const handleDeleteItem = async (id) => {
+    // //   await dispatch(deleteItem(id));
+    // // };
+  
+    // if (status === 'loading') {
+    //   return <div>Loading...</div>;
+    // }
+  
+    // if (status === 'failed') {
+    //   return <div>{error}</div>;
+    // }
+    const options = items?.map((item) => ({
+      value: item?.districtInfo[0]?._id,
+      label: item.stateName,
+    }));
+    const options2 =
+      selectedDistrictData.length > 0 &&
+      selectedDistrictData?.map((item) => ({
+        value: item?._id,
+        label: item.districtName,
+      }));
+    const handleChange1 = (selected) => {
+      setSelectedOptions(selected);
+      // setSelectedId(selected.value);
+  
+      dispatch(getSingleDistrict(selected.value));
+      setSelectedOptions2([]);
+    };
+    const handleChange2 = (selected) => {
+      setSelectedOptions2(selected);
+      dispatch(getDistrictData(selected.value));
+      dispatch(getDistrictWorkingHours(selected.value));
+      dispatch(getUnavailableDates(selected.value));
+      // console.log(selectedOptions2)
+    };
+    const handleSubmit = async () => {
+      dispatch(getSingleDistrict(selectedId));
+      // console.log(items)
+    };  const handleTimeChange = (e) => {
+      setSelectedTime(e.target.value);
+    };
+  
+    console.log(selectedDistrictData);
+  return (
+      <div className="container">
+      <h1>hello </h1>
+      <div className="row">
+        <Select
+          className="w-50"
+          options={options}
+          value={selectedOptions}
+          onChange={handleChange1}
+        />
+        <Select
+          className="w-50"
+          options={options2}
+          value={selectedOptions2}
+          onChange={handleChange2}
+        />
+      </div>
+      <hr />
+      <br />
+      {/* <button className='btn btn-sm btn-dark mt-3' onClick={handleSubmit}>GET DATA</button> */}
+      {/* <DistrictDetail district={selectedDistrict}/> */}
 
-// <ol class="flex items-center w-full mb-4 sm:mb-5">
-//     <li class="flex w-full items-center text-blue-600 dark:text-blue-500 after:content-[''] after:w-full after:h-1 after:border-b after:border-blue-100 after:border-4 after:inline-block dark:after:border-blue-800">
-//         <div class="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full lg:h-12 lg:w-12 dark:bg-blue-800 shrink-0">
-//             <svg aria-hidden="true" class="w-5 h-5 text-blue-600 lg:w-6 lg:h-6 dark:text-blue-300" class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45 4a2.5 2.5 0 10-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
-//         </div>
-//     </li>
-//     <li class="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700">
-//         <div class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
-//             <svg aria-hidden="true" class="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path></svg>
-//         </div>
-//     </li>
-//     <li class="flex items-center w-full">
-//         <div class="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
-//             <svg aria-hidden="true" class="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-//         </div>
-//     </li>
-// </ol>
-// <form action="#">
-//     <h3 class="mb-4 text-lg font-medium leading-none text-gray-900 dark:text-white">Invoice details</h3>
-//     <div class="grid gap-4 mb-4 sm:grid-cols-2">
-//         <div>
-//             <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-//             <input type="text" name="username" id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="username.example" required="">
-//         </div>
-//         <div>
-//             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-//             <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
-//         </div>
-//         <div>
-//             <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-//             <input type="password" name="password" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required="">
-//         </div>                        <div>
-//             <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm password</label>
-//             <input type="password" name="confirm-password" id="confirm-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••" required="">
-//         </div>
-//     </div>
-//     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-//         Next Step: Payment Info
-//     </button>
-// </form>
+      <div className="row">
+        <div className="col">
+          {selectedDistrict.length > 0 &&
+            selectedDistrict?.map((item) => (
+              <div className="">
+                <h5>District Name: {item.districtName}</h5>
+                <p>Office Name: {item.office}</p>
+                <p>Location: {item.location}</p>
+                <p>contact Number: {item.contactNumber}</p>
+                <p>start Time: {item.startTime}</p>
+                <p>End Time: {item.endTime}</p>
+                <p>
+                  Number of people to be worked every day: {item.dailySlots}
+                </p>
+                <p>Hourly Slots: {item.hourlySlots}</p>
+                <p>start Time: {item.startTime}</p>
+              </div>
+            ))}
+        </div>
+        <div className="col">
+      <h5>working hours</h5>
+      {workingHours.length > 0 &&
+        workingHours?.map((item) => (
+          <div key={item.startTime} className="">
+            <div className="form-group">
+              <input
+                type="radio"
+                name="time"
+                value={item.startTime}
+                id={item.startTime}
+                className="mx-2"
+                checked={selectedTime === item.startTime}
+                onChange={handleTimeChange}
+              />
+              <label htmlFor={item.startTime}>
+                {item.startTime} ------- {item.endTime}{" "}
+              </label>
+            </div>
+          </div>
+        ))}
+    </div>
+    <div className="col">
+      <Appointment unavailableDates={unavailableDates} />
+    </div>
+      </div>
+    </div>
+  )
+}
+
+export default StepperFour

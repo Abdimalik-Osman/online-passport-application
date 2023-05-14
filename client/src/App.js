@@ -1,99 +1,18 @@
 import React, { useEffect, useState } from "react";
-
-import { useSelector } from "react-redux";
-import {
-  fetchData,
-  getSingleDistrict,
-  getDistrictData,
-  getDistrictWorkingHours,
-  getUnavailableDates,
-  useAppDispatch,
-} from "./app/districtSlice";
-import DistrictDetail from "./components/districtDetail";
-import Select from "react-select";
 import Stepper from './components/stepper/stepper';
 import Appointment from "./components/appointment";
 import StepperOne from './components/stepper/stepper1';
 import StepperTwo from './components/stepper/stepper2';
+import StepperThree from './components/stepper/stepper3';
+import StepperFour from "./components/stepper/stepper4";
 function App() {
   const steps = [
    <StepperOne />,
     <StepperTwo />,
-
+    <StepperThree />,
+    <StepperFour />
   ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [selectedOptions2, setSelectedOptions2] = useState([]);
-  const [selectedId, setSelectedId] = useState("");
-   const [selectedTime, setSelectedTime] = useState("");
 
-  const dispatch = useAppDispatch();
-  const items = useSelector((state) => state.district.districts);
-  const status = useSelector((state) => state.district.status);
-  const error = useSelector((state) => state.district.error);
-  const selectedDistrict = useSelector((state) => state.district.selectedState);
-  const unavailableDates = useSelector((state) => state.district.unavailableDates);
-  const selectedDistrictData = useSelector(
-    (state) => state.district.districtData
-  );
-  const workingHours = useSelector((state) => state.district.workingHours);
-  useEffect(() => {
-    if (status === "idle") {
-      dispatch(fetchData());
-    }
-  }, [status, dispatch]);
-
-  // console.log(items)
-  // // const handleAddItem = async (item) => {
-  // //   await dispatch(addItem(item));
-  // // };
-
-  // // const handleUpdateItem = async (item) => {
-  // //   await dispatch(updateItem(item));
-  // // };
-
-  // // const handleDeleteItem = async (id) => {
-  // //   await dispatch(deleteItem(id));
-  // // };
-
-  // if (status === 'loading') {
-  //   return <div>Loading...</div>;
-  // }
-
-  // if (status === 'failed') {
-  //   return <div>{error}</div>;
-  // }
-  const options = items?.map((item) => ({
-    value: item?.districtInfo[0]?._id,
-    label: item.stateName,
-  }));
-  const options2 =
-    selectedDistrictData.length > 0 &&
-    selectedDistrictData?.map((item) => ({
-      value: item?._id,
-      label: item.districtName,
-    }));
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-    // setSelectedId(selected.value);
-
-    dispatch(getSingleDistrict(selected.value));
-    setSelectedOptions2([]);
-  };
-  const handleChange2 = (selected) => {
-    setSelectedOptions2(selected);
-    dispatch(getDistrictData(selected.value));
-    dispatch(getDistrictWorkingHours(selected.value));
-    dispatch(getUnavailableDates(selected.value));
-    // console.log(selectedOptions2)
-  };
-  const handleSubmit = async () => {
-    dispatch(getSingleDistrict(selectedId));
-    // console.log(items)
-  };  const handleTimeChange = (e) => {
-    setSelectedTime(e.target.value);
-  };
-
-  console.log(selectedTime);
   return (
     <div className="container">
  <Stepper steps={steps}  />
