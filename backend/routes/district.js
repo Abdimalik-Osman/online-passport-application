@@ -9,5 +9,6 @@ router.get('/all',districtController.getDistrictData);
 router.get('/single/:id',districtController.getSingleDistrict);
 
 router.get('/state/single/:id',districtController.getStateData);
+router.get('/state/single/data/info/:id',districtController.getDistrictInfo);
 router.patch('/:id',districtController.updateDistrict);
 module.exports = router;

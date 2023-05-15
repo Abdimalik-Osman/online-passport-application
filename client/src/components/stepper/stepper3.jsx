@@ -4,8 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNationalId, useAppDispatch } from "../../app/districtSlice";
 
 export default function StepperOne() {
-
-
+  let [amount,setAmount] = useState("150")
+  const [type,setType] = useState("")
+  const handleChange = (e) => {
+    setType(e.target.value);
+    if (e.target.value == "Ordinary") {
+      setAmount("150")
+    }if(e.target.value == "deg-deg"){
+      setAmount("300")
+    }
+  }
+  console.log(type)
   return (
     <form>
       <div className="border-b border-gray-900/10 pb-12">
@@ -48,11 +57,12 @@ export default function StepperOne() {
             <div className="">
               <select
                 id="country"
-                name="country"
+                name="type"
                 autoComplete="country-name"
+                onChange={handleChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                <option>Ordinary</option>
-                <option>Deg Deg</option>
+                <option value={"Ordinary"}>Ordinary</option>
+                <option value={"deg-deg"}>Deg Deg</option>
               </select>
             </div>
           </div>
@@ -68,7 +78,7 @@ export default function StepperOne() {
               <input
                 type="text"
                 name="amount"
-                value={100}
+                value={amount}
                 disabled={true}
                 id="postal-code"
                 autoComplete="postal-code"

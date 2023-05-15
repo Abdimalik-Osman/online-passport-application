@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Appointment = ({unavailableDates}) => {
   
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const handleDateChange = (date) => {
     setSelectedDate(date);
   };
@@ -13,6 +13,8 @@ const Appointment = ({unavailableDates}) => {
   return (
     <div>
  <DatePicker
+        startDate={new Date()}
+        value={new Date()}
         selected={selectedDate}
         onChange={handleDateChange}
         dateFormat="yyyy-MM-dd"

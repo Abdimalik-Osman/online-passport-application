@@ -11,7 +11,7 @@ const StepTwo = ({ nextStep }) => {
 
   return (
      <form>
-      <div className="border-b border-gray-900/10 pb-12">
+      <div className="border-b border-gray-900/10 pb-6">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
           Personal Information
         </h2>
@@ -19,7 +19,7 @@ const StepTwo = ({ nextStep }) => {
           Use a permanent address where you can receive mail.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
    
 
           {/* CONTACT NUMBER */}

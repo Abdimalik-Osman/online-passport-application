@@ -210,7 +210,7 @@ if (isExists) {
   const newAvailableTime = new AvailableTime({
     districtId: districtId,
     availableInfo: [{
-      date: appointmentDate.toDate(),
+      date: new Date(appointmentDate),
       time: appointmentTime,
       availableNumber: districtInfo[0]?.hourlySlots -1 // Set the initial availableNumber to 3 (or any other value you prefer)
     }]
@@ -284,7 +284,7 @@ try {
 }
 }
 
-
+// get un available dates
 exports.getUnavailableDates = async(req, res)=>{
   try {
     
@@ -293,6 +293,37 @@ exports.getUnavailableDates = async(req, res)=>{
     });
 
     return res.send(data)
+  } catch (error) {
+    return res.status(500).json({message:error.message})
+  }
+}
+// get un available dates
+exports.getAvailableDates = async(req, res)=>{
+  try {
+    
+    
+    const appointmentDate = moment(req.body.appointmentDate, 'YYYY-MM-DD');
+    console.log(new Date(req.body.appointmentDate))
+    const data = await AvailableTime.find({
+      districtId: req.body.id,
+      "availableInfo.date": new Date(req.body.appointmentDate)
+    });
+
+    if(!data || data.length === 0) {
+      return res.status(400).json({message:"no available information about this appointment"})
+    }
+    // const filtered = data?.filter((info) => {
+    //   // console.log(moment(info?.availableInfo[0]?.date, 'YYYY-MM-DD').format("YYYY-MM-DD"))
+    //   console.log(moment(info?.availableInfo[0]?.date, 'YYYY-MM-DD').format("YYYY-MM-DD"),"----")
+    //   console.log( moment(req.body.appointmentDate, 'YYYY-MM-DD').format("YYYY-MM-DD"),
+    //   "====")
+    //   return info.districtId.equals(req.body.id) && moment(info?.availableInfo[0]?.date, 'YYYY-MM-DD').format("YYYY-MM-DD") === moment(req.body.appointmentDate, 'YYYY-MM-DD').format("YYYY-MM-DD")
+    // })
+    const filtered = data?.map((info)=>{
+      return info?.availableInfo[0]
+    })
+    // console.log(filtered)
+    return res.send(filtered)
   } catch (error) {
     return res.status(500).json({message:error.message})
   }

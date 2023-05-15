@@ -7,10 +7,11 @@ const url = "http://localhost:4000/api"
 // Define the initial state for your slice
 const initialState = {
   districts: [],
-  selectedState:[],
+  selectedState:{},
   districtData: {},
   workingHours: [],
   unavailableDates: [],
+  availableDates: [],
   nationalID:{},
   status: 'idle',
   message:"",
@@ -47,6 +48,16 @@ export const getDistrictData = createAsyncThunk('districts/data', async (id,thun
     return thunkAPI.rejectWithValue(message); 
 }
 });
+// get selected district data
+export const getDistrictInfo = createAsyncThunk('districts/data/single', async (id,thunkAPI) => {
+  try{
+  const response = await axios.get(url+`/districts/state/single/data/info/${id}`);
+  return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
+});
 
 // get the selected district working hours
 export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours', async (id,thunkAPI) => {
@@ -62,6 +73,16 @@ export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours'
 export const getUnavailableDates = createAsyncThunk('applicants/unavailable', async (id,thunkAPI) => {
   try{
   const response = await axios.get(url+`/applicants/date/unavailable/all/${id}`);
+  return response.data;
+  }catch (err) {
+    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    return thunkAPI.rejectWithValue(message); 
+}
+});
+// get the un available date every district
+export const getAvailableDates = createAsyncThunk('applicants/availableDates', async (data,thunkAPI) => {
+  try{
+  const response = await axios.post(url+`/applicants/dates/availableTime/all`,data);
   return response.data;
   }catch (err) {
     const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
@@ -167,6 +188,28 @@ export const districtSlice = createSlice({
         state.nationalID = action.payload;
       })
       .addCase(getNationalId.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(getDistrictInfo.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getDistrictInfo.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.selectedState = action.payload;
+      })
+      .addCase(getDistrictInfo.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(getAvailableDates.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(getAvailableDates.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.availableDates =action.payload
+      })
+      .addCase(getAvailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       })

@@ -7,7 +7,10 @@ import {
   getDistrictData,
   getDistrictWorkingHours,
   getUnavailableDates,
+  getDistrictInfo,
+  availableDates,
   useAppDispatch,
+  getAvailableDates,
 } from "../../app/districtSlice";
 import DistrictDetail from "../../components/districtDetail";
 import Select from "react-select";
@@ -16,6 +19,7 @@ const StepperFour = () => {
     const [selectedOptions2, setSelectedOptions2] = useState([]);
     const [selectedId, setSelectedId] = useState("");
      const [selectedTime, setSelectedTime] = useState("");
+     const [selectedState, setSelectedState] = useState("");
   
     const dispatch = useAppDispatch();
     const items = useSelector((state) => state.district.districts);
@@ -23,6 +27,7 @@ const StepperFour = () => {
     const error = useSelector((state) => state.district.error);
     const selectedDistrict = useSelector((state) => state.district.selectedState);
     const unavailableDates = useSelector((state) => state.district.unavailableDates);
+    const availableDates = useSelector((state) => state.district.availableDates);
     const selectedDistrictData = useSelector(
       (state) => state.district.districtData
     );
@@ -55,13 +60,13 @@ const StepperFour = () => {
     // }
     const options = items?.map((item) => ({
       value: item?.districtInfo[0]?._id,
-      label: item.stateName,
+      label: item?.stateName,
     }));
     const options2 =
       selectedDistrictData.length > 0 &&
       selectedDistrictData?.map((item) => ({
         value: item?._id,
-        label: item.districtName,
+        label: item?.districtName,
       }));
     const handleChange1 = (selected) => {
       setSelectedOptions(selected);
@@ -72,7 +77,8 @@ const StepperFour = () => {
     };
     const handleChange2 = (selected) => {
       setSelectedOptions2(selected);
-      dispatch(getDistrictData(selected.value));
+      dispatch(getDistrictInfo(selected.value));
+      setSelectedState(selected.value)
       dispatch(getDistrictWorkingHours(selected.value));
       dispatch(getUnavailableDates(selected.value));
       // console.log(selectedOptions2)
@@ -84,7 +90,13 @@ const StepperFour = () => {
       setSelectedTime(e.target.value);
     };
   
-    console.log(selectedDistrictData);
+    const dateHandleChange = (e) => {
+      const id = selectedState;
+      const appointmentDate = e.target.value;
+      setSelectedTime(e.target.value);
+      dispatch(getAvailableDates({id, appointmentDate}));
+    }
+    console.log(availableDates);
   return (
       <div className="container">
       <h1>hello </h1>
@@ -103,28 +115,40 @@ const StepperFour = () => {
         />
       </div>
       <hr />
-      <br />
+    
       {/* <button className='btn btn-sm btn-dark mt-3' onClick={handleSubmit}>GET DATA</button> */}
       {/* <DistrictDetail district={selectedDistrict}/> */}
 
-      <div className="row">
+      <div className="row mb-5">
         <div className="col">
           {selectedDistrict.length > 0 &&
             selectedDistrict?.map((item) => (
-              <div className="">
-                <h5>District Name: {item.districtName}</h5>
-                <p>Office Name: {item.office}</p>
-                <p>Location: {item.location}</p>
-                <p>contact Number: {item.contactNumber}</p>
-                <p>start Time: {item.startTime}</p>
-                <p>End Time: {item.endTime}</p>
-                <p>
-                  Number of people to be worked every day: {item.dailySlots}
-                </p>
-                <p>Hourly Slots: {item.hourlySlots}</p>
-                <p>start Time: {item.startTime}</p>
+              <div>
+              <div className="form-group">
+                <label htmlFor="dailyApplicants">Dails Applicants Can Service</label>
+                <input type="Number" name="office" disabled value={item.dailySlots} className='form-control' />
+              </div>
+              <div className="form-group my-2">
+                <label htmlFor="office">Office Name</label>
+                <input type="text" name="office" disabled value={item.officeName} className='form-control' />
+              </div>
+              <div className="form-group">
+                <label htmlFor="location">Location</label>
+                <textarea type="text" name="location"  disabled value={item.location} className='form-control' />
+              </div>
+             
+              <div className="form-group my-2">
+                <label htmlFor="contactNumber">Office Contact Number</label>
+                <input type="Number" name="contactNumber" disabled value={item.contactNumber} className='form-control' />
+              </div>
               </div>
             ))}
+        </div>
+        <div className="col">
+          <div className="form-group">
+            <label htmlFor="date">Appointment Date</label>
+            <input type="date" name="appointmentDate" onChange={dateHandleChange} id="" className="form-control" />
+          </div>
         </div>
         <div className="col">
       <h5>working hours</h5>
@@ -148,9 +172,9 @@ const StepperFour = () => {
           </div>
         ))}
     </div>
-    <div className="col">
-      <Appointment unavailableDates={unavailableDates} />
-    </div>
+    {/* <div className="col"> */}
+      {/* <Appointment unavailableDates={unavailableDates} /> */}
+    {/* </div> */}
       </div>
     </div>
   )

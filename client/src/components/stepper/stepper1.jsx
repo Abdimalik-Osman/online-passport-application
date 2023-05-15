@@ -50,7 +50,7 @@ export default function StepperOne() {
 
   return (
     <form>
-      <div className="border-b border-gray-900/10 pb-12">
+      <div className="border-b border-gray-900/10 pb-6">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
           Personal Information
         </h2>
@@ -58,14 +58,14 @@ export default function StepperOne() {
           Use a permanent address where you can receive mail.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
           <div className="sm:col-span-4 sm:col-start-1">
             <label
               htmlFor="nID"
               className="block text-sm font-medium leading-6 text-gray-900">
               NATIONAL ID
             </label>
-            <div className="mt-2">
+            <div className="">
               <input
                 type="text"
                 name="nID"
@@ -81,7 +81,7 @@ export default function StepperOne() {
             <button
               type="button"
               onClick={handleClick}
-              className="w-full sm:w-auto rounded-md bg-indigo-600 px-5 py-2 mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              className="btn btn-primary btn-sm w-100 py-2 mt-4">
               check
             </button>
           </div>

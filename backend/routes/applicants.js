@@ -8,5 +8,6 @@ router.post('/add',ApplicantController.createApplicant)
 router.get('/',ApplicantController.getAllApplicants)
 router.get('/:id',ApplicantController.getSingleApplicant)
 router.get('/date/unavailable/all/:id',ApplicantController.getUnavailableDates)
+router.post('/dates/availableTime/all',ApplicantController.getAvailableDates)
 router.delete('/:id',ApplicantController.deleteApplicant)
 module.exports = router;
