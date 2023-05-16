@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="container">
- <Stepper steps={steps}  />
+ <Stepper steps={steps}   />
     </div>
     // <div className="container">
     //   <h1>hello </h1>

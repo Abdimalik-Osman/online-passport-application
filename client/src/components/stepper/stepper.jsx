@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import HorizontalStepper from './horizontalStepper';
 const Stepper = ({ steps }) => {
+
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {

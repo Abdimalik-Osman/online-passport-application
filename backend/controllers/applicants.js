@@ -309,9 +309,9 @@ exports.getAvailableDates = async(req, res)=>{
       "availableInfo.date": new Date(req.body.appointmentDate)
     });
 
-    if(!data || data.length === 0) {
-      return res.status(400).json({message:"no available information about this appointment"})
-    }
+    // if(!data || data.length === 0) {
+    //   return res.status(400).json({message:"no available information about this appointment"})
+    // }
     // const filtered = data?.filter((info) => {
     //   // console.log(moment(info?.availableInfo[0]?.date, 'YYYY-MM-DD').format("YYYY-MM-DD"))
     //   console.log(moment(info?.availableInfo[0]?.date, 'YYYY-MM-DD').format("YYYY-MM-DD"),"----")

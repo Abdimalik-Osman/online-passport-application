@@ -24,6 +24,7 @@ const StepperFour = () => {
     const dispatch = useAppDispatch();
     const items = useSelector((state) => state.district.districts);
     const status = useSelector((state) => state.district.status);
+    const message = useSelector((state) => state.district.message);
     const error = useSelector((state) => state.district.error);
     const selectedDistrict = useSelector((state) => state.district.selectedState);
     const unavailableDates = useSelector((state) => state.district.unavailableDates);
@@ -35,8 +36,11 @@ const StepperFour = () => {
     useEffect(() => {
       if (status === "idle") {
         dispatch(fetchData());
+     
       }
-    }, [status, dispatch]);
+
+      
+    }, [status, dispatch,availableDates,availableDates,selectedDistrict]);
   
     // console.log(items)
     // // const handleAddItem = async (item) => {
@@ -81,6 +85,9 @@ const StepperFour = () => {
       setSelectedState(selected.value)
       dispatch(getDistrictWorkingHours(selected.value));
       dispatch(getUnavailableDates(selected.value));
+      // setSelectedState("")
+      // setSelectedTime("")
+      // dispatch(getAvailableDates({selectedState, selectedTime}));
       // console.log(selectedOptions2)
     };
     const handleSubmit = async () => {
@@ -96,7 +103,8 @@ const StepperFour = () => {
       setSelectedTime(e.target.value);
       dispatch(getAvailableDates({id, appointmentDate}));
     }
-    console.log(availableDates);
+    // console.log(availableDates);
+    console.log(workingHours);
   return (
       <div className="container">
       <h1>hello </h1>
@@ -125,7 +133,7 @@ const StepperFour = () => {
             selectedDistrict?.map((item) => (
               <div>
               <div className="form-group">
-                <label htmlFor="dailyApplicants">Dails Applicants Can Service</label>
+                <label htmlFor="dailyApplicants">Daily Applicants Can Service</label>
                 <input type="Number" name="office" disabled value={item.dailySlots} className='form-control' />
               </div>
               <div className="form-group my-2">
@@ -149,8 +157,49 @@ const StepperFour = () => {
             <label htmlFor="date">Appointment Date</label>
             <input type="date" name="appointmentDate" onChange={dateHandleChange} id="" className="form-control" />
           </div>
+          <div className='mt-2 form-control disabled'>
+          {availableDates.length === 0 ? (
+  workingHours?.map((item) => (
+    <div key={item.startTime} className="">
+      <div className="form-group">
+        <input
+          type="radio"
+          name="time"
+          value={item.startTime}
+          id={item.startTime}
+          className="mx-2"
+          checked={selectedTime === item.startTime}
+          onChange={handleTimeChange}
+        />
+        <label htmlFor={item.startTime}>
+          {item.startTime} ------- {item.endTime} Available
+        </label>
+      </div>
+    </div>
+  ))
+) : (
+  availableDates?.map((info, i) => (
+    <p key={info.time}>
+      <input
+        type="radio"
+        name="time"
+        value={info.time}
+        id={info.time}
+        className="mx-2"
+        disabled={info.availableNumber === 0}
+        // checked={selectedTime === i.startTime}
+        onChange={handleTimeChange}
+      />{" "}
+      {info.time} -- {availableDates[i + 1] ? availableDates[i + 1].time : "12:00"} ={" "}
+      <span style={{ backgroundColor: info.availableNumber === 0 ? "transparent" : "" }}>
+        {info.availableNumber} available slots
+      </span>
+    </p>
+  ))
+)}
+          </div>
         </div>
-        <div className="col">
+        {/* <div className="col">
       <h5>working hours</h5>
       {workingHours.length > 0 &&
         workingHours?.map((item) => (
@@ -171,7 +220,7 @@ const StepperFour = () => {
             </div>
           </div>
         ))}
-    </div>
+    </div> */}
     {/* <div className="col"> */}
       {/* <Appointment unavailableDates={unavailableDates} /> */}
     {/* </div> */}

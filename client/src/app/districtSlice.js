@@ -3,7 +3,12 @@ import { useDispatch } from 'react-redux';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const url = "http://localhost:4000/api"
+const url = "http://localhost:4000/api";
+
+// const formData = {
+//   firstName:"", lastName:"", pob:"", dob:"", nID:""
+//  }
+
 // Define the initial state for your slice
 const initialState = {
   districts: [],
@@ -135,6 +140,7 @@ export const districtSlice = createSlice({
       .addCase(fetchData.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getSingleDistrict.pending, (state) => {
         state.status = 'loading';
@@ -142,10 +148,12 @@ export const districtSlice = createSlice({
       .addCase(getSingleDistrict.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.districtData = action.payload;
+        
       })
       .addCase(getSingleDistrict.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getDistrictData.pending, (state) => {
         state.status = 'loading';
@@ -157,6 +165,7 @@ export const districtSlice = createSlice({
       .addCase(getDistrictData.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getDistrictWorkingHours.pending, (state) => {
         state.status = 'loading';
@@ -168,6 +177,7 @@ export const districtSlice = createSlice({
       .addCase(getDistrictWorkingHours.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getUnavailableDates.pending, (state) => {
         state.status = 'loading';
@@ -179,6 +189,7 @@ export const districtSlice = createSlice({
       .addCase(getUnavailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getNationalId.pending, (state) => {
         state.status = 'loading';
@@ -190,6 +201,7 @@ export const districtSlice = createSlice({
       .addCase(getNationalId.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getDistrictInfo.pending, (state) => {
         state.status = 'loading';
@@ -201,6 +213,7 @@ export const districtSlice = createSlice({
       .addCase(getDistrictInfo.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
       .addCase(getAvailableDates.pending, (state) => {
         state.status = 'loading';
@@ -212,6 +225,7 @@ export const districtSlice = createSlice({
       .addCase(getAvailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
+        state.message = action.payload;
       })
     //   .addCase(addItem.fulfilled, (state, action) => {
     //     state.districts.push(action.payload);
