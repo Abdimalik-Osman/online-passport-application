@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Stepper from './components/stepper/stepper';
+import MultiStepForm from './components/stepper/stepper';
 import Appointment from "./components/appointment";
 import StepperOne from './components/stepper/stepper1';
 import StepperTwo from './components/stepper/stepper2';
@@ -15,7 +15,7 @@ function App() {
 
   return (
     <div className="container">
- <Stepper steps={steps}   />
+ <MultiStepForm />
     </div>
     // <div className="container">
     //   <h1>hello </h1>

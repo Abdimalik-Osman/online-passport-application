@@ -1,18 +1,15 @@
 import React,{useState, useEffect} from 'react'
-import Appointment from '../appointment';
+import { ToastContainer } from 'react-toastify';
 import { useSelector } from "react-redux";
 import {
   fetchData,
   getSingleDistrict,
-  getDistrictData,
   getDistrictWorkingHours,
   getUnavailableDates,
   getDistrictInfo,
-  availableDates,
   useAppDispatch,
   getAvailableDates,
 } from "../../app/districtSlice";
-import DistrictDetail from "../../components/districtDetail";
 import Select from "react-select";
 const StepperFour = () => {
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -103,11 +100,12 @@ const StepperFour = () => {
       setSelectedTime(e.target.value);
       dispatch(getAvailableDates({id, appointmentDate}));
     }
-    // console.log(availableDates);
+    console.log(availableDates);
     console.log(workingHours);
   return (
       <div className="container">
-      <h1>hello </h1>
+      <ToastContainer />
+      {/* <h1>hello </h1> */}
       <div className="row">
         <Select
           className="w-50"
@@ -158,7 +156,7 @@ const StepperFour = () => {
             <input type="date" name="appointmentDate" onChange={dateHandleChange} id="" className="form-control" />
           </div>
           <div className='mt-2 form-control disabled'>
-          {availableDates.length === 0 ? (
+          {availableDates?.length === 0 ? (
   workingHours?.map((item) => (
     <div key={item.startTime} className="">
       <div className="form-group">
@@ -190,7 +188,7 @@ const StepperFour = () => {
         // checked={selectedTime === i.startTime}
         onChange={handleTimeChange}
       />{" "}
-      {info.time} -- {availableDates[i + 1] ? availableDates[i + 1].time : "12:00"} ={" "}
+      {info.time} -- {availableDates[i + 1] ? availableDates[i + 1].time : "Next Hour"} ={" "}
       <span style={{ backgroundColor: info.availableNumber === 0 ? "transparent" : "" }}>
         {info.availableNumber} available slots
       </span>

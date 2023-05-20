@@ -18,6 +18,7 @@ const initialState = {
   unavailableDates: [],
   availableDates: [],
   nationalID:{},
+  data:{},
   status: 'idle',
   message:"",
   error: null
@@ -100,8 +101,8 @@ export const getNationalId = createAsyncThunk('profile/national', async (id,thun
   const response = await axios.get(url+`/profile/person/${id}`);
   return response.data;
   }catch (err) {
-    console.log(err.message);
     const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    console.log(err.message);
     return thunkAPI.rejectWithValue(message); 
 }
 });
@@ -127,6 +128,9 @@ export const districtSlice = createSlice({
   initialState,
   reducers:{
     reset:(state)=> initialState,
+    getData:(state)=> {
+      
+    }
 },
   extraReducers: (builder) => {
     builder

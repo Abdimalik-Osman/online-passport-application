@@ -8,7 +8,8 @@ const HolyDay = require("../models/holydays");
 const moment = require("moment");
 const PaymentLog = require("../models/paymentLog")
 const UnAvailableDate = require("../models/unavailableDate")
-const AvailableTime = require("../models/availableTime")
+const AvailableTime = require("../models/availableTime");
+const DistrictWorkingHours = require("../models/workingHours");
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -192,10 +193,11 @@ const districtId = req.body.districtId;
 const appointmentDate = moment(req.body.appointmentDate, 'YYYY-MM-DD').startOf('day');
 const appointmentTime = req.body.appointmentTime;
 
+
 // Find the document that matches the districtId and appointmentDate
 const isExists = await AvailableTime.findOne({
   districtId: districtId,
-  'availableInfo.date': appointmentDate.toDate(),
+  'availableInfo.date': req.body.appointmentDate,
   'availableInfo.time': appointmentTime
 });
 
@@ -210,12 +212,29 @@ if (isExists) {
   const newAvailableTime = new AvailableTime({
     districtId: districtId,
     availableInfo: [{
-      date: new Date(appointmentDate),
+      date: req.body.appointmentDate,
       time: appointmentTime,
       availableNumber: districtInfo[0]?.hourlySlots -1 // Set the initial availableNumber to 3 (or any other value you prefer)
     }]
   });
   await newAvailableTime.save();
+  const districtData = await DistrictWorkingHours.findOne({districtId: districtId});
+  const workingHours = districtData?.workingHours?.filter((data)=>{
+    console.log(data,"====")
+    return data.startTime != appointmentTime});
+  console.log(workingHours+"----------")
+  workingHours.map(async(info)=>{
+    const newDates = new AvailableTime({
+      districtId: districtId,
+      availableInfo: [{
+        date: req.body.appointmentDate,
+        time: info.startTime,
+        availableNumber: districtInfo[0]?.hourlySlots // Set the initial availableNumber to 3 (or any other value you prefer)
+      }]
+    });
+    await newDates.save();
+  })
+
 }
         const newPayment = new PaymentLog({
         applicantId:newApplicant._id,
@@ -306,7 +325,7 @@ exports.getAvailableDates = async(req, res)=>{
     console.log(new Date(req.body.appointmentDate))
     const data = await AvailableTime.find({
       districtId: req.body.id,
-      "availableInfo.date": new Date(req.body.appointmentDate)
+      "availableInfo.date": req.body.appointmentDate
     });
 
     // if(!data || data.length === 0) {

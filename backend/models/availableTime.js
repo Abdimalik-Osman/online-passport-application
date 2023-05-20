@@ -6,7 +6,7 @@ let availableTimeSchema = new Schema(
     districtId:{type:Schema.Types.ObjectId,ref:"districts", default:null},
     availableInfo:[
         {
-            date:{type:Date, default:null},
+            date:{type:String, default:null},
             time:{type:String, default:null},
             availableNumber:{type:Number, default:5}
         }

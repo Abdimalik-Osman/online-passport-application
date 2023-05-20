@@ -1,9 +1,15 @@
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
 import { useDispatch, useSelector } from "react-redux";
 import { getNationalId, useAppDispatch } from "../../app/districtSlice";
+import StepTwo from "./stepper2";
 
 export default function StepperOne() {
+  const[formData,setFormData]= useState({
+    nID:"", fName:"", lName:"", mFname:"", mLname:"",
+    dob:"", pob:"", status:"", occupation:"", sex:""
+  })
   const dispatch = useAppDispatch();
   const [nId, setId] = useState();
   const [selectedSex, setSelectedSex] = useState("");
@@ -38,17 +44,31 @@ export default function StepperOne() {
 
   const handleChange = (e) => {
     setId(e.target.value);
+    
+    const { name, value, type, checked } = e.target;
+
+  // Merge the new data with the existing data
+  const updatedFormData = { ...formData, [name]: value };
+  setFormData(updatedFormData)
   };
   const handleClick = async () => {
     dispatch(getNationalId(nId));
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
     setSelectedSex(defaultSex);
-    const apiDate = new Date(nationalID?.DOB); // convert date string to date object
+    const apiDate = new Date(nationalID?.DOB);
+    console.log() // convert date string to date object
     setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+    setFormData({
+      ...formData, fName:firstName, lName:lastName, mFname:mFirstName,mLname:mLastName,sex:defaultSex, nID:nId, dob:apiDate?.toISOString()?.substr(0, 10)
+    })
   };
-  console.log(message);
+
+  console.log(formData);
+  // console.log(status);
 
   return (
+    <div>
+       <ToastContainer />
     <form>
       <div className="border-b border-gray-900/10 pb-6">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -69,7 +89,7 @@ export default function StepperOne() {
               <input
                 type="text"
                 name="nID"
-                value={nId}
+                value={formData.nID}
                 onChange={handleChange}
                 autoComplete="address-level2"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -96,8 +116,9 @@ export default function StepperOne() {
             <div className="">
               <input
                 type="text"
-                name="fname"
+                name="fName"
                 value={firstName}
+              onChange={handleChange}
                 autoComplete="given-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -113,8 +134,9 @@ export default function StepperOne() {
             <div className="">
               <input
                 type="text"
-                name="lname"
+                name="lName"
                 value={lastName}
+                onChange={handleChange}
                 autoComplete="family-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -163,7 +185,7 @@ export default function StepperOne() {
               type="radio"
               name="sex"
               checked={selectedSex === "Male"}
-              onChange={(event) => setSelectedSex(event.target.value)}
+              onChange={handleChange}
               className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
             />
             <label
@@ -176,53 +198,34 @@ export default function StepperOne() {
               name="sex"
               // value={nationalID?.sex}
               checked={selectedSex === "Female"}
-              onChange={(event) => setSelectedSex(event.target.value)}
+              onChange={handleChange}
               className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
             />
             <label
-              htmlFor="mLname"
+              htmlFor="sex"
               className="text-sm font-medium leading-6 mx-2 text-gray-900">
               FEMALE
             </label>
           </div>
           {/* occupation */}
           <div className="sm:col-span-2">
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              SELECT YOUR OCCUPATION.
-            </p>
-            <input
-              id="comments"
-              name="comments"
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 mr-1.5 text-indigo-600 focus:ring-indigo-600"
-            />
             <label
-              htmlFor="mLname"
-              className="text-sm mr-5 font-medium leading-6 text-gray-900">
-              Student
+              htmlFor="country"
+              className="block text-sm font-medium leading-6 text-gray-900">
+              SELECT YOUR OCCUPATION
             </label>
-            <input
-              id="comments"
-              name="comments"
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 mr-1.5 text-indigo-600 focus:ring-indigo-600"
-            />
-            <label
-              htmlFor="mLname"
-              className="text-sm font-medium leading-6 mx-2 text-gray-900">
-              Employee
-            </label>
-            <input
-              id="comments"
-              name="comments"
-              type="checkbox"
-              className="h-4 w-4 rounded border-gray-300 mr-1.5 text-indigo-600 focus:ring-indigo-600"
-            />
-            <label
-              htmlFor="mLname"
-              className="text-sm font-medium leading-6 mx-2 text-gray-900">
-              Others
-            </label>
+            <div className="">
+              <select
+                id="occupation"
+                name="occupation"
+                autoComplete=""
+                onChange={handleChange}
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                <option value={"Student"} >Student</option>
+                <option value={"Employee"}>Employee</option>
+                <option value={"Others"}>Others</option>
+              </select>
+            </div>
           </div>
 
           {/* <div className="sm:col-span-4">
@@ -271,13 +274,14 @@ export default function StepperOne() {
             </label>
             <div className="">
               <select
-                id="country"
-                name="country"
+                id="status"
+                name="status"
                 autoComplete="country-name"
+                onChange={handleChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                <option>Single</option>
-                <option>Husband</option>
-                <option>Widow</option>
+                <option value={"Single"} >Single</option>
+                <option value={"Husband"}>Husband</option>
+                <option value={"Widow"}>Widow</option>
               </select>
             </div>
           </div>
@@ -292,10 +296,11 @@ export default function StepperOne() {
             <div className="">
               <input
                 type="date"
-                id="DOB"
-                name="DOB"
+                id="dob"
+                name="dob"
                 value={selectedDate}
-                onChange={(event) => setSelectedDate(event.target.value)}
+                // onChange={(event) => setSelectedDate(event.target.value)}
+                onChange={handleChange}
                 autoComplete="email"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -305,16 +310,18 @@ export default function StepperOne() {
           {/* place of birth */}
           <div className="sm:col-span-2">
             <label
-              htmlFor="email"
+              htmlFor="pob"
               className="block text-sm font-medium leading-6 text-gray-900">
               PLACE OF BIRTH
             </label>
             <div className="">
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+         
+                type="text"
+                name="pob"
+                value={formData.pob}
+                onChange={handleChange}
+                autoComplete="place of birth"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
             </div>
@@ -398,5 +405,7 @@ export default function StepperOne() {
 </div> */}
       </div>
     </form>
+    
+    </div>
   );
 }

@@ -58,11 +58,7 @@ exports.getSingleDistrictWorkingHours = async(req,res)=>{
 exports.getDistrictWorkingHours = async(req,res)=>{
     try {
       const districtData = await DistrictWorkingHours.findOne({districtId: req.params.id});
-      // if(!districtData) return res.status(400).json({message:"no data found"});
       const workingHours = districtData?.workingHours?.map((data)=>{return data})
-    //  const data=  workingHours?.forEach(element => {
-    //     return 
-    //   });
       return res.status(200).json(workingHours)
     } catch (error) {
       return res.status(500).json({ message:error.message });
