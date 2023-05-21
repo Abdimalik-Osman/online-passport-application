@@ -1,5 +1,6 @@
 // export default Stepper;
 import React, { useEffect, useState } from "react";
+import Joi from "joi";
 import HorizontalStepper from './horizontalStepper';
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,12 +21,23 @@ function MultiStepForm() {
   const [step, setStep] = useState(1);
   let [amount,setAmount] = useState("150")
   let [type,setType] = useState("")
+  const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
     nID:"", fName:"", lName:"", mFname:"", mLname:"",
     dob:"", pob:"", status:"", occupation:"", sex:"", status:"", status:"",
     phoneNumber:"", email:"", emergencyContactName:"", emergencyContactNumber:'', amount:"", type:"",
     districtId:"", appointmentDate:"", appointmentTime:"", 
   });
+  
+  const schema = Joi.object({
+    nID: Joi.string().required("National Identity can be empty"),
+    phoneNumber: Joi.string().min(9).max(10).required(),
+    pob: Joi.string().required("Place of birth can not be empty"),
+    emergencyContactName: Joi.string().required("emergency Contact Name can not be empty"),
+    emergencyContactNumber: Joi.string().min(9).max(10).required(),
+    appointmentDate: Joi.date().required("Appointment Date can not be empty"),
+  });
+  
   const dispatch = useAppDispatch();
   const [nId, setId] = useState();
   const [selectedSex, setSelectedSex] = useState("");
@@ -36,17 +48,8 @@ function MultiStepForm() {
       dispatch(fetchData());  
     }
   }, [status, dispatch,availableDates,availableDates,selectedState]);
-  console.log(districts)
-  // const districts = useSelector((state) => state.district.districts);
-  // const status = useSelector((state) => state.district.status);
-  // const message = useSelector((state) => state.district.message);
-  // const error = useSelector((state) => state.district.error);
-  // const selectedDistrict = useSelector((state) => state.district.selectedState);
-  // const unavailableDates = useSelector((state) => state.district.unavailableDates);
-  // const availableDates = useSelector((state) => state.district.availableDates);
-  // const selectedDistrictData = useSelector(
-  //   (state) => state.district.districtData
-  // );
+  // console.log(districts)
+
   // handle the next step
   const handleNext = () => {
     setStep(step + 1);
@@ -64,12 +67,23 @@ function MultiStepForm() {
       ...formData,
       [name]: value,
     });
-    setType(e.target.value);
-    if (e.target.value == "Ordinary") {
-      setAmount("150")
-    }if(e.target.value == "deg-deg"){
-      setAmount("300")
+    const { error } = schema.validate(formData, { abortEarly: false });
+    if (error) {
+      const errors = {};
+      error.details.forEach((err) => {
+        errors[err.path[0]] = err.message;
+      });
+      setValidationErrors(errors);
+    } else {
+      setValidationErrors({});
     }
+  
+    // setType(e.target.value);
+    // if (e.target.value == "Ordinary") {
+    //   setAmount("150")
+    // }if(e.target.value == "deg-deg"){
+    //   setAmount("300")
+    // }
   };
 
   const options = districts?.map((item) => ({
@@ -187,6 +201,9 @@ function MultiStepForm() {
                     autoComplete="address-level2"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                        {validationErrors.nID && (
+        <span className="text-danger">{validationErrors.nID}</span>
+      )}
                 </div>
               </div>
 
@@ -399,6 +416,9 @@ function MultiStepForm() {
                     autoComplete="place of birth"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
+                        {validationErrors.pob && (
+        <span className="text-danger">{validationErrors.pob}</span>
+      )}
                 </div>
               </div>
             </div>
@@ -445,6 +465,9 @@ function MultiStepForm() {
                 autoComplete="contact number"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+                 {validationErrors.phoneNumber && (
+        <span className="text-danger">{validationErrors.phoneNumber}</span>
+      )}
             </div>
           </div>
           {/* EMAIL */}
@@ -463,6 +486,8 @@ function MultiStepForm() {
                 autoComplete="email"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+        
+      
             </div>
           </div>
           {/* EMERGENCY CONTACT NAME */}
@@ -481,6 +506,9 @@ function MultiStepForm() {
                 autoComplete="given-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+                    {validationErrors.emergencyContactName && (
+        <span className="text-danger">{validationErrors.emergencyContactName}</span>
+      )}
             </div>
           </div>
           {/*EMERGENCY CONTACT NUMBER */}
@@ -499,6 +527,9 @@ function MultiStepForm() {
                 autoComplete="family-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+                    {validationErrors.emergencyContactNumber && (
+        <span className="text-danger">{validationErrors.emergencyContactNumber}</span>
+      )}
             </div>
           </div>
 
@@ -572,6 +603,7 @@ function MultiStepForm() {
                 name="type"
                 autoComplete="country-name"
                 onChange={handleChange}
+                disabled
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                 <option value={"Ordinary"}>Ordinary</option>
                 <option value={"deg-deg"}>Deg Deg</option>
@@ -669,9 +701,13 @@ function MultiStepForm() {
           <div className="form-group">
             <label htmlFor="date">Appointment Date</label>
             <input type="date" name="appointmentDate" onChange={dateHandleChange} id="" className="form-control" />
+            {validationErrors.appointmentDate && (
+        <span className="text-danger">{validationErrors.appointmentDate}</span>
+      )}
           </div>
           <div className='mt-2 form-control disabled'>
           {availableDates?.length === 0 ? (
+            selectedDate =="" ? "":
   workingHours?.map((item) => (
     <div key={item.startTime} className="">
       <div className="form-group">
@@ -704,8 +740,8 @@ function MultiStepForm() {
         onChange={handleTimeChange}
       />{" "}
       {info.time} -- {availableDates[i + 1] ? availableDates[i + 1].time : "Next Hour"} ={" "}
-      <span style={{ backgroundColor: info.availableNumber === 0 ? "transparent" : "" }}>
-        {info.availableNumber} available slots
+      <span>
+        {info.availableNumber} available slots {info.availableNumber == 0? "":""}
       </span>
     </p>
   ))
