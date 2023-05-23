@@ -151,7 +151,7 @@ function MultiStepForm() {
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
     setSelectedSex(defaultSex);
     const apiDate = new Date(nationalID?.DOB);
-    console.log(); // convert date string to date object
+; // convert date string to date object
     setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
     setFormData({
       ...formData,
@@ -163,6 +163,8 @@ function MultiStepForm() {
       nID: nId,
       dob: apiDate?.toISOString()?.substr(0, 10),
     });
+
+        console.log(message)
   };
 
   // handle submit

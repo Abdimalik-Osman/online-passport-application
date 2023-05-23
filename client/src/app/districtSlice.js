@@ -102,7 +102,7 @@ export const getNationalId = createAsyncThunk('profile/national', async (id,thun
   return response.data;
   }catch (err) {
     const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    console.log(err.message);
+    // console.log(err.message);
     return thunkAPI.rejectWithValue(message); 
 }
 });
