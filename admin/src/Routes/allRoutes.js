@@ -14,6 +14,7 @@ import Register from "../pages/Authentication/Register";
 import UserProfile from "../pages/Authentication/user-profile";
 import UserRole from "../pages/UserRoles";
 import EmployeeRegistration from "../pages/Employee";
+import CreateUser from "../pages/CreateUser/index";
 
 const authProtectedRoutes = [
   
@@ -21,6 +22,7 @@ const authProtectedRoutes = [
   { path: "/index", component: DashboardEcommerce },
   { path: "/UserRole", component: UserRole },
   { path: "/CreateEmployee", component: EmployeeRegistration },
+  
   //User Profile
   { path: "/profile", component: UserProfile },
 
@@ -38,7 +40,8 @@ const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/login", component: Login },
   { path: "/forgot-password", component: ForgetPasswordPage },
-  { path: "/register", component: Register },
+  // { path: "/register", component: Register },
+  { path: "/register", component: CreateUser },
   
 ];
 

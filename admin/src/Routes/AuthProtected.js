@@ -10,13 +10,13 @@ import { logoutUser } from "../store/actions";
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
-  useEffect(() => {
-    if (userProfile && !loading && token) {
-      setAuthorization(token);
-    } else if (!userProfile && loading && !token) {
-      dispatch(logoutUser());
-    }
-  }, [token, userProfile, loading, dispatch]);
+  // useEffect(() => {
+  //   if (userProfile && !loading && token) {
+  //     setAuthorization(token);
+  //   } else if (!userProfile && loading && !token) {
+  //     dispatch(logoutUser());
+  //   }
+  // }, [token, userProfile, loading, dispatch]);
 
   /*
     redirect is un-auth access protected routes via url
@@ -24,7 +24,8 @@ const AuthProtected = (props) => {
 
   if (!userProfile && loading && !token) {
     return (
-      <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+      // <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+      <Redirect to={{ pathname: "/dashboard", state: { from: props.location } }} />
     );
   }
 

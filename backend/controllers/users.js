@@ -10,8 +10,8 @@ const generateToken = (user) => {
 
 // Create new user
 exports.register = async (req, res) => {
-  const { epmId, isManager,username, password } = req.body;
-
+  const { empId, isAdmin,username, password, status } = req.body;
+  
   //check if the user is already registered
   const userExists = await User.findOne({username});
 
@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: "User already exists" });
   }
 //create new user
-  const user = await User.create({ username, password,epmId,isManager });
+  const user = await User.create({ username, password,empId,isAdmin, status });
 
   if (user) {
     res.status(201).json({
@@ -42,8 +42,9 @@ exports.login = async (req, res) => {
     res.json({
       _id: user._id,
       username: user.username,
-      isManager:user.isManager,
+      isAdmin:user.isAdmin,
       empId:user.empId,
+      status:user.status,
       token: generateToken(user),
     });
   } else {
@@ -88,7 +89,7 @@ exports.getSingleUser = async(req,res)=>{
 // get all users
 exports.getAllUsers = async(req,res)=>{
   try {
-    const users = await find({}).sort({createdAt:-1});
+    const users = await User.find({}).sort({createdAt:-1});
     if(!users){
       return res.status(400).json({message:"no users found.."})
     }

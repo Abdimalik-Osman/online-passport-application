@@ -6,7 +6,8 @@ let UserSchema = new Schema(
    empId:{type:Schema.Types.ObjectId,ref:"employees", default:null},
    username:{type: String,default:null},
    password:{type: String,default:null},
-   isManger:{type:Boolean,default:false},
+   isAdmin:{type:Boolean,default:false},
+   status:{type:String,default:false}
   },
   { timestamps: true }
 );

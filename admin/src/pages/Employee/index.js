@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { Helmet } from "react-helmet";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
+import TableContainer from "../../Components/Common/TableContainer";
 import { ToastContainer, toast } from "react-toastify";
 import {
   Button,
@@ -33,8 +34,15 @@ import {
   UncontrolledDropdown,
 } from "reactstrap";
 import "./styleEmp.css";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
+import moment from "moment";
+
 const EmployeeRegistration = () => {
-  // Employees
+  const {
+    EmployeeRegister, getEmployees, fetchEmployees
+   
+  } = useContext(LoginContext);
+  
   const [EmployeeId, setEmployeeId] = useState();
   const [employeeName, setEmployeeName] = useState("");
   const [titleId, setTitle] = useState("");
@@ -63,6 +71,9 @@ const EmployeeRegistration = () => {
   const [modal_list, setmodal_list] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  useEffect(()=>{
+    fetchEmployees()
+  },[])
   const tog_list = () => {
     setChecked(false);
     setmodal_list(!modal_list);
@@ -103,8 +114,121 @@ const EmployeeRegistration = () => {
     }
     setEmployeePhone(e.target.value.slice(0, limit));
   };
-  document.title = "Employee Registration  ";
 
+  const handlerSubmit = (e) => {
+    if (isEditing == false) {
+      e.preventDefault();
+
+      if (isError == true) {
+        showToastMessage("Please Provide Valid Phone number !");
+        return;
+      }
+      if (checked == false) {
+        if (
+          !employeeName ||
+          !employeePhone 
+        ) {
+          showToastMessage("Please Fill Required Fields !");
+          return;
+        }
+
+        const data = {
+          empName: employeeName,
+          isManager: empType == "Manager"? true : false,
+          isActive: status == "Active"? true : false,
+          empPhone: employeePhone,
+          sex:sex
+
+        };
+
+        EmployeeRegister(data);
+        setmodal_list(false);
+// 
+        // setEmployeeId("");
+        setEmployeeName("");
+        setEmployeePhone("");
+        setSex("")
+        setEmpType('')
+        setStatus()
+
+        console.log(data);
+      } else {
+        if (
+          !employeeName ||
+          !employeePhone
+          
+        ) {
+          showToastMessage("Please Fill Required Fields !");
+          return;
+        }
+
+        const data = {
+          empName: employeeName,
+          isManager: empType == "Manager"? true : false,
+          isActive: status == "Active"? true : false,
+          empPhone: employeePhone,
+          sex:sex
+
+        };
+        EmployeeRegister(data);
+        setmodal_list(false);
+
+        setEmployeeId("");
+        setEmployeeName("");
+        setEmployeePhone("");
+        setEmpType("");
+        setSex("")
+        setStatus("")
+      }
+    }
+
+    if (isEditing == true) {
+      e.preventDefault();
+
+      if (checked == false) {
+        const data = {
+          empName: employeeName,
+          isManager: empType == "Manager"? true : false,
+          isActive: status == "Active"? true : false,
+          empPhone: employeePhone,
+          sex:sex
+        };
+        console.log(data);
+        // updateEmployee(data);
+        setIsEditing(false);
+        setmodal_list(false);
+        setEmployeeId("");
+        setEmployeeName("");
+        setEmployeePhone("");
+        setEmpType("");
+        setSex("")
+        setStatus("")
+      } else {
+        const data = {
+          empName: employeeName,
+          isManager: empType == "Manager"? true : false,
+          isActive: status == "Active"? true : false,
+          empPhone: employeePhone,
+          sex:sex
+        };
+        console.log(data);
+        // updateEmployee(data);
+        setIsEditing(false);
+        setmodal_list(false);
+        setEmployeeId("");
+        setEmployeeName("");
+        setEmployeePhone("");
+        setEmployeeEmail("");
+        
+      }
+    }
+  };
+
+  document.title = "Employee Registration  ";
+  const handleValidDate = (date) => {
+    const date1 = moment(new Date(date)).format("DD MMM Y");
+    return date1;
+  };
   const columns = useMemo(
     () => [
       {
@@ -114,24 +238,30 @@ const EmployeeRegistration = () => {
       },
       {
         Header: "Phone Number",
-        accessor: "mobile",
+        accessor: "empPhone",
         filterable: false,
       },
       {
-        Header: "Department",
-        accessor: "departmentName",
+        Header: "Gender",
+        accessor: "sex",
         filterable: false,
       },
       {
-        Header: "Title",
-        accessor: "titleName",
+        Header: "Employee Type",
+        accessor: (row) => (row.isManager ? "Manager" : "Employee"),
         filterable: false,
       },
+      {
+        Header: "Status",
+        accessor: (row) => (row.isActive ? "Active" : "In Active"),
+        filterable: true,
+      },
+     
       {
         Header: "Hired Date",
-        accessor: "hireDate",
-        filterable: false,
-        // Cell: (cell) => <>{handleValidDate(cell.value)}</>,
+        accessor: "createdAt",
+        filterable: true,
+        Cell: (cell) => <>{handleValidDate(cell.value)}</>,
       },
       //   {
       //     Header: "Action",
@@ -258,6 +388,24 @@ const EmployeeRegistration = () => {
                     </Col>
                   </Row>
                 </CardHeader>
+                <CardBody>
+                  <div id="Purchasestable">
+                    <Row className="g-4 mb-3"></Row>
+                    
+                    <TableContainer
+                      columns={columns}
+                      data={getEmployees || []}
+                      isGlobalFilter={true}
+                      isAddUserList={false}
+                      customPageSize={10}
+                      className="custom-header-css"
+                  
+                        pagination={{ enabled: true, limit: 10 }}
+                      /> 
+                  </div>
+
+                  {/* end of container */}
+                </CardBody>
               </Card>
             </Col>
           </Row>
@@ -292,7 +440,7 @@ const EmployeeRegistration = () => {
               className="btn-close"
               aria-label="Close"></Button>
           </div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handlerSubmit}>
             <ModalBody>
               <div className="mb-3" id="modal-id" style={{ display: "none" }}>
                 <label htmlFor="id-field" className="form-label">

@@ -16,6 +16,7 @@ const DistrictRouter = require("./backend/routes/district")
 const HolyDayRouter = require("./backend/routes/holydays")
 const EmployeeRouter = require("./backend/routes/employees")
 const WorkingHoursRouter = require("./backend/routes/workingHours")
+const usersRouter = require("./backend/routes/users")
 
 const PORT = process.env.PORT || 3000
 connectDB();
@@ -37,6 +38,7 @@ app.use("/api/districts",DistrictRouter);
 app.use("/api/holydays",HolyDayRouter);
 app.use("/api/employees",EmployeeRouter);
 app.use("/api/workingHours",WorkingHoursRouter);
+app.use("/api/users",usersRouter);
 
 
 app.listen(PORT,()=>{
