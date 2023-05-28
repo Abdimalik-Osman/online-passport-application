@@ -7,7 +7,15 @@ import {
     REGISTER_EMPLOYEE_ERROR,
     REGISTER_EMPLOYEE_SUCCESS,
     LOGOUT_USER,
-    GET_ALL_USER
+    GET_ALL_USER,
+    FETCH_SINGLE_DISTRICT,
+    FETCH_WORKING_HOURS,
+    FETCH_ALL_DISTRICTS ,
+    FETCH_SELECTED_STATE ,
+    FETCH_NATIONAL_ID ,
+    FETCH_UNAVAILABLE_HOURS ,
+    FETCH_AVAILABLE_DATES ,
+    FETCH_AVAILABLE_DATES_ERROR 
     
 }  from "./loginActions"
 
@@ -83,6 +91,53 @@ if (action.type === GET_ALL_USER) {
           singleEmployee: action.payload.data,
         };
       }
+
+         // fetch single district
+         if (action.type === FETCH_SINGLE_DISTRICT) {
+          return {
+            ...state,
+            selectedState: action.payload.data,
+          };
+        }
+      
+         // fetch all districts
+         if (action.type === FETCH_ALL_DISTRICTS) {
+          return {
+            ...state,
+            districts: action.payload.data,
+            
+          };
+        }
+
+
+        // get national Id     
+         if (action.type === FETCH_NATIONAL_ID) {
+          return {
+            ...state,
+            nationalId: action.payload.data,     
+          };
+        }
+        // get working hours   
+         if (action.type === FETCH_WORKING_HOURS) {
+          return {
+            ...state,
+            workingHours: action.payload.data,     
+          };
+        }
+          // get available dates  
+          if (action.type === FETCH_AVAILABLE_DATES) {
+            return {
+              ...state,
+              availableDates: action.payload.data,     
+            };
+          }
+          // get selected state  
+          if (action.type === FETCH_SELECTED_STATE) {
+            return {
+              ...state,
+              districtData: action.payload.data,     
+            };
+          }
       //register
   //       if (action.type === REGISTER_EMPLOYEE_SUCCESS) {
   //   return {

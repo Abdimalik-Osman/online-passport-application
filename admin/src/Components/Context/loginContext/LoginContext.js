@@ -16,7 +16,16 @@ import {
     REGISTER_EMPLOYEE_ERROR,
     REGISTER_EMPLOYEE_SUCCESS, 
     REGISTER_USER, GET_ALL_USER,
-    LOGOUT_USER
+    LOGOUT_USER,
+    FETCH_SINGLE_DISTRICT,
+    FETCH_WORKING_HOURS,
+    FETCH_ALL_DISTRICTS ,
+    FETCH_SELECTED_STATE ,
+    FETCH_NATIONAL_ID ,
+    FETCH_UNAVAILABLE_HOURS ,
+    FETCH_AVAILABLE_DATES ,
+    FETCH_AVAILABLE_DATES_ERROR 
+
 } from "./loginActions";
 import reducer from "./loginReducer";
 import { ToastContainer, toast } from "react-toastify";
@@ -75,7 +84,15 @@ const initialState = {
   theUser: user && user != "undefined" ? JSON.parse(user) : null,
   isLoading: false,
   allUsers: [],
-  isLoading: false,
+  districts: [],
+  selectedState:{},
+  districtData: {},
+  workingHours: [],
+  unavailableDates: [],
+  availableDates: [],
+  nationalID:{},
+  data:{},
+  // isLoading: false,
 };
 
 const AppProvider = ({ children }) => {
@@ -227,6 +244,7 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  // get single employee
   const getSingleEmployee = async (id) => {
     try {
       const data = await axios.get(`/employees/single/${id}`);
@@ -237,6 +255,101 @@ const AppProvider = ({ children }) => {
       console.log(error);
     }
   };
+
+  // fetch states
+  const fetchStates = async () => {
+      try {
+        const data = await axios.get("/districts/all");
+        dispatch({ type: FETCH_ALL_DISTRICTS, payload: { data } });
+        // console.log(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+  };
+
+  // fetch single district
+  const fetchSingleDistrict = async (id) => {
+      try {
+        const data = await axios.get(`/districts/single/${id}`);
+        dispatch({ type: FETCH_SINGLE_DISTRICT, payload: { data } });
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+  };
+ // fetch working hours
+ const fetchWorkingHours = async (id) => {
+  try {
+    const data = await axios.get(`/workingHours/hours/single/${id}`);
+    dispatch({ type: FETCH_WORKING_HOURS, payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
+ // fetch selected state
+ const fetchSelectedState = async (id) => {
+  try {
+    const data = await axios.get(`/districts/state/single/data/info/${id}`);
+    dispatch({ type: FETCH_SELECTED_STATE, payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
+   // fetch available dates
+const fetchAvailableDates = async (data) => {
+    // console.log(data);
+    try {
+      const res = await axios.post("/applicants/dates/availableTime/all", data);
+      // fetchEmployees();
+      dispatch({ type: FETCH_AVAILABLE_DATES });
+      if (res.status == "success") {
+        toast.success(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        toast.error(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+    } catch (error) {
+      dispatch({ type: FETCH_AVAILABLE_DATES_ERROR });
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
+
+// fetch national id
+const fetchNationalId = async (id) => {
+  try {
+    const data = await axios.get(`/profile/person/${id}`);
+    dispatch({ type: FETCH_NATIONAL_ID, payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
+
+
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -253,7 +366,13 @@ const AppProvider = ({ children }) => {
         registerUser,
         getAllUsers,
         UpdateUser,
-        loginUser
+        loginUser,
+        fetchNationalId,
+        fetchAvailableDates,
+        fetchSelectedState,
+        fetchWorkingHours,
+        fetchSingleDistrict,
+        fetchStates
       }}
     >
       {children}
