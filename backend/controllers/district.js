@@ -7,7 +7,7 @@ exports.createDistrict = async(req,res)=>{
     
             const newDistrict = await District.create(req.body)
 
-    return res.status(201).json({message: 'district successfully inserted'})
+    return res.status(201).json({message: 'district successfully inserted',status:"success"})
     } catch (error) {
         return res.status(500).json({message:error.message});
     }
@@ -63,7 +63,7 @@ exports.getDistrictInfo = async(req,res)=>{
       const district = await District.findById(id);
   
       if (!district) {
-        return res.status(404).json({ message: 'District not found' });
+        return res.status(404).json({ message: 'District not found', status:"fail" });
       }
   
       const defaultDate = new Date();
@@ -76,12 +76,12 @@ exports.getDistrictInfo = async(req,res)=>{
   
       console.log(`Updated ${result.nModified} districts`);
   
-      res.status(200).json({ message: 'Districts updated successfully' });
+      res.status(200).json({ message: 'Districts updated successfully', status:"success" });
   
     //   res.status(200).json({ message: 'District updated successfully', district });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Failed to update district' });
+      res.status(500).json({ message: 'Failed to update district', status:"fail" });
     }
   };
 
@@ -89,10 +89,10 @@ exports.getDistrictInfo = async(req,res)=>{
 exports.getStateData = async(req,res)=>{
   try {z
     const state = await District.findById(req.params.id);
-    if (!state) return res.status(400).json({message: 'no state data found'});
+    if (!state) return res.status(400).json({message: 'no state data found', status:"fail"});
     return res.status(200).json(state);
   } catch (error) {
-    return res.status(500).json({ message:error.message });
+    return res.status(500).json({ message:error.message, status:"fail" });
   }
 }
 

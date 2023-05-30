@@ -131,7 +131,7 @@ exports.createApplicant = async(req,res)=>{
      })
     //  console.log(districtInfo)
      if (!districtInfo) {
-       return res.status(404).json({ message: 'District not found' });
+       return res.status(400).json({ message: 'District not found' ,status:"fail"});
      }
      
     //  Check if the selected time falls within the office hours
@@ -157,11 +157,11 @@ exports.createApplicant = async(req,res)=>{
         date:moment(req.body.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD')
       }) 
       await newUnavailable.save()
-      return res.status(400).json({ message: 'the district you selected have reached the daily limit' });
+      return res.status(400).json({ message: 'the district you selected have reached the daily limit',status:"fail" });
     }  
    
    if (districtInfo[0]?.hourlySlots <= filteredTime.length && moment(filteredData[0]?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') === formattedDate && districtInfo[0]?._id.equals(new mongoose.Types.ObjectId(req.body.districtId))) {
-     return res.status(400).json({ message: 'the hour you selected reached the hourly limit' });
+     return res.status(400).json({ message: 'the hour you selected reached the hourly limit',status:"fail" });
    }
    
    // // get the national ID
@@ -247,13 +247,13 @@ if (isExists) {
       }
     }
     else{
-      return res.status(400).json({message:"new appointment can not be created"})
+      return res.status(400).json({message:"new appointment can not be created",status:"fail"})
     }
    
 
-    res.status(201).json({ message: 'Appointment booked successfully' });
+    res.status(201).json({ message: 'Appointment booked successfully',status:"success"});
   } catch (error) {
-    return res.status(500).json({ error: error.message})
+    return res.status(500).json({ error: error.message, status:"fail"})
   }
 }
 
@@ -262,9 +262,12 @@ if (isExists) {
 exports.getAllApplicants = async(req,res)=>{
     try {
         const applicants = await Applicant.find({});
+        if(!applicants){
+          return res.status(400).json({ message: "no applicants found", status:"fail" });
+        }
         return res.status(200).json(applicants);
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message, status:"fail" });
     }
 }
 
@@ -272,9 +275,12 @@ exports.getAllApplicants = async(req,res)=>{
 exports.getSingleApplicant = async(req,res)=>{
     try {
         const singleApplicant = await Applicant.findOne({_id:req.params.id});
+        if(!singleApplicant){
+          return res.status(400).json({ message:"not found this applicant", status:"fail" });
+        }
         return res.status(200).json(singleApplicant);
     } catch (err) {
-        return res.status(500).json({ message:err.message});
+        return res.status(500).json({ message:err.message, status:"fail"});
         
     }
 }
@@ -283,9 +289,9 @@ exports.getSingleApplicant = async(req,res)=>{
 exports.deleteApplicant = async(req, res)=>{
     try {
         await Applicant.findByIdAndRemove({_id:mongoose.Types.ObjectId(req.params.id)});
-        return res.status(200).json({message:"Successfully deleted applicant🤣"})
+        return res.status(200).json({message:"Successfully deleted applicant🤣",status:"success"})
     } catch (err) {
-        return res.status(500).json({ message:err.message});
+        return res.status(500).json({ message:err.message, status:"fail"});
     }
 }
 
@@ -295,11 +301,11 @@ exports.getNationalId = async(req,res) =>{
 try {
   const data = await NationalID.findById(req.params.id)
   if(!data){
-    return res.status(400).json({message:'this National Id does not exist.'})
+    return res.status(400).json({message:'this National Id does not exist.',status:"fail"})
   }
   return res.status(200).json(data)
 } catch (error) {
-  return res.status(500).json({message:error.message})
+  return res.status(500).json({message:error.message,status:"fail"})
 }
 }
 
@@ -313,7 +319,7 @@ exports.getUnavailableDates = async(req, res)=>{
 
     return res.send(data)
   } catch (error) {
-    return res.status(500).json({message:error.message})
+    return res.status(500).json({message:error.message, status:"fail"})
   }
 }
 // get un available dates
@@ -344,7 +350,7 @@ exports.getAvailableDates = async(req, res)=>{
     // console.log(filtered)
     return res.send(filtered)
   } catch (error) {
-    return res.status(500).json({message:error.message})
+    return res.status(500).json({message:error.message, status:"fail"})
   }
 }
 

@@ -24,7 +24,7 @@ const authProtectedRoutes = [
   { path: "/UserRole", component: UserRole },
   { path: "/CreateEmployee", component: EmployeeRegistration },
   { path: "/register", component: CreateUser },
-  { path: "/newApplicant", component: CreateApplicant },
+  { path: "/new", component: CreateApplicant },
 
   
   //User Profile

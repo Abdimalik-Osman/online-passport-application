@@ -114,7 +114,7 @@ if (action.type === GET_ALL_USER) {
          if (action.type === FETCH_NATIONAL_ID) {
           return {
             ...state,
-            nationalId: action.payload.data,     
+            nationalID: action.payload.data,     
           };
         }
         // get working hours   

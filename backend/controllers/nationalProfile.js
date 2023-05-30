@@ -17,9 +17,9 @@ exports.insertData = async(req,res)=>{
         await newData.save();
         })
         Promise.all(promise);
-        return res.status(201).json({message: 'successfully inserted data'})
+        return res.status(201).json({message: 'successfully inserted data',status:"success"})
     } catch (error) {
-        return res.status(500).json({message:error.message});
+        return res.status(500).json({message:error.message,status:"fail"});
     }
 }
 
@@ -29,7 +29,7 @@ exports.getAllData = async(req, res) => {
         const data = await NationalID.find({});
         return res.json(data)
     } catch (err) {
-        return res.status(500).json({ message: err.message  });
+        return res.status(500).json({ message: err.message, status:"fail"  });
     }
 }
 
@@ -40,9 +40,9 @@ exports.getSinglePerson = async(req, res) => {
         if (person) {
         return res.status(200).json(person);
         }else{
-            return res.status(400).json({message: 'This ID does not exist.'});
+            return res.status(400).json({message: 'This ID does not exist.',status:"fail"});
         }
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        return res.status(500).json({ message: err.message ,status:"fail"});
     }
 }

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, useHistory } from "react-router-dom";
 import {setAuthorization} from "../helpers/api_helper";
 import { useDispatch } from "react-redux";
 
@@ -7,16 +7,20 @@ import { useProfile } from "../Components/Hooks/UserHooks";
 
 import { logoutUser } from "../store/actions";
 
+
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
-  // useEffect(() => {
-  //   if (userProfile && !loading && token) {
-  //     setAuthorization(token);
-  //   } else if (!userProfile && loading && !token) {
-  //     dispatch(logoutUser());
-  //   }
-  // }, [token, userProfile, loading, dispatch]);
+  const history = useHistory()
+  useEffect(() => {
+    if (!userProfile ||  !loading || token) {
+      // setAuthorization(token);
+      history.push("/dashboard");
+    }
+    // } else if (!userProfile && loading && !token) {
+    //   history.push("/dashboard");
+    // }
+  }, [token, userProfile, loading, dispatch]);
 
   /*
     redirect is un-auth access protected routes via url
@@ -24,8 +28,9 @@ const AuthProtected = (props) => {
 
   if (!userProfile && loading && !token) {
     return (
+      history.push("/dashboard")
       // <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
-      <Redirect to={{ pathname: "/dashboard", state: { from: props.location } }} />
+      // <Redirect to={{ pathname: "/dashboard", state: { from: props.location } }} />
     );
   }
 

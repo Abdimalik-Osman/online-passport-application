@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
   const userExists = await User.findOne({username});
 
   if (userExists) {
-    return res.status(400).json({ message: "User already exists" });
+    return res.status(400).json({ message: "User already exists", status:"fail" });
   }
 //create new user
   const user = await User.create({ username, password,empId,isAdmin, status });
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
       token: generateToken(user),
     });
   } else {
-    res.status(400).json({ message: "Invalid user data" });
+    res.status(400).json({ message: "Invalid user data", status:"fail" });
   }
 };
 
@@ -48,7 +48,7 @@ exports.login = async (req, res) => {
       token: generateToken(user),
     });
   } else {
-    res.status(401).json({ message: "Invalid email or password" });
+    res.status(401).json({ message: "Invalid email or password",status:"fail" });
   }
 };
 
@@ -59,7 +59,7 @@ exports.deleteUser = async (req, res) => {
         const deleteUser = await User.findByIdAndRemove(req.body.id);
         return res.status(200).json(deleteUser);
     } catch (error) {
-        return res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message,status:"fail" })
     }
 }
 
@@ -67,9 +67,9 @@ exports.deleteUser = async (req, res) => {
 exports.updateUser = async(req,res)=>{
     try {
         await User.findByIdAndUpdate({_id:req.params.id},req.body,{new:true});
-        return res.status(200).json({message:"Successfully Updated..."})
+        return res.status(200).json({message:"Successfully Updated...",status:"success"})
     } catch (error) {
-        return res.status(500).json({ error: error.message })
+        return res.status(500).json({ error: error.message, status:"fail" })
     }
 }
 
@@ -78,11 +78,11 @@ exports.getSingleUser = async(req,res)=>{
   try {
       const user = await User.findById(req.params.id);
       if (!user) {
-        return res.status(400).json({message: 'User not found'});
+        return res.status(400).json({message: 'User not found',status:"fail"});
       }
       return res.status(200).json(user);
   } catch (error) {
-    return res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error.message, status:"fail" })
   }
 }
 
@@ -91,10 +91,10 @@ exports.getAllUsers = async(req,res)=>{
   try {
     const users = await User.find({}).sort({createdAt:-1});
     if(!users){
-      return res.status(400).json({message:"no users found.."})
+      return res.status(400).json({message:"no users found..",status:"fail"})
     }
     return res.status(200).json(users);
   } catch (error) {
-    return res.status(500).json({ error: error.message })
+    return res.status(500).json({ error: error.message, status:"fail" })
   }
 }

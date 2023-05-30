@@ -46,18 +46,42 @@ import { Grid, _ } from "gridjs-react";
 
 const CreateApplicant = () => {
   const history = useHistory();
-  const [userName, setUsername] = useState();
-  const [password, setPassword] = useState();
-  const [role, setRole] = useState();
+  const [fName, setFname] = useState();
+  const [lName, setLname] = useState();
+  const [mFname, setMFname] = useState();
+  const [mLname, setMLname] = useState();
+  const [occupation, setOccupation] = useState();
+  const [status, setStatus] = useState();
+  const [pob, setPob] = useState();
+  const [dob, setDob] = useState();
+  const [districtId, setDistrictId] = useState();
+  const [emergencyContactNumber, setEmergencyContactNumber] = useState();
+  const [emergencyContactName, setEmergencyContactName] = useState();
+  const [email, setEmail] = useState();
+  const [type, setType] = useState();
+  // const [amount, setAmount] = useState();
+  const [appointmentDate, setzppointmentDate] = useState();
+  const [appointmentTime, setAppointmentTime] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
   const [employeeId, setEmployeeId] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [changePassword, setChangePassword] = useState("No");
-  const [showPassword, setShowPassword] = useState(true);
+  const [nationalId, setNationalId] = useState("");
   const [modal_list, setmodal_list] = useState(false);
   const [id, setId] = useState("");
   const [checked, setChecked] = useState(true);
   const [state, setState] = useState(true);
+  // const [nId, setId] = useState();
+  const [selectedSex, setSelectedSex] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions2, setSelectedOptions2] = useState([]);
+  const [selectedId, setSelectedId] = useState("");
+   const [selectedTime, setSelectedTime] = useState("");
+   const [selectedState1, setSelectedState] = useState("");
+  const [step, setStep] = useState(1);
+  let [amount,setAmount] = useState("150")
+  
   const tog_list = () => {
     setmodal_list(!modal_list);
   };
@@ -87,7 +111,7 @@ const CreateApplicant = () => {
     fetchSingleDistrict,
     fetchStates
   } = useContext(LoginContext);
-  console.log(changePassword);
+  // console.log(changePassword);
   const { error, registrationError, success } = useSelector((state) => ({
     registrationError: state.Account.registrationError,
     success: state.Account.success,
@@ -102,8 +126,8 @@ const CreateApplicant = () => {
       item.username &&
       item.username.toLowerCase().includes(filterText.toLowerCase())
   );
-  console.log(filteredItems);
-  console.log(filterText);
+  // console.log(filteredItems);
+  // console.log(filterText);
   const subHeaderComponentMemo = React.useMemo(() => {
     const handleClear = () => {
       if (filterText) {
@@ -129,8 +153,8 @@ const CreateApplicant = () => {
     fetchEmployees();
   }, []);
 
-  console.log(getEmployees);
-  console.log(allUsers);
+  // console.log(getEmployees);
+  // console.log(allUsers);
 
   useEffect(() => {
     if (success) {
@@ -149,47 +173,47 @@ const CreateApplicant = () => {
   const handleSubmit = (e) => {
     if (isEditing == false) {
       e.preventDefault();
-      if (!userName || !password || !role || !employeeId) {
-        showToastMessage("Please provide the required values");
-      }
+      // if (!userName || !password || !role || !employeeId) {
+      //   showToastMessage("Please provide the required values");
+      // }
 
-      const data = {
-        username: userName,
-        password: password,
-        isAdmin: role == "Yes" ? true : false,
-        empId: employeeId?.value,
+      // const data = {
+      //   username: userName,
+      //   password: password,
+      //   isAdmin: role == "Yes" ? true : false,
+      //   empId: employeeId?.value,
 
-        // phoneNumber: phoneNumber,
-        status: state,
-      };
-      registerUser(data);
+      //   // phoneNumber: phoneNumber,
+      //   status: state,
+      // };
+      // registerUser(data);
       setEmployeeId("");
       setState("");
       e.target.reset();
     }
     if (isEditing == true) {
       e.preventDefault();
-      if (!userName || !role || !employeeId) {
-        showToastMessage("Please provide the required values");
-      }
+      // if (!userName || !role || !employeeId) {
+      //   showToastMessage("Please provide the required values");
+      // }
       // if (changePassword == "Yes" && password.length > 2) {
       //   showToastMessage("Please provide the password");
       // }
-      const data = {
-        username: userName,
-        password: password,
-        isAdmin: role == "Yes" ? true : false,
-        empId: employeeId?.value,
-        // phoneNumber: phoneNumber,
-        state: state,
-        status: changePassword == "Yes" ? true : false,
-        id: id,
-      };
-      UpdateUser(data);
+      // const data = {
+      //   username: userName,
+      //   password: password,
+      //   isAdmin: role == "Yes" ? true : false,
+      //   empId: employeeId?.value,
+      //   // phoneNumber: phoneNumber,
+      //   state: state,
+      //   status: changePassword == "Yes" ? true : false,
+      //   id: id,
+      // };
+      // UpdateUser(data);
       setState("");
       // setEmployeeId("");
       e.target.reset();
-      console.log(data);
+      // console.log(data);
       setmodal_list(false);
     }
   };
@@ -242,7 +266,7 @@ const CreateApplicant = () => {
     Emp.push(dropdownList);
   }
 
-  console.log(Emp);
+  // console.log(Emp);
 
   const sortedUsers = [];
   for (let i = 0; i < allUsers?.length; i++) {
@@ -260,19 +284,19 @@ const CreateApplicant = () => {
   const addModal = () => {
     tog_list();
     setEmployeeId("");
-    setUsername("");
-    setRole("");
+    // setUsername("");
+    // setRole("");
     // setPhoneNumber("");
     setChecked(true);
   };
   const editUser = (row) => {
     setIsEditing(true);
     tog_list();
-    console.log(row);
-    console.log(row?.emp?.empName);
+    // console.log(row);
+    // console.log(row?.emp?.empName);
     setEmployeeId({ lable: row?.emp?.empName, value: row?.emp?._id });
-    setUsername(row?.username);
-    setRole(row?.isAdmin == true ? "Yes" : "No");
+    // setUsername(row?.username);
+    // setRole(row?.isAdmin == true ? "Yes" : "No");
     // setPhoneNumber(row?.phoneNumber);
     setId(row._id);
   };
@@ -289,7 +313,55 @@ const CreateApplicant = () => {
     setChangePassword(checked ? "Yes" : "No");
   };
 
-  console.log(checked);
+  let mFirstName = "";
+  let mLastName = "";
+  let firstName = "";
+  let lastName = "";
+  // console.log(checked);
+  const checkNationalId = async() => {
+    fetchNationalId(nationalId)
+    
+   
+  
+      const text = nationalID?.fullName;
+      const fullname = text?.split(" ");
+      const motherName = nationalID?.motherName;
+      const motherFullname = motherName?.split(" ");
+
+      const fname = fullname?.[0];
+      const secondName = fullname?.[1];
+      firstName = fname?.concat(" ", secondName);
+      lastName = fullname?.[2];
+      // ----------------
+      const mFname = motherFullname?.[0];
+      const mSecondName = motherFullname?.[1];
+      mFirstName = mFname?.concat(" ", mSecondName);
+      mLastName = motherFullname?.[2];
+      const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
+      setSelectedSex(defaultSex);
+    
+      const apiDate = new Date(nationalID?.DOB);
+   // convert date string to date object
+      setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+      setMFname(mFirstName)
+      setMLname(mLastName)
+      setFname(firstName)
+      setLname(lastName)
+      setOccupation(nationalID?.occupation)
+    
+      // setFormData({
+      //   ...formData,
+      //   fName: firstName,
+      //   lName: lastName,
+      //   mFname: mFirstName,
+      //   mLname: mLastName,
+      //   sex: defaultSex,
+      //   nID: nId,
+      //   dob: apiDate?.toISOString()?.substr(0, 10),
+      // });
+    }
+    
+
 
   return (
     <React.Fragment>
@@ -388,7 +460,7 @@ const CreateApplicant = () => {
                     type="text"
                     id="id-field"
                     className="form-control"
-                    placeholder="ID"
+                    
                     readOnly
                   />
                 </div>
@@ -430,10 +502,10 @@ const CreateApplicant = () => {
                       <Input
                         name="national-id"
                         type="text"
-                        placeholder="Enter your National ID"
+                        // placeholder="Enter your National ID"
                         required
-                        onChange={(e) => setUsername(e.target.value)}
-                        value={userName}
+                        onChange={(e) => setNationalId(e.target.value)}
+                        value={nationalId}
                       />
                     </div>
                   </Col>
@@ -442,9 +514,7 @@ const CreateApplicant = () => {
                       <button
                         type="button"
                         className="btn  btn-primary"
-                        // onClick={() => {
-                        // closeModalMuscab();
-                        // }}
+                        onClick={checkNationalId}
                         aria-label="Check">CHECK</button>
                     </div>
                   </Col>
@@ -457,10 +527,11 @@ const CreateApplicant = () => {
                         <span className="text-danger">*</span>
                       </Label>
                       <Input
-                        name="firstName"
+                        name="fName"
                         type="text"
-                        placeholder="Enter your first name"
+                        // placeholder="Enter your first name"
                         required
+                        value={fName}
                       />
                     </div>
                   </Col>
@@ -472,10 +543,11 @@ const CreateApplicant = () => {
                         <span className="text-danger">*</span>
                       </Label>
                       <Input
-                        name="lastName"
+                        name="lName"
                         type="text"
-                        placeholder="Enter your last name"
+                        // placeholder="Enter your last name"
                         required
+                        value={lName}
                       />
                     </div>
                   </Col>
@@ -489,8 +561,9 @@ const CreateApplicant = () => {
                       <Input
                         name="mFname"
                         type="text"
-                        placeholder="Mother First Name"
+                       
                         required
+                        value={mFname}
                       />
                     </div>
                   </Col>
@@ -504,8 +577,9 @@ const CreateApplicant = () => {
                       <Input
                         name="mLname"
                         type="text"
-                        placeholder="Mother Last Name"
+                        // placeholder="Mother Last Name"
                         required
+                        value={mLname}
                       />
                     </div>
                   </Col>
@@ -520,7 +594,8 @@ const CreateApplicant = () => {
                         id="sex"
                         required
                         onChange={(e) => setState(e.target.value)}
-                        value={state}>
+                        value={selectedSex}>
+                        
                         <option value="">
                           &hellip; Choose an option &hellip;
                         </option>
@@ -541,7 +616,7 @@ const CreateApplicant = () => {
                         id="sex"
                         required
                         onChange={(e) => setState(e.target.value)}
-                        value={state}>
+                        value={occupation}>
                         <option value="">
                           &hellip; Choose an option &hellip;
                         </option>
@@ -564,7 +639,7 @@ const CreateApplicant = () => {
                         
                         required
                         onChange={(e) => setState(e.target.value)}
-                        value={state}>
+                        value={status}>
                         <option value="">
                           &hellip; Choose an option &hellip;
                         </option>
@@ -583,9 +658,10 @@ const CreateApplicant = () => {
                       <label className="form-label">
                         Date of Birth <span className="text-danger">*</span>
                       </label>
-                      <input type="date" id="dob" className="form-control" />
+                      <input type="date" id="dob" className="form-control" value={selectedDate} />
                     </div>
                   </Col>
+                  {/* place of birth */}
                   <Col md={6} sm={12} lg={4}>
                     <div className="mb-3">
                       <label className="form-label">
@@ -595,7 +671,8 @@ const CreateApplicant = () => {
                         type="text"
                         id="pob"
                         className="form-control"
-                        placeholder="Place of Birth"
+                        // placeholder="Place of Birth"
+                        value={pob}
                       />
                     </div>
                   </Col>
@@ -614,7 +691,7 @@ const CreateApplicant = () => {
                       <Input
                         name="contactNumber"
                         type="text"
-                        placeholder="Contact Number"
+                        // placeholder="Contact Number"
                         required
                       />
                     </div>
@@ -628,7 +705,7 @@ const CreateApplicant = () => {
                       <Input
                         name="email"
                         type="email"
-                        placeholder="Contact Email"
+                        // placeholder="Contact Email"
                         
                       />
                     </div>
@@ -643,7 +720,7 @@ const CreateApplicant = () => {
                       <Input
                         name="emergencyContactName"
                         type="text"
-                        placeholder="Emergency Contact Name"
+                        // placeholder="Emergency Contact Name"
                         required
                       />
                     </div>
@@ -658,7 +735,7 @@ const CreateApplicant = () => {
                       <Input
                         name="emergencyContactNumber"
                         type="Number"
-                        placeholder="Emergency Contact Number"
+                        // placeholder="Emergency Contact Number"
                         required
                       />
                     </div>
@@ -721,7 +798,7 @@ const CreateApplicant = () => {
                       <Input
                         name="amount"
                         type="Number"
-                        placeholder="Amount"
+                        // placeholder="Amount"
                         value={150}
                         required
                         disabled
