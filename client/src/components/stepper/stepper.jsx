@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Joi from "joi";
 import HorizontalStepper from './horizontalStepper';
+import { ToastContainer, toast } from 'react-toastify';
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import { getNationalId,  
@@ -17,6 +18,21 @@ function MultiStepForm() {
   const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [selectedId, setSelectedId] = useState("");
    const [selectedTime, setSelectedTime] = useState("");
+   const [nID, setNID] = useState("");
+   const [fName, setFname] = useState("");
+   const [lName, setLName] = useState("");
+   const [mFname, setMFname] = useState("");
+   const [mLname, setMLname] = useState("");
+   const [dob, setDob] = useState("");
+   const [status1, setStatus] = useState("");
+   const [pob, setPob] = useState("");
+   const [occupation, setOccupation] = useState("");
+   const [phoneNumber, setPhoneNumber] = useState("");
+   const [email, setEmail] = useState("");
+   const [emergencyContactName, setEmergencyContactName] = useState("");
+   const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
+   const [appointmentDate, setAppointmentDate] = useState("");
+   const [appointmentTime, setAppointmentTime] = useState("");
    const [selectedState1, setSelectedState] = useState("");
   const [step, setStep] = useState(1);
   let [amount,setAmount] = useState("150")
@@ -32,7 +48,7 @@ function MultiStepForm() {
   const schema = Joi.object({
     nID: Joi.string().required("National Identity can be empty"),
     phoneNumber: Joi.string().min(9).max(10).required(),
-    pob: Joi.string().required("Place of birth can not be empty"),
+    // pob: Joi.string().required("Place of birth can not be empty"),
     emergencyContactName: Joi.string().required("emergency Contact Name can not be empty"),
     emergencyContactNumber: Joi.string().min(9).max(10).required(),
     appointmentDate: Joi.date().required("Appointment Date can not be empty"),
@@ -50,10 +66,7 @@ function MultiStepForm() {
   }, [status, dispatch,availableDates,availableDates,selectedState]);
   // console.log(districts)
 
-  // handle the next step
-  const handleNext = () => {
-    setStep(step + 1);
-  };
+
 // handle the previous step 
   const handlePrevious = () => {
     setStep(step - 1);
@@ -119,6 +132,8 @@ function MultiStepForm() {
     const appointmentDate = e.target.value;
     setSelectedTime(e.target.value);
     dispatch(getAvailableDates({id, appointmentDate}));
+
+    // console.log(workingHours)
   }
 
   // assign  variables 
@@ -147,12 +162,18 @@ function MultiStepForm() {
 
   // handle click or get national id information
   const handleClick = async () => {
-    dispatch(getNationalId(nId));
+    dispatch(getNationalId(nID));
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
     setSelectedSex(defaultSex);
     const apiDate = new Date(nationalID?.DOB);
 ; // convert date string to date object
     setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+    setMFname(mFirstName)
+    setMLname(mLastName)
+    setFname(firstName)
+    setLName(mLastName)
+    setDob(apiDate?.toISOString()?.substr(0, 10),)
+    setOccupation(nationalID?.occupation)
     setFormData({
       ...formData,
       fName: firstName,
@@ -173,12 +194,34 @@ function MultiStepForm() {
     console.log(formData); // You can access form data here
   };
 
+
+    // handle the next step
+    const handleNext = (e) => {
+      e.preventDefault()
+      if(mFname == "" || lName == "" || fName == "" || nID == "" || mLname == ""  || selectedDate == ""   || pob == ""){
+        console.log(mFname,lName, fName, nID, selectedDate, pob )
+        toast.error("please fill the required fields")  
+        return
+      }
+  else{
+    // console.log("here",formData.mFname)
+    if(step == 2 && (emergencyContactName == "" || emergencyContactNumber == "" || phoneNumber == "")){
+      console.log(emergencyContactName, emergencyContactNumber, phoneNumber )
+      toast.error("please fill the required fields")  
+      return
+    }
+    setStep(step + 1);
+   
+  }
+    };
+
   return (
     <div>
+    <ToastContainer />
      <HorizontalStepper />
       {step === 1 && (
         // personal information form
-        <form onSubmit={handleNext} className="mx-5 shadow-2xl px-5 ">
+        <form onSubmit={handleNext} className=" shadow-2xl px-5 ">
           <div className="border-b border-gray-900/10 pb-6">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Personal Information
@@ -198,14 +241,14 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="nID"
-                    value={formData.nID}
-                    onChange={handleChange}
+                    value={nID}
+                    onChange={(e)=>setNID(e.target.value)}
                     autoComplete="address-level2"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                        {validationErrors.nID && (
+                        {/* {validationErrors.nID && (
         <span className="text-danger">{validationErrors.nID}</span>
-      )}
+      )} */}
                 </div>
               </div>
 
@@ -213,7 +256,7 @@ function MultiStepForm() {
               <button
     type="button"
     onClick={handleClick}
-    className="w-full sm:w-auto rounded-md bg-slate-950 w-50 py-2  mt-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-slate-950 w-50 py-2  mt-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
     NEXT
   </button>
               </div>
@@ -229,8 +272,8 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="fName"
-                    value={firstName}
-                    onChange={handleChange}
+                    value={fName}
+                    onChange={(e)=>setFname(e.target.value)}
                     autoComplete="given-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -247,8 +290,8 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="lName"
-                    value={lastName}
-                    onChange={handleChange}
+                    value={lName}
+                    onChange={(e)=>setLName(e.target.value)}
                     autoComplete="family-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -265,7 +308,8 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="mFname"
-                    value={mFirstName}
+                    value={mFname}
+                    onChange={(e)=>setMFname(e.target.value)}
                     autoComplete="given-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -282,7 +326,8 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="mLname"
-                    value={mLastName}
+                    value={mLname}
+                    onChange={(e)=>setMLname(e.target.value)}
                     autoComplete="family-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -290,48 +335,40 @@ function MultiStepForm() {
               </div>
               {/* sex */}
               <div className="sm:col-span-2">
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  SELECT YOUR SEX.
-                </p>
-                <input
-                  type="radio"
-                  name="sex"
-                  checked={selectedSex === "Male"}
-                  onChange={handleChange}
-                  className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
-                />
-                <label
-                  htmlFor="mLname"
-                  className="text-sm mr-5 font-medium leading-6 text-gray-900">
-                  MALE
-                </label>
-                <input
-                  type="radio"
-                  name="sex"
-                  // value={nationalID?.sex}
-                  checked={selectedSex === "Female"}
-                  onChange={handleChange}
-                  className="h-4 w-4 border-gray-300 mx-2 text-indigo-600 focus:ring-indigo-600"
-                />
-                <label
-                  htmlFor="sex"
-                  className="text-sm font-medium leading-6 mx-2 text-gray-900">
-                  FEMALE
-                </label>
-              </div>
-              {/* occupation */}
-              <div className="sm:col-span-2">
                 <label
                   htmlFor="country"
                   className="block text-sm font-medium leading-6 text-gray-900">
-                  SELECT YOUR OCCUPATION
+                  SELECT YOUR SEX
                 </label>
                 <div className="">
                   <select
                     id="occupation"
                     name="occupation"
                     autoComplete=""
-                    onChange={handleChange}
+                    onChange={(e) => setSelectedSex(e.target.value)}
+                   value={selectedSex}>
+                 
+                    <option value={"Male"}>Male</option>
+                    <option value={"Female"}>Female</option>
+                    
+                  </select>
+                </div>
+              </div>
+         
+              {/* occupation */}
+              <div className="sm:col-span-2">
+                <label
+                  htmlFor="country"
+                  className="block text-sm font-medium leading-6 text-gray-900">
+                  OCCUPATION
+                </label>
+                <div className="">
+                  <select
+                    id="occupation"
+                    name="occupation"
+                    autoComplete=""
+                    value={occupation}
+                    onChange={(e)=>setOccupation(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={"Student"}>Student</option>
                     <option value={"Employee"}>Employee</option>
@@ -370,9 +407,9 @@ function MultiStepForm() {
                 <div className="">
                   <select
                     id="status"
-                    name="status"
+                    name="status1"
                     autoComplete="country-name"
-                    onChange={handleChange}
+                    onChange={(e)=>setStatus(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={"Single"}>Single</option>
                     <option value={"Husband"}>Husband</option>
@@ -391,12 +428,12 @@ function MultiStepForm() {
                 <div className="">
                   <input
                     type="date"
-                    id="dob"
-                    name="dob"
+                    id="selectedDate"
+                    name="selectedDate"
                     value={selectedDate}
-                    // onChange={(event) => setSelectedDate(event.target.value)}
-                    onChange={handleChange}
-                    autoComplete="email"
+                    onChange={(event) => setSelectedDate(event.target.value)}
+                    // onChange={handleChange}
+                    autoComplete="date"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -413,14 +450,14 @@ function MultiStepForm() {
                   <input
                     type="text"
                     name="pob"
-                    value={formData.pob}
-                    onChange={handleChange}
+                    value={pob}
+                    onChange={(e)=>setPob(e.target.value)}
                     autoComplete="place of birth"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                        {validationErrors.pob && (
+                        {/* {validationErrors.pob && (
         <span className="text-danger">{validationErrors.pob}</span>
-      )}
+      )} */}
                 </div>
               </div>
             </div>
@@ -429,7 +466,7 @@ function MultiStepForm() {
             <button
     type="submit"
     
-    className="w-full sm:w-auto rounded-md bg-indigo-600 w-25 py-2 my-5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-indigo-600 w-25 py-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
     NEXT
   </button>
 </div>
@@ -439,7 +476,7 @@ function MultiStepForm() {
 
       {step === 2 && (
         // contact information form
-        <form onSubmit={handleNext} className="mx-5 shadow-2xl p-11">
+        <form onSubmit={handleNext} className=" shadow-2xl p-11">
         <div className="border-b border-gray-900/10 pb-6">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
           Personal Information
@@ -462,8 +499,8 @@ function MultiStepForm() {
               <input
                 type="number"
                 name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
+                value={phoneNumber}
+                onChange={(e)=>setPhoneNumber(e.target.value)}
                 autoComplete="contact number"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -483,8 +520,8 @@ function MultiStepForm() {
               <input
                 type="email"
                 name="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
                 autoComplete="email"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -503,8 +540,8 @@ function MultiStepForm() {
               <input
                 type="text"
                 name="emergencyContactName"
-                value={formData.emergencyContactName}
-                onChange={handleChange}
+                value={emergencyContactName}
+                onChange={(e)=>setEmergencyContactName(e.target.value)}
                 autoComplete="given-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -524,8 +561,8 @@ function MultiStepForm() {
               <input
                 type="number"
                 name="emergencyContactNumber"
-                value={formData.emergencyContactNumber}
-                onChange={handleChange}
+                value={emergencyContactNumber}
+                onChange={(e)=>setEmergencyContactNumber(e.target.value)}
                 autoComplete="family-name"
                 className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
@@ -544,14 +581,14 @@ function MultiStepForm() {
             <button
     type="button"
     onClick={handlePrevious}
-    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     Previous 
   </button>
             <button
     type="submit"
     
-    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     NEXT
   </button>
@@ -561,7 +598,7 @@ function MultiStepForm() {
 
       {step === 3 && (
         // passport information
-        <form onSubmit={handleNext} className="mx-5 p-5 shadow-2xl">
+        <form onSubmit={handleNext} className=" p-5 shadow-2xl">
         <div className="border-b border-gray-900/10 pb-12">
         <h2 className="text-base font-semibold leading-7 text-gray-900">
           Personal Information
@@ -639,14 +676,14 @@ function MultiStepForm() {
             <button
     type="button"
     onClick={handlePrevious}
-    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     Previous 
   </button>
             <button
     type="submit"
     
-    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     NEXT
   </button>
@@ -656,7 +693,7 @@ function MultiStepForm() {
 
       {step === 4 && (
         // passport information
-        <form onSubmit={handleSubmit} className="mx-5 p-5 shadow-2xl">
+        <form onSubmit={handleSubmit} className=" p-5 shadow-2xl">
         <div className="row">
         <Select
           className="w-50"
@@ -703,14 +740,13 @@ function MultiStepForm() {
           <div className="form-group">
             <label htmlFor="date">Appointment Date</label>
             <input type="date" name="appointmentDate" onChange={dateHandleChange} id="" className="form-control" />
-            {validationErrors.appointmentDate && (
+            {/* {validationErrors.appointmentDate && (
         <span className="text-danger">{validationErrors.appointmentDate}</span>
-      )}
+      )} */}
           </div>
           <div className='mt-2 form-control disabled'>
-          {availableDates?.length === 0 ? (
-            selectedDate =="" ? "":
-  workingHours?.map((item) => (
+          {availableDates?.length === 0 ? 
+          (   workingHours?.map((item) => (
     <div key={item.startTime} className="">
       <div className="form-group">
         <input
@@ -780,14 +816,14 @@ function MultiStepForm() {
             <button
     type="button"
     onClick={handlePrevious}
-    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-3 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-slate-950 w-25 py-2 my-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     Previous 
   </button>
             <button
     type="submit"
     
-    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+    className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
    
     NEXT
   </button>

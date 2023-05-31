@@ -218,39 +218,39 @@ const Navdata = () => {
                   },
                 ]
         },
-        {
-            id: "Report",
-            label: "Passport Settings",
-            icon: "ri-layout-grid-line",
-            link: "/#",
-            click: function (e) {
-                e.preventDefault();
-                setIsReport(!isReport);
-                setIscurrentState('Report');
-                updateIconSidebar(e);
-            },
-            stateVariables: isReport,
-            subItems: [
-                {
-                    id: "Create User",
-                    label: "Create User",
-                    link: "/register",
-                    parentId: "setting",
-                  },
-                  {
-                    id: "Setup",
-                    label: "Setups",
-                    link: "/Promotion",
-                    parentId: "setting",
-                  },
-                  {
-                    id: "User Role",
-                    label: "User Roles",
-                    link: "/UserRole",
-                    parentId: "setting",
-                  },
-                ]
-        },
+        // {
+        //     id: "Report",
+        //     label: "Passport Settings",
+        //     icon: "ri-layout-grid-line",
+        //     link: "/#",
+        //     click: function (e) {
+        //         e.preventDefault();
+        //         setIsReport(!isReport);
+        //         setIscurrentState('Report');
+        //         updateIconSidebar(e);
+        //     },
+        //     stateVariables: isReport,
+        //     subItems: [
+        //         {
+        //             id: "Create User",
+        //             label: "Create User",
+        //             link: "/register",
+        //             parentId: "setting",
+        //           },
+        //           {
+        //             id: "Setup",
+        //             label: "Setups",
+        //             link: "/Promotion",
+        //             parentId: "setting",
+        //           },
+        //           {
+        //             id: "User Role",
+        //             label: "User Roles",
+        //             link: "/UserRole",
+        //             parentId: "setting",
+        //           },
+        //         ]
+        // },
         {
             id: "Registration",
             label: "Registration",

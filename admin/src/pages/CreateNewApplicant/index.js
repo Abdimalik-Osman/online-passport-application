@@ -342,7 +342,7 @@ const CreateApplicant = () => {
     
       const apiDate = new Date(nationalID?.DOB);
    // convert date string to date object
-      setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+     await setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
       setMFname(mFirstName)
       setMLname(mLastName)
       setFname(firstName)
