@@ -20,6 +20,7 @@ const initialState = {
   nationalID:{},
   data:{},
   status: 'idle',
+  
   message:"",
   error: null
 };

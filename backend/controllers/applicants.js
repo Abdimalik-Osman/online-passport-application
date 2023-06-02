@@ -354,9 +354,16 @@ exports.getAvailableDates = async(req, res)=>{
   }
 }
 
+exports.updateApplicant = async(req,res)=>{
+  try {
+    const updated = await Applicant.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true});
+    if(!updated) return res.status(400).json({message:"Error occurred while updating this applicant..",status:"fail"})
+    return res.status(200).json({message:"application updated successfully",status:"success"})
+  } catch (error) {
+    return res.status(500).json({message:error.message, status:"fail"})
+  }
+}
 
-// exports.createApplicant = async (req, res) => {
-//   try {
 //     //initialize the passport expiration date
 //     let passportExpirationData = new Date();
 //     passportExpirationData.setFullYear(

@@ -14,7 +14,7 @@ function App() {
   ];
 
   return (
-    <div className="container">
+    <div className="">
  <MultiStepForm />
     </div>
     // <div className="container">

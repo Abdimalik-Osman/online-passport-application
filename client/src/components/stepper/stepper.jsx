@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Joi from "joi";
 import HorizontalStepper from "./horizontalStepper";
 import { ToastContainer, toast } from "react-toastify";
-import Modal from "./Modal"
+import ModalShow from "./Modal"
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,6 +16,8 @@ import {
   useAppDispatch,
   getAvailableDates,
 } from "../../app/districtSlice";
+import { addNewApplicant, deleteApplicant, updateApplicant,getApplicants,getSingleApplicant, reset} from "../../app/applicantSlice";
+
 function MultiStepForm() {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
@@ -101,6 +103,8 @@ function MultiStepForm() {
     districtData,
     workingHours,
   } = useSelector((state) => state.district);
+  const appMessage = useSelector((state) => state.applicant.message);
+  const appStatus = useSelector((state) => state.applicant.status);
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchData());
@@ -171,7 +175,8 @@ function MultiStepForm() {
   const dateHandleChange = (e) => {
     const id = selectedState1;
     const appointmentDate = e.target.value;
-    setSelectedTime(e.target.value);
+    setAppointmentDate(appointmentDate); //
+    // setSelectedTime(e.target.value);
     dispatch(getAvailableDates({ id, appointmentDate }));
 
     // console.log(workingHours)
@@ -213,31 +218,76 @@ function MultiStepForm() {
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
     setSelectedSex(defaultSex);
     const apiDate = new Date(nationalID?.DOB); // convert date string to date object
-    setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
+    setDob(apiDate?.toISOString()?.substr(0, 10));
+    setSelectedDate(apiDate?.toISOString()?.substr(0, 10))
     setMFname(mFirstName);
     setMLname(mLastName);
     setFname(firstName);
-    setLName(mLastName);
+    setLName(lastName);
     setDob(apiDate?.toISOString()?.substr(0, 10));
-    setOccupation(nationalID?.occupation);
-    setFormData({
-      ...formData,
-      fName: firstName,
-      lName: lastName,
-      mFname: mFirstName,
-      mLname: mLastName,
-      sex: defaultSex,
-      nID: nId,
-      dob: apiDate?.toISOString()?.substr(0, 10),
-    });
+    // setOccupation(nationalID?.occupation);
+  
+    // setFormData({
+    //   ...formData,
+    //   fName: firstName,
+    //   lName: lastName,
+    //   mFname: mFirstName,
+    //   mLname: mLastName,
+    //   sex: defaultSex,
+    //   nID: nId,
+    //   dob: apiDate?.toISOString()?.substr(0, 10),
+    // });
 
-    console.log(message);
+    // console.log(message);
   };
 
   // handle submit
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
-    console.log(formData); // You can access form data here
+    const data = {
+      nID:nID,
+      phoneNumber:phoneNumber,
+      emergencyContactName:emergencyContactName,
+      emergencyContactNumber:emergencyContactNumber,
+      fullname:fName+" "+lName,
+      motherName: mFname+" "+mLname,
+      POB:pob,
+      DOB:selectedDate,
+      amount,
+      status:status1,
+      email:email,
+      occupation:occupation,
+      appointmentTime:selectedTime,
+      appointmentDate:appointmentDate,
+      districtId:selectedState1,
+      sex:selectedSex,
+    }
+    // console.log(data);
+    if(!appointmentDate || appointmentDate == undefined || appointmentDate ==""){
+      toast.error("please select an appointment date")
+      return
+    }
+    if(!selectedTime || selectedTime == undefined || selectedTime ==""){
+      toast.error("please select an appointment time")
+      return
+    }
+    if(isChecked == false){
+      toast.error("please check the checkbox if you have agreed our terms")
+      return
+    } // You can access form data here
+    else{
+      await dispatch(addNewApplicant(data))
+      if(appStatus == "succeeded"){
+        
+       toast.success("new applicant successfully created.")
+       dispatch(getAvailableDates({id: selectedState1, appointmentDate }));
+       console.log(appMessage)
+       dispatch(reset())
+      }else{
+       toast.error(appMessage)
+       reset()
+      }
+    }
   };
 
   // handle the next step
@@ -270,7 +320,7 @@ function MultiStepForm() {
       else if (
         step === 4 && isChecked == false
       ) {
-        console.log(isChecked);
+        // console.log(isChecked);
         toast.error("please fill the required fields");
         return;
       }
@@ -281,14 +331,14 @@ function MultiStepForm() {
 
   return (
     <>
-    <Modal isOpen={isOpen} handleClose={handleClose} />
+    <ModalShow isOpen={isOpen} handleClose={handleClose} />
     
-      <div style={{display:isOpen == true ? "none":""}}>
-      <ToastContainer />
       <HorizontalStepper />
+      <div style={{display:isOpen == true ? "none":""}} className="bg-dark w-100 h-100 py-16 text-white " >
+      <ToastContainer />
       {step === 1 && (
         // personal information form
-        <form onSubmit={handleNext} className=" shadow-2xl px-5 ">
+        <form onSubmit={handleNext} className=" shadow-2xl px-3 ">
           <div className="border-b border-gray-900/10 pb-6">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Personal Information
@@ -324,16 +374,16 @@ function MultiStepForm() {
                 <button
                   type="button"
                   onClick={handleClick}
-                  className="w-full sm:w-auto rounded-md bg-slate-950 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                  className="w-full sm:w-auto rounded-md bg-blue-600 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                   NEXT
                 </button>
               </div>
 
               {/* //FIRST NAME */}
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3 lg:col-span-3 my-3">
                 <label
                   htmlFor="first-name"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   First name
                 </label>
                 <div className="">
@@ -342,16 +392,17 @@ function MultiStepForm() {
                     name="fName"
                     value={fName}
                     onChange={(e) => setFname(e.target.value)}
+                    placeholder="First Name"
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/* LAST NAME */}
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3 my-3">
                 <label
                   htmlFor="last-name"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   Last name
                 </label>
                 <div className="">
@@ -360,6 +411,7 @@ function MultiStepForm() {
                     name="lName"
                     value={lName}
                     onChange={(e) => setLName(e.target.value)}
+                    placeholder="Last Name"
                     autoComplete="family-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -369,7 +421,7 @@ function MultiStepForm() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="first-name"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   MOTHER'S FIRST NAME
                 </label>
                 <div className="">
@@ -378,6 +430,7 @@ function MultiStepForm() {
                     name="mFname"
                     value={mFname}
                     onChange={(e) => setMFname(e.target.value)}
+                    placeholder="Mother's First Name"
                     autoComplete="given-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -387,7 +440,7 @@ function MultiStepForm() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="mLname"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   MOTHER'S LAST NAME
                 </label>
                 <div className="">
@@ -396,16 +449,17 @@ function MultiStepForm() {
                     name="mLname"
                     value={mLname}
                     onChange={(e) => setMLname(e.target.value)}
+                    placeholder="Mother's Last Name"
                     autoComplete="family-name"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/* sex */}
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 my-3">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   Gender
                 </label>
                 <div className="">
@@ -415,7 +469,9 @@ function MultiStepForm() {
                     autoComplete=""
                     value={selectedSex}
                     onChange={(e) => setSelectedSex(e.target.value)}
+                    placeholder="Select Gender"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    <option value={""}>Select Your Gender</option>
                     <option value={"Male"}>Male</option>
                     <option value={"Male"}>Male</option>
                   </select>
@@ -423,10 +479,10 @@ function MultiStepForm() {
               </div>
 
               {/* occupation */}
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 my-3">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   OCCUPATION
                 </label>
                 <div className="">
@@ -435,8 +491,10 @@ function MultiStepForm() {
                     name="occupation"
                     autoComplete=""
                     value={occupation}
+                    placeholder="Select Your occupation"
                     onChange={(e) => setOccupation(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    <option value={""}>Select Your Occupation</option>
                     <option value={"Student"}>Student</option>
                     <option value={"Employee"}>Employee</option>
                     <option value={"Others"}>Others</option>
@@ -445,10 +503,10 @@ function MultiStepForm() {
               </div>
 
               {/* nationality */}
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 my-3">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   SELECT COUNTRY
                 </label>
                 <div className="">
@@ -468,7 +526,7 @@ function MultiStepForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   MARITAL STATUS
                 </label>
                 <div className="">
@@ -477,18 +535,20 @@ function MultiStepForm() {
                     name="status1"
                     autoComplete="country-name"
                     onChange={(e) => setStatus(e.target.value)}
+                    placeholder="Marital Status"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    <option value={""}>Marital Status</option>
                     <option value={"Single"}>Single</option>
                     <option value={"Husband"}>Husband</option>
                     <option value={"Widow"}>Widow</option>
                   </select>
                 </div>
               </div>
-              {/* place of birth */}
+              {/* date of birth */}
               <div className="sm:col-span-2">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   DATE OF BIRTH
                 </label>
 
@@ -510,7 +570,7 @@ function MultiStepForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="pob"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-gray-900 d-none">
                   PLACE OF BIRTH
                 </label>
                 <div className="">
@@ -519,6 +579,7 @@ function MultiStepForm() {
                     name="pob"
                     value={pob}
                     onChange={(e) => setPob(e.target.value)}
+                    placeholder="Place of Birth"
                     autoComplete="place of birth"
                     className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -659,23 +720,25 @@ function MultiStepForm() {
 
       {step === 3 && (
         // passport information
-        <form onSubmit={handleNext} className=" p-5 shadow-2xl">
+        <form onSubmit={handleNext} className=" p-5 shadow-2xl text-white">
           <div className="border-b border-gray-900/10 pb-12">
             <h2 className="text-base font-semibold leading-7 text-gray-900">
               Personal Information
             </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
+            <p className="mt-1 text-sm leading-6 text-white">
               Use a permanent address where you can receive mail.
-             <h5> NOTE: </h5>
+              <br />
+             <b> NOTE: </b>
+             <br />
               Please bring your proof of Philippine citizenship by election, naturalization, re-acquisition on the date of your personal appearance.
             </p>
 
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
               {/* type of passport  application */}
               <div className="sm:col-span-2">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-white">
                   Passport Application
                 </label>
                 <div className="">
@@ -695,7 +758,7 @@ function MultiStepForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-white">
                   SELECT PASSPORT TYPE
                 </label>
                 <div className="">
@@ -716,10 +779,10 @@ function MultiStepForm() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="postal-code"
-                  className="block text-sm font-medium leading-6 text-gray-900">
+                  className="block text-sm font-medium leading-6 text-white">
                   AMOUNT
                 </label>
-                <div className="mt-2">
+                <div className="">
                   <input
                     type="text"
                     name="amount"
@@ -751,25 +814,32 @@ function MultiStepForm() {
 
       {step === 4 && (
         // passport information
-        <form onSubmit={handleNext} className=" p-5 shadow-2xl">
-          <div className="row">
+        <form onSubmit={handleSubmit} className=" p-4 shadow-2xl">
+          {/* <div className="row"> */}
+          <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
+            <div className="sm:col-span-3">
             <Select
-              className="w-50"
+              className="block w-full rounded-md 3order-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               options={options}
               value={selectedOptions}
               onChange={handleChange1}
+              
             />
+            </div>
+            <div className="sm:col-span-3">
             <Select
-              className="w-50"
+              className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               options={options2}
               value={selectedOptions2}
               onChange={handleChange2}
             />
-          </div>
-          <hr />
+        </div>
+         
+         {/* 1502440 */}
 
-          <div className="row mb-5">
-            <div className="col">
+          {/* <hr /> */}
+
+        <div className="sm:col-span-3">
               {selectedState?.length > 0 &&
                 selectedState?.map((item) => (
                   <div>
@@ -782,7 +852,7 @@ function MultiStepForm() {
                         name="office"
                         disabled
                         value={item.dailySlots}
-                        className="form-control"
+                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     <div className="form-group my-2">
@@ -792,7 +862,7 @@ function MultiStepForm() {
                         name="office"
                         disabled
                         value={item.officeName}
-                        className="form-control"
+                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     <div className="form-group">
@@ -802,7 +872,7 @@ function MultiStepForm() {
                         name="location"
                         disabled
                         value={item.location}
-                        className="form-control"
+                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
 
@@ -815,13 +885,13 @@ function MultiStepForm() {
                         name="contactNumber"
                         disabled
                         value={item.contactNumber}
-                        className="form-control"
+                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
                 ))}
             </div>
-            <div className="col">
+            <div className="sm:col-span-3">
               <div className="form-group">
                 <label htmlFor="date">Appointment Date</label>
                 <input
@@ -829,7 +899,7 @@ function MultiStepForm() {
                   name="appointmentDate"
                   onChange={dateHandleChange}
                   id=""
-                  className="form-control"
+                  className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
                 {/* {validationErrors.appointmentDate && (
         <span className="text-danger">{validationErrors.appointmentDate}</span>
@@ -837,7 +907,7 @@ function MultiStepForm() {
               </div>
               <div className="mt-2 form-control disabled">
                 {availableDates?.length === 0
-                  ? workingHours?.map((item) => (
+                  ? workingHours && workingHours?.map((item) => (
                       <div key={item.startTime} className="">
                         <div className="form-group">
                           <input
@@ -850,7 +920,7 @@ function MultiStepForm() {
                             onChange={handleTimeChange}
                           />
                           <label htmlFor={item.startTime}>
-                            {item.startTime} ------- {item.endTime} Available
+                            {item.startTime} ------- {item.endTime} Available 
                           </label>
                         </div>
                       </div>
@@ -868,17 +938,19 @@ function MultiStepForm() {
                           onChange={handleTimeChange}
                         />{" "}
                         {info.time} --{" "}
+                        
                         {availableDates[i + 1]
                           ? availableDates[i + 1].time
-                          : "Next Hour"}{" "}
+                          : "Next Hour"}
                         ={" "}
                         <span>
-                          {info.availableNumber} available slots{" "}
-                          {info.availableNumber == 0 ? "" : ""}
+                         {info.availableNumber == 0 ? "FULL" : `${info.availableNumber} available slots`}  
+                          {/* { info.availableNumber == 0 ? "Full" : ""} */}
                         </span>
                       </p>
                     ))}
               </div>
+            </div>
             </div>
             {/* <div className="col">
       <h5>working hours</h5>
@@ -905,7 +977,7 @@ function MultiStepForm() {
             {/* <div className="col"> */}
             {/* <Appointment unavailableDates={unavailableDates} /> */}
             {/* </div> */}
-            <div className="col-12">
+            <div className="col-12 mt-10">
               <h5 className="text-red-600">NOTICE:</h5>
               Before you proceed to booking an appointment at TOPS site, please
               read and confirm your agreement to the following :
@@ -947,7 +1019,7 @@ function MultiStepForm() {
                 conditions.
               </p>
             </div>
-          </div>
+          {/* </div> */}
           <div className="d-flex justify-content-center align-items-center">
             <button
               type="button"
@@ -963,14 +1035,14 @@ function MultiStepForm() {
           </div>
         </form>
       )}
-      {
-        step === 5 && (
-          <div>
+      {/* { */}
+        {/* step === 5 && ( */}
+          {/* <div>
           Please choose a Processing Type
             <h1 className="text-center">Payment</h1>
-          </div>
-        )
-      }
+          </div> */}
+        {/* ) */}
+      {/* } */}
       </div>
     </>
   );
