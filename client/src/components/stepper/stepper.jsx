@@ -333,18 +333,19 @@ function MultiStepForm() {
     <>
     <ModalShow isOpen={isOpen} handleClose={handleClose} />
     
-      <HorizontalStepper />
-      <div style={{display:isOpen == true ? "none":""}} className="bg-dark w-100 h-100 py-16 text-white " >
+      <HorizontalStepper isOpen={isOpen} />
+      <div style={{display:isOpen == true ? "none":""}} className="bg-dark w-100 h-100 py-10 text-white lg:px-12 " >
       <ToastContainer />
       {step === 1 && (
         // personal information form
-        <form onSubmit={handleNext} className=" shadow-2xl px-3 ">
+        <form onSubmit={handleNext} className=" shadow-2xl px-4 ">
           <div className="border-b border-gray-900/10 pb-6">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
+            <h2 className="text-base font-extrabold leading-9 text-white">
               Personal Information
             </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
+            <p className="mt-1 text-sm leading-6 text-white">
+              Please fill your personal information, firstly you will enter your NATIONAL ID for getting your personal information and checking if you are ready for applying this system.
+              please enter your national ID and double click the check button fill you personal information.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
@@ -362,7 +363,7 @@ function MultiStepForm() {
                     value={nID}
                     onChange={(e) => setNID(e.target.value)}
                     autoComplete="address-level2"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   {/* {validationErrors.nID && (
         <span className="text-danger">{validationErrors.nID}</span>
@@ -380,7 +381,7 @@ function MultiStepForm() {
               </div>
 
               {/* //FIRST NAME */}
-              <div className="sm:col-span-3 lg:col-span-3 my-3">
+              <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1 ">
                 <label
                   htmlFor="first-name"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -394,12 +395,12 @@ function MultiStepForm() {
                     onChange={(e) => setFname(e.target.value)}
                     placeholder="First Name"
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-0.5 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/* LAST NAME */}
-              <div className="sm:col-span-3 my-3">
+              <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1">
                 <label
                   htmlFor="last-name"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -413,12 +414,12 @@ function MultiStepForm() {
                     onChange={(e) => setLName(e.target.value)}
                     placeholder="Last Name"
                     autoComplete="family-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/* //MOTHER FIRST NAME */}
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3 my-2 lg:col-span-2  lg:my-1 ">
                 <label
                   htmlFor="first-name"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -432,12 +433,12 @@ function MultiStepForm() {
                     onChange={(e) => setMFname(e.target.value)}
                     placeholder="Mother's First Name"
                     autoComplete="given-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/*MOTHER'S LAST NAME */}
-              <div className="sm:col-span-3">
+              <div className="sm:col-span-3  lg:col-span-2 lg:my-1">
                 <label
                   htmlFor="mLname"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -451,12 +452,12 @@ function MultiStepForm() {
                     onChange={(e) => setMLname(e.target.value)}
                     placeholder="Mother's Last Name"
                     autoComplete="family-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
               {/* sex */}
-              <div className="sm:col-span-2 my-3">
+              <div className="sm:col-span-2 lg:col-span-2  my-2 lg:my-3">
                 <label
                   htmlFor="country"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -470,7 +471,7 @@ function MultiStepForm() {
                     value={selectedSex}
                     onChange={(e) => setSelectedSex(e.target.value)}
                     placeholder="Select Gender"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={""}>Select Your Gender</option>
                     <option value={"Male"}>Male</option>
                     <option value={"Male"}>Male</option>
@@ -479,7 +480,7 @@ function MultiStepForm() {
               </div>
 
               {/* occupation */}
-              <div className="sm:col-span-2 my-3">
+              <div className="sm:col-span-2 lg:col-span-1">
                 <label
                   htmlFor="country"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -493,7 +494,7 @@ function MultiStepForm() {
                     value={occupation}
                     placeholder="Select Your occupation"
                     onChange={(e) => setOccupation(e.target.value)}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={""}>Select Your Occupation</option>
                     <option value={"Student"}>Student</option>
                     <option value={"Employee"}>Employee</option>
@@ -503,7 +504,7 @@ function MultiStepForm() {
               </div>
 
               {/* nationality */}
-              <div className="sm:col-span-2 my-3">
+              <div className="sm:col-span-2 lg:col-span-1 my-2 ">
                 <label
                   htmlFor="country"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -514,7 +515,7 @@ function MultiStepForm() {
                     id="country"
                     name="country"
                     autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option>SOMALIA</option>
                     <option>Canada</option>
                     <option>Mexico</option>
@@ -536,7 +537,7 @@ function MultiStepForm() {
                     autoComplete="country-name"
                     onChange={(e) => setStatus(e.target.value)}
                     placeholder="Marital Status"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={""}>Marital Status</option>
                     <option value={"Single"}>Single</option>
                     <option value={"Husband"}>Husband</option>
@@ -561,13 +562,13 @@ function MultiStepForm() {
                     onChange={(event) => setSelectedDate(event.target.value)}
                     // onChange={handleChange}
                     autoComplete="date"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
 
               {/* place of birth */}
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 mb-2 lg:my-1">
                 <label
                   htmlFor="pob"
                   className="block text-sm font-medium leading-6 text-gray-900 d-none">
@@ -581,7 +582,7 @@ function MultiStepForm() {
                     onChange={(e) => setPob(e.target.value)}
                     placeholder="Place of Birth"
                     autoComplete="place of birth"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   {/* {validationErrors.pob && (
         <span className="text-danger">{validationErrors.pob}</span>
@@ -600,16 +601,19 @@ function MultiStepForm() {
           </div>
         </form>
       )}
-
+      {/* CONTACT INFORMATION */}
       {step === 2 && (
         // contact information form
-        <form onSubmit={handleNext} className=" shadow-2xl p-11">
+        <form onSubmit={handleNext} className=" shadow-2xl px-12 lg:p-11">
           <div className="border-b border-gray-900/10 pb-6">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Personal Information
+            <h2 className="text-base font-semibold leading-7 text-white">
+              CONTACT INFORMATION
             </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
+            <p className="mt-1 text-sm leading-6 text-white">
+              Please use  a permanent contact information where you can receive updates.
+            </p>
+            <p className="mt-1 text-sm leading-6 text-white">
+             Please fill all the contact information the required can be recognized by red star if you don't see the red star it means it optional.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
@@ -627,7 +631,8 @@ function MultiStepForm() {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     autoComplete="contact number"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="Enter your phone number"
                   />
                   {validationErrors.phoneNumber && (
                     <span className="text-danger">
@@ -650,7 +655,8 @@ function MultiStepForm() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="Enter your E-mail"
                   />
                 </div>
               </div>
@@ -667,8 +673,9 @@ function MultiStepForm() {
                     name="emergencyContactName"
                     value={emergencyContactName}
                     onChange={(e) => setEmergencyContactName(e.target.value)}
-                    autoComplete="given-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    // autoComplete="given-name"
+                    placeholder="Enter your Emergency Contact Name"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   {validationErrors.emergencyContactName && (
                     <span className="text-danger">
@@ -690,8 +697,9 @@ function MultiStepForm() {
                     name="emergencyContactNumber"
                     value={emergencyContactNumber}
                     onChange={(e) => setEmergencyContactNumber(e.target.value)}
-                    autoComplete="family-name"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    // autoComplete="family-name"
+                    placeholder="Enter your Emergency Contact Number"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   {validationErrors.emergencyContactNumber && (
                     <span className="text-danger">
@@ -717,16 +725,16 @@ function MultiStepForm() {
           </div>
         </form>
       )}
-
+      {/* PASSPORT INFORMATION */}
       {step === 3 && (
         // passport information
-        <form onSubmit={handleNext} className=" p-5 shadow-2xl text-white">
+        <form onSubmit={handleNext} className=" px-4 shadow-2xl text-white">
           <div className="border-b border-gray-900/10 pb-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Personal Information
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-white">
-              Use a permanent address where you can receive mail.
+            <h4 className="text-base font-semibold leading-3 text-white">
+              PASSPORT INFORMATION
+            </h4>
+            <p className=" text-sm leading-8 text-white">
+            
               <br />
              <b> NOTE: </b>
              <br />
@@ -747,7 +755,7 @@ function MultiStepForm() {
                     disabled={true}
                     name="country"
                     autoComplete="country-name"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option>New Application</option>
                   </select>
                 </div>
@@ -755,7 +763,7 @@ function MultiStepForm() {
               {/*  */}
 
               {/* type of passport */}
-              <div className="sm:col-span-2">
+              <div className="sm:col-span-2 my-2">
                 <label
                   htmlFor="country"
                   className="block text-sm font-medium leading-6 text-white">
@@ -768,7 +776,7 @@ function MultiStepForm() {
                     autoComplete="country-name"
                     onChange={handleChange}
                     disabled
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                     <option value={"Ordinary"}>Ordinary</option>
                     <option value={"deg-deg"}>Deg Deg</option>
                   </select>
@@ -790,7 +798,7 @@ function MultiStepForm() {
                     disabled={true}
                     id="postal-code"
                     autoComplete="postal-code"
-                    className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
               </div>
@@ -811,15 +819,34 @@ function MultiStepForm() {
           </div>
         </form>
       )}
-
+      {/* APPOINTMENT INFORMATION */}
       {step === 4 && (
         // passport information
-        <form onSubmit={handleSubmit} className=" p-4 shadow-2xl">
+     
+        <form onSubmit={handleSubmit} className=" px-4 shadow-2xl">
+        <h2 className="text-base font-semibold leading-4 text-white">
+             APPOINTMENT INFORMATION
+            </h2>
+            <p className=" text-sm leading-8 text-white">
+            
+              <br />
+             <b> NOTE: </b>
+             <br />
+              Please first select the state and then select the district that you can get from the passport, and then choose your appointment date, if the date you selected is full in terms that district please select another date and then select the time that you can go there
+              <br />
+              <b>NOTE:</b>
+              <br />
+              if you miss the appointment you selected at that your appointment will be cancelled immediately and you have to pay another fee.
+              please go there the time you appointed to go there. 
+            </p>
+            <p className=" text-sm leading-8 text-white">
+              please check the checkbox if you have agreed our personal terms
+            </p>
           {/* <div className="row"> */}
-          <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
+          <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
             <div className="sm:col-span-3">
             <Select
-              className="block w-full rounded-md 3order-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md 3order-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               options={options}
               value={selectedOptions}
               onChange={handleChange1}
@@ -828,7 +855,7 @@ function MultiStepForm() {
             </div>
             <div className="sm:col-span-3">
             <Select
-              className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               options={options2}
               value={selectedOptions2}
               onChange={handleChange2}
@@ -852,7 +879,7 @@ function MultiStepForm() {
                         name="office"
                         disabled
                         value={item.dailySlots}
-                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     <div className="form-group my-2">
@@ -862,7 +889,7 @@ function MultiStepForm() {
                         name="office"
                         disabled
                         value={item.officeName}
-                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                     <div className="form-group">
@@ -872,7 +899,7 @@ function MultiStepForm() {
                         name="location"
                         disabled
                         value={item.location}
-                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
 
@@ -885,7 +912,7 @@ function MultiStepForm() {
                         name="contactNumber"
                         disabled
                         value={item.contactNumber}
-                        className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
@@ -899,7 +926,7 @@ function MultiStepForm() {
                   name="appointmentDate"
                   onChange={dateHandleChange}
                   id=""
-                  className="block w-full rounded-md border-1 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
                 {/* {validationErrors.appointmentDate && (
         <span className="text-danger">{validationErrors.appointmentDate}</span>
@@ -1029,6 +1056,7 @@ function MultiStepForm() {
             </button>
             <button
               type="submit"
+              style={{display: isChecked == false?"none" : ""}}
               className="w-full sm:w-auto rounded-md bg-indigo-700 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
               NEXT
             </button>

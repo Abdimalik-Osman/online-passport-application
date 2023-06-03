@@ -2,10 +2,11 @@ import "../../index.css"
 
 import React from 'react'
 
-function HorizontalStepper() {
+function HorizontalStepper({isOpen}) {
   return (
-    <div className="flex justify-center bg-blue-600">
-    <ol className="flex items-center w-full my-4 mx-5 sm:mb-5">
+    <div className="flex justify-center bg-blue-600 pt-3" style={{ display:isOpen == true ? "none":""}}>
+    <ol className="flex items-center w-full lg:my-3 lg:ml-12 sm:mb-3 sm:ml-12 ">
+    <span style={{position:"absolute", top:4,left:50}} className="text-white fs-10 hidden sm:inline-block">personal info</span>
       <li className="flex w-full items-center text-blue-600 dark:text-blue-500 after:content-[''] after:w-full after:h-1 after:border-b after:border-blue-100 after:border-4 after:inline-block dark:after:border-blue-800">
         <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full lg:h-12 lg:w-12 dark:bg-blue-800 shrink-0">
         
@@ -14,6 +15,7 @@ function HorizontalStepper() {
           </svg>
         </div>
       </li>
+      <span style={{position:"absolute", top:4,left:290}} className="text-white fs-10 hidden sm:inline-block">Contact info</span>
       <li className="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700">
         <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
           <svg aria-hidden="true" className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fillRule="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -22,6 +24,7 @@ function HorizontalStepper() {
           </svg>
         </div>
       </li>
+      <span style={{position:"absolute", top:4,left:550}} className="text-white fs-10 hidden sm:inline-block">Passport info</span>
       <li className="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700">
         <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
           <svg aria-hidden="true" className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fillRule="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -30,6 +33,16 @@ function HorizontalStepper() {
           </svg>
         </div>
       </li>
+      <span style={{position:"absolute", top:4,left:750}} className="text-white fs-10 hidden sm:inline-block">Appointment info</span>
+      <li className="flex w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-100 after:border-4 after:inline-block dark:after:border-gray-700">
+        <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
+          <svg aria-hidden="true" className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fillRule="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+            <path fillRule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clipRule="evenodd"></path>
+          </svg>
+        </div>
+      </li>
+      <span style={{position:"absolute", top:4,left:1000}} className="text-white fs-10 hidden sm:inline-block">Payment info</span>
       <li className="flex items-center w-full">
         <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full lg:h-12 lg:w-12 dark:bg-gray-700 shrink-0">
           <svg aria-hidden="true" className="w-5 h-5 text-gray-500 lg:w-6 lg:h-6 dark:text-gray-100" fillRule="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +51,7 @@ function HorizontalStepper() {
           </svg>
         </div>
       </li>
+      
     </ol>
   </div>
   )
