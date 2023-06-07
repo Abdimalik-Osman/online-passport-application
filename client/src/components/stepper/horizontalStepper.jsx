@@ -4,7 +4,7 @@ import React from 'react'
 
 function HorizontalStepper({isOpen}) {
   return (
-    <div className="flex justify-center bg-blue-600 pt-3" style={{ display:isOpen == true ? "none":""}}>
+    <div className="flex justify-center bg-cyan-700 pt-3" style={{ display:isOpen == true ? "none":""}}>
     <ol className="flex items-center w-full lg:my-3 lg:ml-12 sm:mb-3 sm:ml-12 ">
     <span style={{position:"absolute", top:4,left:50}} className="text-white fs-10 hidden sm:inline-block">personal info</span>
       <li className="flex w-full items-center text-blue-600 dark:text-blue-500 after:content-[''] after:w-full after:h-1 after:border-b after:border-blue-100 after:border-4 after:inline-block dark:after:border-blue-800">
