@@ -15,7 +15,7 @@ const initialState = {
   newApplicants: [],
   singleApplicant: {},
   status: 'idle',
-  
+  holyDay:{},
   message:"",
   error: null
 };
@@ -26,8 +26,9 @@ export const getApplicants = createAsyncThunk('applicants/all', async (_,thunkAP
     const response = await axios.get(url+"/all");
     return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get single applicant
@@ -36,8 +37,9 @@ export const getSingleApplicant = createAsyncThunk('applicants/single', async (i
   const response = await axios.get(url+`/single/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 
@@ -48,9 +50,10 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
       const response = await axios.post(url+'/add', data);
       return response.data;
       
-  }catch (err) {
-      const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-      return thunkAPI.rejectWithValue(message); 
+  }catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data);
+      // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+      // return thunkAPI.rejectWithValue(message); 
   }
   });
   
@@ -61,8 +64,9 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
       const response = await axios.patch(url+`/update/${data.id}`);
       return response.data;
       }catch (err) {
-        const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-        return thunkAPI.rejectWithValue(message); 
+        return thunkAPI.rejectWithValue(err.response.data);
+        // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+        // return thunkAPI.rejectWithValue(message); 
     }
     });
 
@@ -73,8 +77,21 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
           return response.data;
   
   }catch (err) {
-      const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-      return thunkAPI.rejectWithValue(message); 
+      // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+      // return thunkAPI.rejectWithValue(message); 
+      return thunkAPI.rejectWithValue(err.response.data);
+  }
+  });
+// check if its holyday
+  export const checkIsHolyday = createAsyncThunk('holydays/single', async (appointmentDate,thunkAPI) => {
+    try{
+    const response = await axios.get(`http://localhost:4000/api/holydays/single/${appointmentDate}`);
+    console.log(response.data)
+    return response.data;
+    }catch (err) {
+      // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+      // return thunkAPI.rejectWithValue(message); 
+      return thunkAPI.rejectWithValue(err.response.data);
   }
   });
 
@@ -107,28 +124,33 @@ export const applicantSlice = createSlice({
     builder
       .addCase(getApplicants.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getApplicants.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.applicants = action.payload;
+        state.error = null;
       })
       .addCase(getApplicants.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
-        state.message = action.payload;
+        state.error =  action.payload;
+        // state.message = action.payload;
       })
       .addCase(getSingleApplicant.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getSingleApplicant.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.singleApplicant = action.payload;
+        state.error = null;
         
       })
       .addCase(getSingleApplicant.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
-        state.message = action.payload;
+        state.error =  action.payload;
+        
+        // state.message = action.payload;
       })
       .addCase(addNewApplicant.pending, (state) => {
         state.status = 'loading';
@@ -136,12 +158,14 @@ export const applicantSlice = createSlice({
       .addCase(addNewApplicant.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.applicants.push(action.payload);
+        state.error = null;
         // state = initialState
       })
       .addCase(addNewApplicant.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
-        state.message = action.payload;
+        state.error =  action.payload;
+
+        // state.message = action.payload;
       })
       
       .addCase(updateApplicant.pending, (state) => {
@@ -156,8 +180,8 @@ export const applicantSlice = createSlice({
       })
       .addCase(updateApplicant.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
-        state.message = action.payload;
+        state.error =  action.payload;
+        // state.message = action.payload;
       })
       .addCase(deleteApplicant.pending, (state) => {
         state.status = 'loading';
@@ -170,8 +194,23 @@ export const applicantSlice = createSlice({
       })
       .addCase(deleteApplicant.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
-        state.message = action.payload;
+        state.error =  action.payload;
+
+        // state.message = action.payload;
+      })
+      .addCase(checkIsHolyday.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(checkIsHolyday.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.error = null;
+        state.holyDay = action.payload;
+      })
+      .addCase(checkIsHolyday.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error =  action.payload;
+        // state.message = action.payload;
       })
 
     //   .addCase(addItem.fulfilled, (state, action) => {

@@ -6,4 +6,5 @@ const router = express.Router();
 
 router.post('/add',holyDayController.createHolyDay);
 router.get('/',holyDayController.getHolyDayData);
+router.get('/single/:appointmentDate',holyDayController.getSingleHolyDay);
 module.exports = router;

@@ -31,8 +31,9 @@ export const fetchData = createAsyncThunk('districts/all', async (_,thunkAPI) =>
     const response = await axios.get(url+"/districts/all");
     return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get single distinct
@@ -41,8 +42,9 @@ export const getSingleDistrict = createAsyncThunk('districts/single', async (id,
   const response = await axios.get(url+`/districts/single/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get selected district data
@@ -51,8 +53,9 @@ export const getDistrictData = createAsyncThunk('districts/data', async (id,thun
   const response = await axios.get(url+`/districts/single/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get selected district data
@@ -61,8 +64,9 @@ export const getDistrictInfo = createAsyncThunk('districts/data/single', async (
   const response = await axios.get(url+`/districts/state/single/data/info/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 
@@ -72,8 +76,9 @@ export const getDistrictWorkingHours = createAsyncThunk('districts/workingHours'
   const response = await axios.get(url+`/workingHours/hours/single/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get the un available date every district
@@ -82,8 +87,9 @@ export const getUnavailableDates = createAsyncThunk('applicants/unavailable', as
   const response = await axios.get(url+`/applicants/date/unavailable/all/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 // get the un available date every district
@@ -92,8 +98,9 @@ export const getAvailableDates = createAsyncThunk('applicants/availableDates', a
   const response = await axios.post(url+`/applicants/dates/availableTime/all`,data);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    return thunkAPI.rejectWithValue(message); 
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
 }
 });
 // get national ID
@@ -102,9 +109,10 @@ export const getNationalId = createAsyncThunk('profile/national', async (id,thun
   const response = await axios.get(url+`/profile/person/${id}`);
   return response.data;
   }catch (err) {
-    const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    // console.log(err.message);
-    return thunkAPI.rejectWithValue(message); 
+    return thunkAPI.rejectWithValue(err.response.data);
+    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+    // // console.log(err.message);
+    // return thunkAPI.rejectWithValue(message); 
 }
 });
 
@@ -137,99 +145,114 @@ export const districtSlice = createSlice({
     builder
       .addCase(fetchData.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(fetchData.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.error = null;
         state.districts = action.payload;
       })
       .addCase(fetchData.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getSingleDistrict.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getSingleDistrict.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.districtData = action.payload;
-        
+        state.error = null;
       })
       .addCase(getSingleDistrict.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getDistrictData.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getDistrictData.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.selectedState = action.payload;
+        state.error = null;
       })
       .addCase(getDistrictData.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getDistrictWorkingHours.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getDistrictWorkingHours.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.workingHours = action.payload;
+        state.error = null;
       })
       .addCase(getDistrictWorkingHours.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getUnavailableDates.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getUnavailableDates.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.unavailableDates = action.payload;
+        state.error = null;
       })
       .addCase(getUnavailableDates.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getNationalId.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getNationalId.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.error = null;
         state.nationalID = action.payload;
       })
       .addCase(getNationalId.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getDistrictInfo.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getDistrictInfo.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.error = null;
         state.selectedState = action.payload;
       })
       .addCase(getDistrictInfo.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
       .addCase(getAvailableDates.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(getAvailableDates.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.error = null;
         state.availableDates =action.payload
       })
       .addCase(getAvailableDates.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error =  action.payload;
         state.message = action.payload;
       })
     //   .addCase(addItem.fulfilled, (state, action) => {

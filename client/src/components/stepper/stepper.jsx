@@ -22,6 +22,7 @@ import {
   updateApplicant,
   getApplicants,
   getSingleApplicant,
+  checkIsHolyday,
   reset,
 } from "../../app/applicantSlice";
 
@@ -113,6 +114,7 @@ function MultiStepForm() {
   } = useSelector((state) => state.district);
   const appMessage = useSelector((state) => state.applicant.message);
   const appStatus = useSelector((state) => state.applicant.status);
+  const errorMessage = useSelector((state) => state.applicant.error);
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchData());
@@ -123,6 +125,7 @@ function MultiStepForm() {
   // handle the previous step
   const handlePrevious = () => {
     setStep(step - 1);
+    setIsChecked(false);
   };
 
   // handle changes
@@ -167,7 +170,7 @@ function MultiStepForm() {
     // setSelectedId(selected.value);
 
     dispatch(getSingleDistrict(selected.value));
-    setStateName(selected.label)
+    setStateName(selected.label);
     setSelectedOptions2([]);
   };
   const handleChange2 = (selected) => {
@@ -286,58 +289,77 @@ function MultiStepForm() {
       toast.error("please select an appointment time");
       return;
     }
+
     if (isChecked == false) {
       toast.error("please check the checkbox if you have agreed our terms");
       return;
     } // You can access form data here
     else {
-      await dispatch(addNewApplicant(data));
-      if (appStatus == "succeeded") {
-        toast.success("new applicant successfully created.");
-        dispatch(getAvailableDates({ id: selectedState1, appointmentDate }));
-        console.log(appMessage);
-        dispatch(reset());
-      } else {
-        toast.error(appMessage);
-        reset();
-      }
+      console.log(errorMessage);
+      // await dispatch(addNewApplicant(data));
+      // if (appStatus == "succeeded") {
+      //   toast.success("new applicant successfully created.");
+      //   dispatch(getAvailableDates({ id: selectedState1, appointmentDate }));
+      //   console.log(appMessage);
+      //   // dispatch(reset());
+      // } else {
+      //   toast.error(appMessage);
+      //   // reset();
+      // }
     }
   };
 
   // handle the next step
-  const handleNext = (e) => {
+  const handleNext = async (e) => {
     e.preventDefault();
     if (
-      mFname == "" ||
-      lName == "" ||
-      fName == "" ||
-      nID == "" ||
-      mLname == "" ||
-      selectedDate == "" ||
-      pob == ""
+      step == 1 &&
+      (mFname == "" ||
+        lName == "" ||
+        fName == "" ||
+        nID == "" ||
+        mLname == "" ||
+        selectedDate == "" ||
+        pob == "")
     ) {
       console.log(mFname, lName, fName, nID, selectedDate, pob);
       toast.error("please fill the required fields");
       return;
-    } else {
-      // console.log("here",formData.mFname)
-      if (
-        step == 2 &&
-        (emergencyContactName == "" ||
-          emergencyContactNumber == "" ||
-          phoneNumber == "")
-      ) {
-        console.log(emergencyContactName, emergencyContactNumber, phoneNumber);
-        toast.error("please fill the required fields");
-        return;
-      } else if (step === 4 && isChecked == false) {
-        // console.log(isChecked);
-        toast.error("please fill the required fields");
+    }
+    // console.log("here",formData.mFname)
+    if (
+      step == 2 &&
+      (emergencyContactName == "" ||
+        emergencyContactNumber == "" ||
+        phoneNumber == "")
+    ) {
+      console.log(emergencyContactName, emergencyContactNumber, phoneNumber);
+      toast.error("please fill the required fields");
+      return;
+    }
+    if (
+      step === 4 &&
+      (appointmentDate === undefined ||
+        appointmentDate === "" ||
+        selectedState1 === undefined ||
+        selectedState1 === "")
+    ) {
+      toast.error("please fill the required fields");
+      return;
+    }
+    if (step === 4 && isChecked == false) {
+      toast.error("please check the checkbox if you agreed the terms");
+      return;
+    }
+    if (step === 4 && isChecked == true) {
+      dispatch(checkIsHolyday(appointmentDate));
+      if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
+        toast.error(errorMessage.message);
         return;
       }
-
-      setStep(step + 1);
     }
+
+    setStep(step + 1);
   };
 
   return (
@@ -1072,430 +1094,428 @@ function MultiStepForm() {
           </form>
         )}
         {step === 5 && (
-          <form onSubmit={handleNext} className=" shadow-2xl px-4 ">
-            <div className="border-b border-gray-900/10 pb-6">
-              <p className="mt-1 text-sm leading-6 text-white">
-                Please preview your information before submitting your
-                application.
-              </p>
+          <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
+            <p className="mt-1 text-sm leading-6 text-white">
+              PLEASE PREVIEW YOUR INFORMATION BEFORE SUBMITTING AND MAKE
+              PAYMENT.
+            </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
-                {/* <div className="sm:col-span-4">
+            <legend>PERSONAL INFORMATION</legend>
+            <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3  sm:grid-cols-6 m-0">
+              <div className="col-span-1 my-2 lg:col-span-1 lg:my-1">
                 <label
                   htmlFor="nID"
-                  className="block text-sm font-medium leading-6 text-gray-300">
+                  className="block text-sm font-medium leading-6 text-white">
                   NATIONAL ID
                 </label>
+                <input
+                  type="text"
+                  name="nID"
+                  placeholder="Enter Your National ID"
+                  value={nID}
+                  disabled
+                  // onChange={(e) => setNID(e.target.value)}
+                  autoComplete="address-level2"
+                  className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+
+              {/* //FIRST NAME */}
+              <div className="col-span-2 my-2 lg:col-span-2 lg:my-1">
+                <label
+                  htmlFor="first-name"
+                  className="block text-sm font-medium leading-6 text-white">
+                  First name
+                </label>
+                <div className="">
                   <input
                     type="text"
-                    name="nID"
-                    placeholder="Enter Your National ID"
-                    value={nID}
-                    // onChange={(e) => setNID(e.target.value)}
+                    name="fName"
+                    value={fName}
+                    // onChange={(e) => setFname(e.target.value)}
                     disabled
-                    autoComplete="address-level2"
+                    placeholder="First Name"
+                    autoComplete="given-name"
+                    className="block w-full rounded-md border-0.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              {/* LAST NAME */}
+              <div className="col-span-2 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="last-name"
+                  className="block text-sm font-medium leading-6 text-white">
+                  Last name
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="lName"
+                    value={lName}
+                    // onChange={(e) => setLName(e.target.value)}
+                    disabled
+                    placeholder="Last Name"
+                    autoComplete="family-name"
                     className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  {/* {validationErrors.nID && (
-        <span className="text-danger">{validationErrors.nID}</span>
-      )} */}
-                {/* </div> */}
-                {/* */}
+                </div>
+              </div>
+              {/* sex */}
+              <div className="col-span-1 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="gender"
+                  className="block text-sm font-medium leading-6 text-white">
+                  Gender
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="mLname"
+                    value={selectedSex}
+                    // onChange={(e) => setMLname(e.target.value)}
+                    disabled
+                    placeholder="gender"
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              {/* MARITAL STATUS */}
+              <div className="col-span-1 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="status"
+                  className="block text-sm font-medium leading-6 text-white">
+                  MARITAL STATUS
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="status1"
+                    value={status1}
+                    // onChange={(e) => setMLname(e.target.value)}
+                    disabled
+                    placeholder="Marital status"
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              {/* //MOTHER FIRST NAME */}
+              <div className="col-span-2 my-2 lg:col-span-2 lg:my-1">
+                <label
+                  htmlFor="first-name"
+                  className="block text-sm font-medium leading-6 text-white">
+                  MOTHER'S FIRST NAME
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="mFname"
+                    value={mFname}
+                    // onChange={(e) => setMFname(e.target.value)}
+                    disabled
+                    placeholder="Mother's First Name"
+                    autoComplete="given-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+              {/*MOTHER'S LAST NAME */}
+              <div className="col-span-2 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="mLname"
+                  className="block text-sm font-medium leading-6 text-white">
+                  MOTHER'S LAST NAME
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="mLname"
+                    value={mLname}
+                    // onChange={(e) => setMLname(e.target.value)}
+                    disabled
+                    placeholder="Mother's Last Name"
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
 
-                {/* //FIRST NAME */}
-                <fieldset>
-                  <legend>PERSONAL INFORMATION</legend>
-                  <div className="sm:col-span-6  lg:col-span-2 lg:my-1 ">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      First name
-                    </label>
-                    <div className="">
-                      <input
-                        type="text"
-                        name="fName"
-                        value={fName}
-                        disabled
-                        // onChange={(e) => setFname(e.target.value)}
-                        placeholder="First Name"
-                        autoComplete="given-name"
-                        className="block w-full rounded-md border-0.5 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                  {/* LAST NAME */}
-                  <div className="sm:col-span-2 lg:col-span-2 lg:my-1">
-                    <label
-                      htmlFor="last-name"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      Last name
-                    </label>
-                    <div className="">
-                      <input
-                        type="text"
-                        name="lName"
-                        value={lName}
-                        // onChange={(e) => setLName(e.target.value)}
-                        disabled
-                        placeholder="Last Name"
-                        autoComplete="family-name"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                  {/* //MOTHER FIRST NAME */}
-                  <div className="sm:col-span-3 lg:col-span-2  lg:my-1 ">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      MOTHER'S FIRST NAME
-                    </label>
-                    <div className="">
-                      <input
-                        type="text"
-                        name="mFname"
-                        value={mFname}
-                        // onChange={(e) => setMFname(e.target.value)}
-                        disabled
-                        placeholder="Mother's First Name"
-                        autoComplete="given-name"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                  {/*MOTHER'S LAST NAME */}
-                  <div className="sm:col-span-3  lg:col-span-2 lg:my-1">
-                    <label
-                      htmlFor="mLname"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      MOTHER'S LAST NAME
-                    </label>
-                    <div className="">
-                      <input
-                        type="text"
-                        name="mLname"
-                        value={mLname}
-                        disabled
-                        // onChange={(e) => setMLname(e.target.value)}
-                        placeholder="Mother's Last Name"
-                        autoComplete="family-name"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-                  {/* sex */}
-                  <div className="sm:col-span-2 lg:col-span-2  lg:my-3">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      Gender
-                    </label>
-                    <div className="">
-                      <select
-                        id="selectedSex"
-                        name="selectedSex"
-                        autoComplete=""
-                        value={selectedSex}
-                        // onChange={(e) => setSelectedSex(e.target.value)}
-                        disabled
-                        placeholder="Select Gender"
-                        className="block w-full rounded-md border-0 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                        <option value={selectedSex}>{selectedSex}</option>
-                      </select>
-                    </div>
-                  </div>
+              {/* occupation */}
+              <div className="col-span-1 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="occupation"
+                  className="block text-sm font-medium leading-6 text-white">
+                  OCCUPATION
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="occupation"
+                    value={occupation}
+                    // onChange={(e) => setMLname(e.target.value)}
+                    disabled
+                    placeholder="occupation"
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
 
-                  {/* occupation */}
-                  <div className="sm:col-2 lg:col-span-2">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      OCCUPATION
-                    </label>
-                    <div className="">
-                      <select
-                        id="occupation"
-                        name="occupation"
-                        autoComplete=""
-                        value={occupation}
-                        placeholder="Select Your occupation"
-                        // onChange={(e) => setOccupation(e.target.value)}
-                        className="block w-full rounded-md border-0 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                        <option value={""}>Select Your Occupation</option>
-                        <option value={"Student"}>Student</option>
-                        <option value={"Employee"}>Employee</option>
-                        <option value={"Others"}>Others</option>
-                      </select>
-                    </div>
-                  </div>
+              {/* date of birth */}
+              <div className="col-span-3 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="selectedDate"
+                  className="block text-sm font-medium leading-6 text-white">
+                  DATE OF BIRTH
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="selectedDate"
+                    value={selectedDate}
+                    // onChange={(e) => setMLname(e.target.value)}
+                    disabled
+                    placeholder="Mother's Last Name"
+                    autoComplete="family-name"
+                    className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
 
-                  {/* MARITAL STATUS */}
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      MARITAL STATUS
-                    </label>
-                    <div className="">
-                      <select
-                        id="status"
-                        name="status1"
-                        autoComplete="country-name"
-                        onChange={(e) => setStatus(e.target.value)}
-                        placeholder="Marital Status"
-                        className="block w-full rounded-md border-0 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                        <option value={""}>Marital Status</option>
-                        <option value={"Single"}>Single</option>
-                        <option value={"Husband"}>Husband</option>
-                        <option value={"Widow"}>Widow</option>
-                      </select>
-                    </div>
-                  </div>
-                  {/* date of birth */}
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      DATE OF BIRTH
-                    </label>
-
-                    <div className="">
-                      <input
-                        type="date"
-                        id="selectedDate"
-                        name="selectedDate"
-                        value={selectedDate}
-                        // onChange={(event) => setSelectedDate(event.target.value)}
-                        disabled
-                        // onChange={handleChange}
-                        autoComplete="date"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-
-                  {/* place of birth */}
-                  <div className="sm:col-span-2 mb-2 lg:my-1">
-                    <label
-                      htmlFor="pob"
-                      className="block text-sm font-medium leading-6 text-gray-300">
-                      PLACE OF BIRTH
-                    </label>
-                    <div className="">
-                      <input
-                        type="text"
-                        name="pob"
-                        value={pob}
-                        onChange={(e) => setPob(e.target.value)}
-                        placeholder="Place of Birth"
-                        autoComplete="place of birth"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                      {/* {validationErrors.pob && (
+              {/* place of birth */}
+              <div className="col-span-3 my-2 lg:col-span-1 lg:my-1">
+                <label
+                  htmlFor="pob"
+                  className="block text-sm font-medium leading-6 text-white">
+                  PLACE OF BIRTH
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="pob"
+                    value={pob}
+                    // onChange={(e) => setPob(e.target.value)}
+                    disabled
+                    placeholder="Place of Birth"
+                    autoComplete="place of birth"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                  {/* {validationErrors.pob && (
         <span className="text-danger">{validationErrors.pob}</span>
       )} */}
-                    </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="shadow-2xl my-3 border-b border-gray-900/10 pb-6">
+              <legend>CONTACT INFORMATION</legend>
+              <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3 sm:grid-cols-6 m-0">
+                {/* CONTACT NUMBER */}
+                <div className="col-span-3  lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="contactNumber"
+                    className="block text-sm font-medium leading-6 text-white">
+                    YOUR CONTACT NUMBER
+                  </label>
+                  <div className="">
+                    <input
+                      type="number"
+                      name="phoneNumber"
+                      value={phoneNumber}
+                      disabled
+                      // onChange={(e) => setPhoneNumber(e.target.value)}
+                      autoComplete="contact number"
+                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="Enter your phone number"
+                    />
                   </div>
-                  <legend>CONTACT INFORMATION</legend>
-                  {/* CONTACT NUMBER */}
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium leading-6 text-white">
-                      YOUR CONTACT NUMBER
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="number"
-                        name="phoneNumber"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                        autoComplete="contact number"
-                        className="block w-full rounded-md border-0 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="Enter your phone number"
-                      />
-                      {validationErrors.phoneNumber && (
-                        <span className="text-danger">
-                          {validationErrors.phoneNumber}
-                        </span>
-                      )}
-                    </div>
+                </div>
+                {/* EMAIL */}
+                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium leading-6 text-white">
+                    YOUR E-MAIL
+                  </label>
+                  <div className="">
+                    <input
+                      type="email"
+                      name="email"
+                      value={email}
+                      disabled
+                      // onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="Enter your E-mail"
+                    />
                   </div>
-                  {/* EMAIL */}
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="last-name"
-                      className="block text-sm font-medium leading-6 text-white">
-                      YOUR E-MAIL
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="email"
-                        name="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="email"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        placeholder="Enter your E-mail"
-                      />
-                    </div>
+                </div>
+                {/* EMERGENCY CONTACT NAME */}
+                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="emergency-contact"
+                    className="block text-sm font-medium leading-6 text-white">
+                    EMERGENCY CONTACT NAME
+                  </label>
+                  <div className="">
+                    <input
+                      type="text"
+                      name="emergencyContactName"
+                      value={emergencyContactName}
+                      disabled
+                      // onChange={(e) => setEmergencyContactName(e.target.value)}
+                      // autoComplete="given-name"
+                      placeholder="Enter your Emergency Contact Name"
+                      className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
-                  {/* EMERGENCY CONTACT NAME */}
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="first-name"
-                      className="block text-sm font-medium leading-6 text-white">
-                      EMERGENCY CONTACT NAME
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="emergencyContactName"
-                        value={emergencyContactName}
-                        onChange={(e) =>
-                          setEmergencyContactName(e.target.value)
-                        }
-                        // autoComplete="given-name"
-                        placeholder="Enter your Emergency Contact Name"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                      {validationErrors.emergencyContactName && (
-                        <span className="text-danger">
-                          {validationErrors.emergencyContactName}
-                        </span>
-                      )}
-                    </div>
+                </div>
+                {/*EMERGENCY CONTACT NUMBER */}
+                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="mLname"
+                    className="block text-sm font-medium leading-6 text-white">
+                    EMERGENCY CONTACT NUMBER
+                  </label>
+                  <div className="">
+                    <input
+                      type="number"
+                      name="emergencyContactNumber"
+                      value={emergencyContactNumber}
+                      disabled
+                      // onChange={(e) =>
+                      //   setEmergencyContactNumber(e.target.value)
+                      // }
+                      // autoComplete="family-name"
+                      placeholder="Enter your Emergency Contact Number"
+                      className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
                   </div>
-                  {/*EMERGENCY CONTACT NUMBER */}
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="mLname"
-                      className="block text-sm font-medium leading-6 text-white">
-                      EMERGENCY CONTACT NUMBER
-                    </label>
-                    <div className="mt-2 mb-3">
-                      <input
-                        type="number"
-                        name="emergencyContactNumber"
-                        value={emergencyContactNumber}
-                        onChange={(e) =>
-                          setEmergencyContactNumber(e.target.value)
-                        }
-                        // autoComplete="family-name"
-                        placeholder="Enter your Emergency Contact Number"
-                        className="block w-full rounded-md border-1 py-1 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                      {validationErrors.emergencyContactNumber && (
-                        <span className="text-danger">
-                          {validationErrors.emergencyContactNumber}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {/* APPOINTMENT */}
-                  <legend>APPOINTMENT INFORMATION</legend>
-                  <div className="sm:col-span-3">
-                    <label htmlFor="stateName">State Name</label>
+                </div>
+              </div>
+            </div>
+
+            <legend>APPOINTMENT INFORMATION</legend>
+            <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
+            <div className="col-span-3  lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="state"
+                    className="block text-sm font-medium leading-6 text-white">
+                    STATE NAME
+                  </label>
+                  <div className="">
                     <input
                       type="text"
                       name="stateName"
-                      disabled
                       value={stateName}
-                      
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      disabled
+                      // onChange={(e) => setPhoneNumber(e.target.value)}
+                      autoComplete="stateName"
+                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="State name"
                     />
                   </div>
-                  <div className="sm:col-span-3">
-                    <label htmlFor="selectedState">District Name</label>
+                </div>
+                <div className="col-span-3  lg:col-span-1 lg:my-1">
+                  <label
+                    htmlFor="district"
+                    className="block text-sm font-medium leading-6 text-white">
+                    District Name
+                  </label>
+                  <div className="">
                     <input
                       type="text"
                       name="districtName"
-                      disabled
                       value={districtName}
-                      
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      disabled
+                      // onChange={(e) => setPhoneNumber(e.target.value)}
+                      autoComplete="districtName"
+                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      placeholder="District Name"
                     />
                   </div>
-                  
+                </div>
+          
 
-                  {/* 1502440 */}
+              {/* 1502440 */}
 
-                  {/* <hr /> */}
+              {/* <hr /> */}
 
-                  <div className="sm:col-span-3">
-                    {selectedState?.length > 0 &&
-                      selectedState?.map((item) => (
-                        <div>
+              <div className="col-span-3  lg:col-span-1 lg:my-1">
+                {selectedState?.length > 0 &&
+                  selectedState?.map((item) => (
+                    <div>
                       
-                          <div className="form-group my-2">
-                            <label htmlFor="office">Office Name</label>
-                            <input
-                              type="text"
-                              name="office"
-                              disabled
-                              value={item.officeName}
-                              className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                          <div className="form-group">
-                            <label htmlFor="location">Location</label>
-                            <textarea
-                              type="text"
-                              name="location"
-                              disabled
-                              value={item.location}
-                              className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
+                      <div className="form-group my-2">
+                        <label htmlFor="office">Office Name</label>
+                        <input
+                          type="text"
+                          name="office"
+                          disabled
+                          value={item.officeName}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="location">Location</label>
+                        <textarea
+                          type="text"
+                          name="location"
+                          disabled
+                          value={item.location}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
 
-                          <div className="form-group my-2">
-                            <label htmlFor="contactNumber">
-                              Office Contact Number
-                            </label>
-                            <input
-                              type="Number"
-                              name="contactNumber"
-                              disabled
-                              value={item.contactNumber}
-                              className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                  <div className="sm:col-span-3">
-                    <div className="form-group">
-                      <label htmlFor="date">Appointment Date</label>
-                      <input
-                        type="text"
-                        name="appointmentDate"
-                        disabled
-                        value={appointmentDate}
-                        // onChange={dateHandleChange}
-                        id=""
-                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
+                      <div className="form-group my-2">
+                        <label htmlFor="contactNumber">
+                          Office Contact Number
+                        </label>
+                        <input
+                          type="Number"
+                          name="contactNumber"
+                          disabled
+                          value={item.contactNumber}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </fieldset>
+                  ))}
               </div>
-
-              <div className="d-flex justify-content-center align-items-center">
-                <button
-                  type="button"
-                  onClick={handlePrevious}
-                  className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                  Previous
-                </button>
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                  NEXT
-                </button>
+              <div className="col-span-3  lg:col-span-1 lg:my-1">
+                <div className="form-group">
+                  <label htmlFor="date">Appointment Date</label>
+                  <input
+                    type="text"
+                    name="appointmentDate"
+                    // onChange={dateHandleChange}
+                    value={appointmentDate}
+                    id=""
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                  {/* {validationErrors.appointmentDate && (
+        <span className="text-danger">{validationErrors.appointmentDate}</span>
+      )} */}
+                </div>
+               
               </div>
             </div>
-          </form>
+
+            <div className="d-flex justify-content-center align-items-center">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                Previous
+              </button>
+              <button
+                type="submit"
+                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-black shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                NEXT
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </>
