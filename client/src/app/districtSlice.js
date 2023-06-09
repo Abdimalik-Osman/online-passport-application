@@ -22,7 +22,10 @@ const initialState = {
   status: 'idle',
   
   message:"",
-  error: null
+  error: null,
+  isError: false,
+  isSuccess: false,
+  isLoading: false,
 };
 
 // Define your async actions using createAsyncThunk
@@ -136,7 +139,12 @@ export const districtSlice = createSlice({
   name: 'districts',
   initialState,
   reducers:{
-    reset:(state)=> initialState,
+    reset:(state)=> {
+      state.isError =  false
+      state.isSuccess = false
+      state.isLoading = false
+      state.error = null
+    },
     getData:(state)=> {
       
     }
@@ -146,9 +154,12 @@ export const districtSlice = createSlice({
       .addCase(fetchData.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true
       })
       .addCase(fetchData.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isLoading = false;
+        state.isSuccess =  true
         state.error = null;
         state.districts = action.payload;
       })
@@ -156,13 +167,18 @@ export const districtSlice = createSlice({
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getSingleDistrict.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(getSingleDistrict.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isSuccess = true;
+        state.isLoading = false;
         state.districtData = action.payload;
         state.error = null;
       })
@@ -170,13 +186,18 @@ export const districtSlice = createSlice({
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getDistrictData.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(getDistrictData.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isSuccess = true;
+        state.isLoading = false;
         state.selectedState = action.payload;
         state.error = null;
       })
@@ -184,76 +205,103 @@ export const districtSlice = createSlice({
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getDistrictWorkingHours.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true;
       })
       .addCase(getDistrictWorkingHours.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isSuccess = true;
+        state.isLoading = false;
         state.workingHours = action.payload;
         state.error = null;
       })
       .addCase(getDistrictWorkingHours.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
-        state.message = action.payload;
+        // state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getUnavailableDates.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true;
       })
       .addCase(getUnavailableDates.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.unavailableDates = action.payload;
         state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true
       })
       .addCase(getUnavailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getNationalId.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true;
       })
       .addCase(getNationalId.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.error = null;
         state.nationalID = action.payload;
+        state.isLoading = false
+        state.isSuccess = true;
       })
       .addCase(getNationalId.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
-        state.message = action.payload;
+        // state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getDistrictInfo.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true;
       })
       .addCase(getDistrictInfo.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.error = null;
         state.selectedState = action.payload;
+        state.isSuccess = true;
+        state.isLoading = false
       })
       .addCase(getDistrictInfo.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
       .addCase(getAvailableDates.pending, (state) => {
         state.status = 'loading';
         state.error = null;
+        state.isLoading = true;
       })
       .addCase(getAvailableDates.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.error = null;
         state.availableDates =action.payload
+        state.isLoading = false;
+        state.isSuccess = true;
       })
       .addCase(getAvailableDates.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
         state.message = action.payload;
+        state.isError = true;
+        state.isLoading = false;
       })
     //   .addCase(addItem.fulfilled, (state, action) => {
     //     state.districts.push(action.payload);

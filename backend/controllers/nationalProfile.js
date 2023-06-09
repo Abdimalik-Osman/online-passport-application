@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const NationalID = require('../models/nationalProfile');
-
+const Applicant = require("../models/applicants")
 exports.insertData = async(req,res)=>{
     try {
         let promise = req.body.data.map(async(arr)=>{
@@ -36,12 +36,19 @@ exports.getAllData = async(req, res) => {
 // get single person data
 exports.getSinglePerson = async(req, res) => {
     try {
+        const applicant = await Applicant.findOne({nID:req.params.id})
+        // console.log(applicant)
+        if(applicant){
+            return res.status(400).json({message: 'This ID already registered, please check your national ID',status:"fail"});
+        }
         const person = await NationalID.findOne({serialNumber: req.params.id});
         if (person) {
         return res.status(200).json(person);
-        }else{
+        }
+        if(!person){
             return res.status(400).json({message: 'This ID does not exist.',status:"fail"});
         }
+       
     } catch (err) {
         return res.status(500).json({ message: err.message ,status:"fail"});
     }

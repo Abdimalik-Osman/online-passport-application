@@ -10,6 +10,7 @@ const PaymentLog = require("../models/paymentLog")
 const UnAvailableDate = require("../models/unavailableDate")
 const AvailableTime = require("../models/availableTime");
 const DistrictWorkingHours = require("../models/workingHours");
+const nodemailer = require("nodemailer")
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -123,6 +124,20 @@ exports.createApplicant = async(req,res)=>{
         passportExpirationData.setFullYear(
           passportExpirationData.getFullYear() + 5
         );
+
+           // Find the highest appointmentNumber value in the database
+    const highestAppointment = await Appointment.findOne().sort('-appointmentNumber').exec();
+    let newAppointmentNumber = 0;
+    if (highestAppointment) {
+      // Extract the numeric portion of the highest appointmentNumber and increment it
+      const lastNumber = parseInt(highestAppointment.appointmentNumber.toString().substr(4));
+      newAppointmentNumber = lastNumber + 1;
+    } else {
+      // If no appointments exist in the database, start with a default value of 1000
+      newAppointmentNumber = 1000;
+    }
+    // Set the appointmentNumber field to the new sequence number
+    const appointmentNumber = `APPT${newAppointmentNumber.toString().padStart(4, '0')}`;
      // Check if there are available slots for the selected district and date
      const districtData = await District.findOne({"districtInfo._id":req.body.districtId})
     
@@ -183,7 +198,10 @@ exports.createApplicant = async(req,res)=>{
                    appointmentTime:req.body.appointmentTime,
                    applyingDate: new Date(),
                    expireDate: passportExpirationData,
-                   nID:req.body.nID
+                   nID:req.body.nID,
+                   email:req.body.email,
+                   emergencyContactNumber:req.body.emergencyContactNumber,
+                   emergencyContactName:req.body.emergencyContactName,
                  });
                     // Save the appointment and update the bookedSlots count for the selected date
    await newApplicant.save();
@@ -236,21 +254,53 @@ if (isExists) {
   })
 
 }
+      const newAppointment = new Appointment({
+        applicantId: newApplicant._id,
+        appointmentNumber:appointmentNumber,
+        appointmentDate:req.body.appointmentDate,
+        appointmentTime:req.body.appointmentTime
+      })
+      await newAppointment.save()
+      
         const newPayment = new PaymentLog({
         applicantId:newApplicant._id,
-        amount:req.body.amount,
+        amount:150,
         type:req.body.type
       });
       await newPayment.save();
       if(!newPayment){
         await Applicant.findByIdAndRemove(newApplicant._id)
+        await Appointment.findByIdAndRemove(newAppointment._id)
       }
     }
     else{
       return res.status(400).json({message:"new appointment can not be created",status:"fail"})
     }
-   
-
+    const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, with ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
+    
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: true,
+      auth: {
+        user: 'myfather8818@gmail.com',
+        pass:'oqsvvrqmzgjhxuux',
+        
+      }
+    })
+    const emailOption = {
+      from: 'myfather88818@gmail.com',
+      to: "engabdimalik8818@gmail.com",
+      subject: emailBody,
+      text:'Appointment Scheduled'
+    }
+    
+    transport.sendMail(emailOption, (error, info) => {
+      if (error) throw error;
+    
+      console.log(`The email sent ${info.response}`);
+    })
     res.status(201).json({ message: 'Appointment booked successfully',status:"success"});
   } catch (error) {
     return res.status(500).json({ error: error.message, status:"fail"})
@@ -364,107 +414,25 @@ exports.updateApplicant = async(req,res)=>{
   }
 }
 
-//     //initialize the passport expiration date
-//     let passportExpirationData = new Date();
-//     passportExpirationData.setFullYear(
-//       passportExpirationData.getFullYear() + 5
-//     );
+exports.viewApplicant = async (req,res) => {
+  try {
+    if(!req.params.appointmentNumber || req.params.appointmentNumber === undefined){
+      return res.stat(404).json({message:"Please enter appointment number",status:"fail"});
+    }
+    if(!req.params.phoneNumber || req.params.phoneNumber === undefined){
+      return res.stat(404).json({message:"Please enter phone number",status:"fail"});
+    }
+     const applicantInfo = await Appointment.findOne({appointmentNumber:req.params.appointmentNumber, phoneNumber:req.params.phoneNumber})
+     if(!applicantInfo) return res.status(400).json({message:"this appointment does not exist",status:"fail"})
+     console.log(applicantInfo?._id)
+     const applicantData = await Applicant.findOne({phoneNumber:applicantInfo?.phoneNumber})
+     if (!applicantData){
+      return res.stat(404).json({message:"No applicant data was not found",status:"fail"});
+     }
+    //  console.log(applicantData)
+     return res.status(200).json(applicantData)
+  } catch (error) {
+    return res.status(500).json({message:error.message, status:"fail"})
+  }
+}
 
-//     // create an appointment time
-//     const options = { timeZone: "Africa/Nairobi" };
-//     let appointmentDate = new Date().toLocaleString("en-US", options);
-//     appointmentDate = new Date(appointmentDate); // convert the date string to a Date object
-//     appointmentDate.setDate(appointmentDate.getDate() + 3);
-//     // appointmentDate.setHours(8, 0, 0); // set the time to 9:00 AM
-//     //    console.log(appointmentDate.toLocaleString('en-US', options));
-//     (appointmentDate.getDay() === 5 ? new Date(appointmentDate.setDate(appointmentDate.getDate() + 1)).toLocaleString('en-US', options) : appointmentDate.toLocaleString('en-US', options)) + "."
-//     let appointmentNumber = Math.floor(100000 + Math.random() * 900000);
-
-//     // check if the applicant is already existing
-//     const oldCidNumber = await Applicant.findOne({CIDNumber:req.body.CIDNumber})
-//     const oldRegionalId = await Applicant.findOne({regionalID:req.body.regionalID})
-
-//     // get cid data
-//     const cIdData = await CID.findOne({
-//       cIdNumber: Number(req.body.CIDNumber),
-//     });
-//     // get region's data
-//     const regionalData = await Region.findOne({
-//       serialNumber: Number(req.body.regionalID),
-//     });
-//     if (regionalData) {
-//       if (regionalData.endDate < Date.now()) {
-//         return res
-//           .status(404)
-//           .json({ message: "Dhalashadaada waqtiga wuu ka dhacay..." });
-//       } else {
-//         if (cIdData) {
-//           if (
-//             cIdData.status === true ||
-//             cIdData.status == true ||
-//             cIdData.status == "true"
-//           ) {
-//             if(oldRegionalId || oldCidNumber){
-//               return res.status(404).json({message:"Sorry, qofkan mar hore ayaa la diiwangaliyey😜😜"})
-//             }
-           
-//             const newApplicant = new Applicant({
-//               fullname: regionalData?.fullName,
-//               motherName: req.body.motherName,
-//               phoneNumber: req.body.phoneNumber,
-//               DOB: regionalData?.DOB,
-//               sex: regionalData?.sex,
-//               POB: req.body.POB,
-//               occupation: req.body.occupation,
-//               applyingPlace: req.body.applyingPlace,
-//               // passportType:
-//               applyingDate: new Date(),
-//               expireDate: passportExpirationData,
-//               CIDNumber: req.body.CIDNumber,
-//               regionalID: req.body.regionalID,
-//             });
-//             await newApplicant.save();
-//             if (newApplicant) {
-//               const newAppointment = new Appointment({
-//                 applicantId: newApplicant?._id,
-//                 appointmentNumber: appointmentNumber,
-//                 appointmentDate: appointmentDate,
-//               });
-//               await newAppointment.save();
-//               return res.status(201).json({
-//                 message: "new Applicant has been created🤣🤣🤣",
-//                 newApplicant,
-//               });
-//             } else {
-//               return res
-//                 .status(404)
-//                 .json({
-//                   message: "error occurred while creating new applicant😜😜",
-//                 });
-//             }
-//           } else {
-//             return res
-//               .status(404)
-//               .json({ message: "Fadlan adiga waxaa tahay dambiile😜😜" });
-//           }
-//         } else {
-//           return res
-//             .status(404)
-//             .json({
-//               message:
-//                 "CID numberkan majiro,Fadlan marka hore iska soo diiwan gali CID-da😜😜",
-//             });
-//         }
-//       }
-//     } else {
-//       return res
-//         .status(404)
-//         .json({
-//           message:
-//             "Dhalasho numberkan majiro, fadlan marka hore iska soo diiwan gali xarunta gobolka😜😜",
-//         });
-//     }
-//   } catch (err) {
-//     return res.status(500).json({ message: err.message });
-//   }
-// };

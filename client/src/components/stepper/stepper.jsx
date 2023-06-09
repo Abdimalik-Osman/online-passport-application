@@ -1,8 +1,10 @@
 // export default Stepper;
 import React, { useEffect, useState } from "react";
+
 import Joi from "joi";
 import HorizontalStepper from "./horizontalStepper";
 import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import ModalShow from "./Modal";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +17,7 @@ import {
   getDistrictInfo,
   useAppDispatch,
   getAvailableDates,
+  reset
 } from "../../app/districtSlice";
 import {
   addNewApplicant,
@@ -23,7 +26,7 @@ import {
   getApplicants,
   getSingleApplicant,
   checkIsHolyday,
-  reset,
+  appReset,
 } from "../../app/applicantSlice";
 
 function MultiStepForm() {
@@ -52,6 +55,9 @@ function MultiStepForm() {
   const [step, setStep] = useState(1);
   let [amount, setAmount] = useState("150");
   let [type, setType] = useState("");
+  let [officeName, setOfficeName] = useState("");
+  let [location, setLocation] = useState("");
+  let [officeNumber, setOfficeNumber] = useState("");
   let [isChecked, setIsChecked] = useState(false);
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -111,15 +117,43 @@ function MultiStepForm() {
     availableDates,
     districtData,
     workingHours,
+    isError,
+    isSuccess,
+    isLoading
+    
   } = useSelector((state) => state.district);
   const appMessage = useSelector((state) => state.applicant.message);
   const appStatus = useSelector((state) => state.applicant.status);
   const errorMessage = useSelector((state) => state.applicant.error);
+  const isAppError = useSelector((state) => state.applicant.isError);
+  const isAppSuccess = useSelector((state) => state.applicant.isSuccess);
+  const isAppLoading = useSelector((state) => state.applicant.isLoading);
+  const [minDate, setMinDate] = useState('');
+  
+  // Get the current date in the format required by the input element
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  // Set the minimum date of the input element to the current date
+  if (!minDate) {
+    setMinDate(currentDate);
+  }
   useEffect(() => {
-    if (status === "idle") {
+    
+    if(status == "idle"){
       dispatch(fetchData());
     }
-  }, [status, dispatch, availableDates, availableDates, selectedState]);
+    if(isError){
+      toast.error(error?.message)
+    }
+    if(isAppError) {
+      toast.error(errorMessage?.message);
+
+    }
+    return ()=>{
+      dispatch(reset());
+    dispatch(appReset());
+    }
+  }, [isLoading, dispatch, isAppError,isAppLoading, isAppSuccess, isSuccess, isError]);
   // console.log(districts)
 
   // handle the previous step
@@ -155,7 +189,7 @@ function MultiStepForm() {
     // }
   };
 
-  const options = districts?.map((item) => ({
+  const options =  districts?.map((item) => ({
     value: item?.districtInfo[0]?._id,
     label: item?.stateName,
   }));
@@ -228,7 +262,13 @@ function MultiStepForm() {
 
   // handle click or get national id information
   const handleClick = async () => {
+ 
     dispatch(getNationalId(nID));
+    if (error?.status === "fail" || error?.status == "fail") {
+      toast.error(error.message);
+      console.log(error)
+     return
+    }
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
     setSelectedSex(defaultSex);
     const apiDate = new Date(nationalID?.DOB); // convert date string to date object
@@ -312,6 +352,24 @@ function MultiStepForm() {
   // handle the next step
   const handleNext = async (e) => {
     e.preventDefault();
+    const data = {
+      nID: nID,
+      phoneNumber: phoneNumber,
+      emergencyContactName: emergencyContactName,
+      emergencyContactNumber: emergencyContactNumber,
+      fullname: fName + " " + lName,
+      motherName: mFname + " " + mLname,
+      POB: pob,
+      DOB: selectedDate,
+      amount,
+      status: status1,
+      email: email,
+      occupation: occupation,
+      appointmentTime: selectedTime,
+      appointmentDate: appointmentDate,
+      districtId: selectedState1,
+      sex: selectedSex,
+    };
     if (
       step == 1 &&
       (mFname == "" ||
@@ -351,12 +409,22 @@ function MultiStepForm() {
       toast.error("please check the checkbox if you agreed the terms");
       return;
     }
-    if (step === 4 && isChecked == true) {
+    if (isChecked == true) {
       dispatch(checkIsHolyday(appointmentDate));
       if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
-        toast.error(errorMessage.message);
-        return;
+        toast.error(errorMessage?.message);
+      }else{
+        
+       dispatch(addNewApplicant(data));
+       if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
+        toast.error(errorMessage?.message);
+      }else{
+        if (errorMessage?.status === "success" || errorMessage?.status == "success") {
+          toast.success(errorMessage?.message);
+        }
       }
+      }
+      return
     }
 
     setStep(step + 1);
@@ -510,7 +578,7 @@ function MultiStepForm() {
                       className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                       <option value={""}>Select Your Gender</option>
                       <option value={"Male"}>Male</option>
-                      <option value={"Male"}>Male</option>
+                      <option value={"Female"}>Female</option>
                     </select>
                   </div>
                 </div>
@@ -914,6 +982,7 @@ function MultiStepForm() {
                           name="office"
                           disabled
                           value={item.officeName}
+                          // onChange={(e)=>setOfficeName(e.target.value)}
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
@@ -924,6 +993,7 @@ function MultiStepForm() {
                           name="location"
                           disabled
                           value={item.location}
+                          // onChange={(e)=>setLocation(e.target.value)}
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
@@ -937,6 +1007,7 @@ function MultiStepForm() {
                           name="contactNumber"
                           disabled
                           value={item.contactNumber}
+                          // onChange={(e)=>setOfficeNumber(e.target.value)}
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
@@ -950,7 +1021,7 @@ function MultiStepForm() {
                     type="date"
                     name="appointmentDate"
                     onChange={dateHandleChange}
-                    id=""
+                    min={minDate}
                     className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                   {/* {validationErrors.appointmentDate && (
@@ -1308,11 +1379,11 @@ function MultiStepForm() {
               </div>
             </div>
 
-            <div className="shadow-2xl my-3 border-b border-gray-900/10 pb-6">
+            <div className=" my-3 border-b border-gray-900/10 pb-6">
               <legend>CONTACT INFORMATION</legend>
               <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3 sm:grid-cols-6 m-0">
                 {/* CONTACT NUMBER */}
-                <div className="col-span-3  lg:col-span-1 lg:my-1">
+                <div className="col-span-3  lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="contactNumber"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1332,7 +1403,7 @@ function MultiStepForm() {
                   </div>
                 </div>
                 {/* EMAIL */}
-                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                <div className="col-span-3 my-1 lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="email"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1352,7 +1423,7 @@ function MultiStepForm() {
                   </div>
                 </div>
                 {/* EMERGENCY CONTACT NAME */}
-                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                <div className="col-span-3 my-1 lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="emergency-contact"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1372,7 +1443,7 @@ function MultiStepForm() {
                   </div>
                 </div>
                 {/*EMERGENCY CONTACT NUMBER */}
-                <div className="col-span-3 my-1 lg:col-span-1 lg:my-1">
+                <div className="col-span-3 my-1 lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="mLname"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1398,7 +1469,7 @@ function MultiStepForm() {
 
             <legend>APPOINTMENT INFORMATION</legend>
             <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
-            <div className="col-span-3  lg:col-span-1 lg:my-1">
+            <div className="col-span-3  lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="state"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1417,7 +1488,7 @@ function MultiStepForm() {
                     />
                   </div>
                 </div>
-                <div className="col-span-3  lg:col-span-1 lg:my-1">
+                <div className="col-span-3  lg:col-span-2 lg:my-1">
                   <label
                     htmlFor="district"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1441,11 +1512,11 @@ function MultiStepForm() {
               {/* 1502440 */}
 
               {/* <hr /> */}
-
-              <div className="col-span-3  lg:col-span-1 lg:my-1">
-                {selectedState?.length > 0 &&
+              {selectedState?.length > 0 &&
                   selectedState?.map((item) => (
-                    <div>
+                <>
+              <div className="col-span-3  lg:col-span-2 lg:my-1">
+     
                       
                       <div className="form-group my-2">
                         <label htmlFor="office">Office Name</label>
@@ -1457,6 +1528,8 @@ function MultiStepForm() {
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
+              </div>
+              <div className="col-span-3  lg:col-span-2 lg:my-1">
                       <div className="form-group">
                         <label htmlFor="location">Location</label>
                         <textarea
@@ -1467,7 +1540,8 @@ function MultiStepForm() {
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
-
+                    </div>
+                    <div className="col-span-3  lg:col-span-2 lg:my-1">
                       <div className="form-group my-2">
                         <label htmlFor="contactNumber">
                           Office Contact Number
@@ -1481,8 +1555,8 @@ function MultiStepForm() {
                         />
                       </div>
                     </div>
-                  ))}
-              </div>
+              </>
+        ))}
               <div className="col-span-3  lg:col-span-1 lg:my-1">
                 <div className="form-group">
                   <label htmlFor="date">Appointment Date</label>
@@ -1494,9 +1568,22 @@ function MultiStepForm() {
                     id=""
                     className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                  {/* {validationErrors.appointmentDate && (
-        <span className="text-danger">{validationErrors.appointmentDate}</span>
-      )} */}
+        
+                </div>
+               
+              </div>
+              <div className="col-span-3  lg:col-span-1 lg:my-1">
+                <div className="form-group">
+                  <label htmlFor="appointmentTime">Appointment Time</label>
+                  <input
+                    type="text"
+                    name="appointmentTime"
+                    // onChange={dateHandleChange}
+                    value={selectedTime}
+                    id=""
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+        
                 </div>
                
               </div>

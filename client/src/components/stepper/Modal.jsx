@@ -20,17 +20,17 @@ const Modal = ({handleClose, isOpen}) => {
     style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
   >
     <div
-      className="relative bg-white rounded-lg shadow dark:bg-gray-700"
+      className="relative bg-white rounded-lg shadow dark:bg-gray-900"
       style={{ width: '100%', maxWidth: '800px', maxHeight: '100vh' }}
     >
-      <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
+      <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-900">
         <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">
           Passport Rules
         </h3>
       </div>
 
       <div className="p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto" style={{ maxHeight: '70vh' }}>
-        <ol className="text-sm md:text-base leading-relaxed text-gray-500 dark:text-gray-400">
+        <ol className="text-sm md:text-base leading-relaxed text-gray-900 dark:text-gray-400">
           <li>1- Applicants must be Somali citizens or have proof of Somali citizenship to apply for a new passport.</li>
           <li>2- Applicants must provide accurate and complete information during the application process, including personal details, contact information, and supporting documents. Any false or misleading information may result in the rejection of the application.</li>
           <li>3- Applicants must pay the processing fee and any applicable convenience fees within the given time frame. Failure to make payment within the specified period may result in the cancellation or delay of the passport application.</li>

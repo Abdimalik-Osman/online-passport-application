@@ -14,10 +14,14 @@ const initialState = {
   applicants: [],
   newApplicants: [],
   singleApplicant: {},
+  applicantInfo:{},
   status: 'idle',
   holyDay:{},
   message:"",
-  error: null
+  error: null,
+  isError: false,
+  isSuccess: false,
+  isLoading: false,
 };
 
 // Define your async actions using createAsyncThunk
@@ -38,8 +42,16 @@ export const getSingleApplicant = createAsyncThunk('applicants/single', async (i
   return response.data;
   }catch (err) {
     return thunkAPI.rejectWithValue(err.response.data);
-    // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
-    // return thunkAPI.rejectWithValue(message); 
+
+}
+});
+export const getApplicantInfo = createAsyncThunk('applicants/view', async ({appointmentNumber,phoneNumber},thunkAPI) => {
+  try{
+  const response = await axios.get(url+`/view/${appointmentNumber}/${phoneNumber}`);
+  return response.data;
+  }catch (err) {
+    return thunkAPI.rejectWithValue(err.response.data);
+
 }
 });
 
@@ -115,7 +127,12 @@ export const applicantSlice = createSlice({
   name: 'applicants',
   initialState,
   reducers:{
-    reset:(state)=> initialState,
+    appReset:(state)=> {
+      state.isError =  false
+      state.isSuccess = false
+      state.isLoading = false
+      state.error = null
+    },
     getData:(state)=> {
       
     }
@@ -124,51 +141,88 @@ export const applicantSlice = createSlice({
     builder
       .addCase(getApplicants.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(getApplicants.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.applicants = action.payload;
+        state.isSuccess = true;
+        state.isLoading = false
         state.error = null;
       })
       .addCase(getApplicants.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
+        state.isLoading = false;
+        state.isError = true;
         // state.message = action.payload;
       })
       .addCase(getSingleApplicant.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(getSingleApplicant.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isSuccess = true
+        state.isLoading = false;
         state.singleApplicant = action.payload;
         state.error = null;
         
       })
       .addCase(getSingleApplicant.rejected, (state, action) => {
         state.status = 'failed';
+        state.isError = true;
+        state.isLoading = false;
+        state.error =  action.payload;
+        
+        // state.message = action.payload;
+      })
+      .addCase(getApplicantInfo.pending, (state) => {
+        state.status = 'loading';
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(getApplicantInfo.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.isSuccess = true
+        state.isLoading = false;
+        state.applicantInfo = action.payload;
+        state.error = null;
+        
+      })
+      .addCase(getApplicantInfo.rejected, (state, action) => {
+        state.status = 'failed';
+        state.isError = true;
+        state.isLoading = false;
         state.error =  action.payload;
         
         // state.message = action.payload;
       })
       .addCase(addNewApplicant.pending, (state) => {
+        state.isLoading = true;
+        
         state.status = 'loading';
       })
       .addCase(addNewApplicant.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.applicants.push(action.payload);
         state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
         // state = initialState
       })
       .addCase(addNewApplicant.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
-
+        state.isLoading = false;
+        state.isError = true
         // state.message = action.payload;
       })
       
       .addCase(updateApplicant.pending, (state) => {
+        state.isLoading = true;
         state.status = 'loading';
       })
       .addCase(updateApplicant.fulfilled, (state, action) => {
@@ -180,11 +234,14 @@ export const applicantSlice = createSlice({
       })
       .addCase(updateApplicant.rejected, (state, action) => {
         state.status = 'failed';
+        state.isLoading = false;
+        state.isError = true
         state.error =  action.payload;
         // state.message = action.payload;
       })
       .addCase(deleteApplicant.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true;
       })
        .addCase(deleteApplicant.fulfilled, (state, action) => {
         const index = state.applicants.findIndex((app) => app._id === action.payload);
@@ -195,21 +252,27 @@ export const applicantSlice = createSlice({
       .addCase(deleteApplicant.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
-
+        state.isError = true
+        state.isLoading = false
         // state.message = action.payload;
       })
       .addCase(checkIsHolyday.pending, (state) => {
         state.status = 'loading';
+        state.isLoading = true
         state.error = null;
       })
       .addCase(checkIsHolyday.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.isSuccess = true;
+        state.isLoading = false;
         state.error = null;
         state.holyDay = action.payload;
       })
       .addCase(checkIsHolyday.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
+        state.isError = true;
+        state.isLoading = false;
         // state.message = action.payload;
       })
 
@@ -234,7 +297,7 @@ export const applicantSlice = createSlice({
 
 // Export your async action creators
 
-export const {reset} = applicantSlice.actions;
+export const {appReset} = applicantSlice.actions;
 
 // Export the slice and the useAppDispatch hook
 export default applicantSlice.reducer;

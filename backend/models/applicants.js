@@ -6,11 +6,16 @@ let applicantSchema = new Schema(
     fullname:{type:String, default:null},
     motherName:{type:String, default:null},
     phoneNumber:{type:String, default:null},
+    email:{type:String, default:null},
+    emergencyContactNumber:{type:String, default:null},
+    emergencyContactName:{type:String, default:null},
+
     DOB:{type:Date, default:null},
     sex:{type:String, default:null},
     POB:{type:String, default:null},
     occupation:{type:String, default:null},
     appointmentDate:{type:Date, default:null},
+    
     // passportType:
     applyingDate:{type:Date, default:new Date()},
     appointmentTime:{type:String, default:"10:00",required:true},
