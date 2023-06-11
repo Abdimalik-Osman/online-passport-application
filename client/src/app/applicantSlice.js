@@ -208,6 +208,7 @@ export const applicantSlice = createSlice({
       .addCase(addNewApplicant.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.applicants.push(action.payload);
+        state.message = action.payload;
         state.error = null;
         state.isLoading = false;
         state.isSuccess = true;

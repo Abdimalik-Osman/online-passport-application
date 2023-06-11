@@ -1,6 +1,6 @@
 // export default Stepper;
 import React, { useEffect, useState } from "react";
-
+import {useNavigate} from "react-router-dom";
 import Joi from "joi";
 import HorizontalStepper from "./horizontalStepper";
 import { ToastContainer, toast } from "react-toastify";
@@ -30,6 +30,7 @@ import {
 } from "../../app/applicantSlice";
 
 function MultiStepForm() {
+  const navigate = useNavigate("/")
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [selectedId, setSelectedId] = useState("");
@@ -123,6 +124,7 @@ function MultiStepForm() {
     
   } = useSelector((state) => state.district);
   const appMessage = useSelector((state) => state.applicant.message);
+  const applicantInfo = useSelector((state) => state.applicant.applicantInfo);
   const appStatus = useSelector((state) => state.applicant.status);
   const errorMessage = useSelector((state) => state.applicant.error);
   const isAppError = useSelector((state) => state.applicant.isError);
@@ -149,6 +151,12 @@ function MultiStepForm() {
       toast.error(errorMessage?.message);
 
     }
+    if(errorMessage?.status == "fail"){
+      toast.error(errorMessage?.message);
+    }
+    if(errorMessage?.status == "success"){
+      toast.success(errorMessage?.message);
+    }
     return ()=>{
       dispatch(reset());
     dispatch(appReset());
@@ -166,27 +174,7 @@ function MultiStepForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setId(e.target.value);
-    // setFormData({
-    //   ...formData,
-    //   [name]: value,
-    // });
-    // const { error } = schema.validate(formData, { abortEarly: false });
-    // if (error) {
-    //   const errors = {};
-    //   error.details.forEach((err) => {
-    //     errors[err.path[0]] = err.message;
-    //   });
-    //   setValidationErrors(errors);
-    // } else {
-    //   setValidationErrors({});
-    // }
-
-    // setType(e.target.value);
-    // if (e.target.value == "Ordinary") {
-    //   setAmount("150")
-    // }if(e.target.value == "deg-deg"){
-    //   setAmount("300")
-    // }
+    
   };
 
   const options =  districts?.map((item) => ({
@@ -279,20 +267,7 @@ function MultiStepForm() {
     setFname(firstName);
     setLName(lastName);
     setDob(apiDate?.toISOString()?.substr(0, 10));
-    // setOccupation(nationalID?.occupation);
 
-    // setFormData({
-    //   ...formData,
-    //   fName: firstName,
-    //   lName: lastName,
-    //   mFname: mFirstName,
-    //   mLname: mLastName,
-    //   sex: defaultSex,
-    //   nID: nId,
-    //   dob: apiDate?.toISOString()?.substr(0, 10),
-    // });
-
-    // console.log(message);
   };
 
   // handle submit
@@ -320,34 +295,35 @@ function MultiStepForm() {
     if (
       !appointmentDate ||
       appointmentDate == undefined ||
-      appointmentDate == ""
+      appointmentDate == "" || !selectedTime || selectedTime == undefined || selectedTime == "" || !selectedState1 || selectedState1 == undefined || selectedState1 == "" || !nID || nID == undefined || nID == "" || !phoneNumber || phoneNumber == undefined || phoneNumber == ""
     ) {
-      toast.error("please select an appointment date");
-      return;
-    }
-    if (!selectedTime || selectedTime == undefined || selectedTime == "") {
-      toast.error("please select an appointment time");
+      toast.error("please provide all required fields.");
       return;
     }
 
-    if (isChecked == false) {
-      toast.error("please check the checkbox if you have agreed our terms");
-      return;
-    } // You can access form data here
-    else {
-      console.log(errorMessage);
-      // await dispatch(addNewApplicant(data));
-      // if (appStatus == "succeeded") {
-      //   toast.success("new applicant successfully created.");
-      //   dispatch(getAvailableDates({ id: selectedState1, appointmentDate }));
-      //   console.log(appMessage);
-      //   // dispatch(reset());
-      // } else {
-      //   toast.error(appMessage);
-      //   // reset();
-      // }
-    }
-  };
+       dispatch(addNewApplicant(data));
+       console.log(applicantInfo)
+       console.log(errorMessage?.message)
+      if(errorMessage?.status == "fail"){
+        toast.error(errorMessage?.message);
+      }else{
+        toast.success(errorMessage?.message);
+        setIsChecked(false);
+        setSelectedDate("");
+        setSelectedTime('');
+        setEmergencyContactNumber("")
+        setEmergencyContactName("")
+        setDob("")
+        setMLname("")
+        setMFname("")
+        setLName("")
+        setFname("")
+        setNID("")
+        navigate("/")
+      }
+    
+  }
+  
 
   // handle the next step
   const handleNext = async (e) => {
@@ -409,23 +385,24 @@ function MultiStepForm() {
       toast.error("please check the checkbox if you agreed the terms");
       return;
     }
-    if (isChecked == true) {
-      dispatch(checkIsHolyday(appointmentDate));
-      if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
-        toast.error(errorMessage?.message);
-      }else{
+    // if(step ===)
+    // // if (isChecked == true) {
+    // //   dispatch(checkIsHolyday(appointmentDate));
+    // //   if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
+    // //     toast.error(errorMessage?.message);
+    // //   }else{
         
-       dispatch(addNewApplicant(data));
-       if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
-        toast.error(errorMessage?.message);
-      }else{
-        if (errorMessage?.status === "success" || errorMessage?.status == "success") {
-          toast.success(errorMessage?.message);
-        }
-      }
-      }
-      return
-    }
+    // //    dispatch(addNewApplicant(data));
+    // //    if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
+    // //     toast.error(errorMessage?.message);
+    // //   }else{
+    // //     if (errorMessage?.status === "success" || errorMessage?.status == "success") {
+    // //       toast.success(errorMessage?.message);
+    // //     }
+    // //   }
+    // //   }
+    // //   return
+    // // }
 
     setStep(step + 1);
   };
@@ -496,6 +473,7 @@ function MultiStepForm() {
                       type="text"
                       name="fName"
                       value={fName}
+                      readOnly
                       onChange={(e) => setFname(e.target.value)}
                       placeholder="First Name"
                       autoComplete="given-name"
@@ -514,6 +492,7 @@ function MultiStepForm() {
                     <input
                       type="text"
                       name="lName"
+                      readOnly
                       value={lName}
                       onChange={(e) => setLName(e.target.value)}
                       placeholder="Last Name"
@@ -535,6 +514,7 @@ function MultiStepForm() {
                       name="mFname"
                       value={mFname}
                       onChange={(e) => setMFname(e.target.value)}
+                      readOnly
                       placeholder="Mother's First Name"
                       autoComplete="given-name"
                       className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -554,6 +534,7 @@ function MultiStepForm() {
                       name="mLname"
                       value={mLname}
                       onChange={(e) => setMLname(e.target.value)}
+                      readOnly
                       placeholder="Mother's Last Name"
                       autoComplete="family-name"
                       className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -625,6 +606,7 @@ function MultiStepForm() {
                       <option value={""}>Marital Status</option>
                       <option value={"Single"}>Single</option>
                       <option value={"Husband"}>Husband</option>
+                      <option value={"Wife"}>Wife</option>
                       <option value={"Widow"}>Widow</option>
                     </select>
                   </div>
@@ -644,6 +626,7 @@ function MultiStepForm() {
                       name="selectedDate"
                       value={selectedDate}
                       onChange={(event) => setSelectedDate(event.target.value)}
+                      readOnly
                       // onChange={handleChange}
                       autoComplete="date"
                       className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -1597,9 +1580,10 @@ function MultiStepForm() {
                 Previous
               </button>
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-black shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                NEXT
+                Submit
               </button>
             </div>
           </div>

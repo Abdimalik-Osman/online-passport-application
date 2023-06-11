@@ -3,6 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {  appReset,useAppDispatch, getApplicantInfo
 } from "../app/applicantSlice";
+import Table from 'react-bootstrap/Table'
 import { useSelector } from "react-redux";
 const ViewApplicant = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -90,6 +91,29 @@ const ViewApplicant = () => {
         </div>
       </div>
     </form>
+  {
+    !appMessage?.status  === "fail"? "":(
+      <Table className="shadow-2xl px-5">
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Phone Number</th>
+      <th>Appointment Date</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{applicantInfo && applicantInfo?.fullname}</td>
+      <td>{applicantInfo &&applicantInfo?.phoneNumber}</td>
+      <td>{applicantInfo && applicantInfo?.appointmentDate}</td>
+      <td>{applicantInfo && applicantInfo?.status}</td>
+    </tr>
+   
+  </tbody>
+</Table>
+    )
+  }
     </>
   );
 };
