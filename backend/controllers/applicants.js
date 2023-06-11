@@ -119,6 +119,13 @@ const nodemailer = require("nodemailer")
 exports.createApplicant = async(req,res)=>{
   
   try {
+    const nationalData = await NationalID.findOne({
+      serialNumber: Number(req.body.nID),
+    });
+    const nIdExists = await Applicant.findOne({nID:req.body.nID})
+    if(nIdExists){
+      return res.status(400).json({message:"this nation is already exists..",status:"fail"})
+    }
     
     let passportExpirationData = new Date();
         passportExpirationData.setFullYear(
@@ -180,10 +187,7 @@ exports.createApplicant = async(req,res)=>{
    }
    
    // // get the national ID
-     const nationalData = await NationalID.findOne({
-     serialNumber: Number(req.body.nID),
-   });
-   const nIdExists = await Applicant.findOne({nID:req.body.nID})
+ 
    
    const newApplicant = new Applicant({
                    fullname: nationalData?.fullName,
@@ -414,6 +418,8 @@ exports.updateApplicant = async(req,res)=>{
   }
 }
 
+
+// view applicant data
 exports.viewApplicant = async (req,res) => {
   try {
     if(!req.params.appointmentNumber || req.params.appointmentNumber === undefined){
@@ -436,3 +442,46 @@ exports.viewApplicant = async (req,res) => {
   }
 }
 
+
+// get approve applicant information
+exports.getPendingApplicants = async(req,res)=>{
+  try {
+    if(!req.params.nID && !req.params.phoneNumber){
+      return res.status(400).json({message:"please provide  your national identity or your phone number",status:"fail"})
+    }
+    if(req.params.nID && !req.params.phoneNumber){
+      const data = await Applicant.findOne({serialNumber:req.params.nID,isApproved:false});
+      if(!data) {
+        return res.status(400).json({message:"no applicant found with this national identity, please try again to get as phone number",status:"fail"})
+      }
+      return res.status(200).json({data})
+    }
+    if(!req.params.nID && req.params.phoneNumber){
+      const data = await Applicant.findOne({phoneNumber:req.params.phoneNumber,isApproved:false});
+      if(!data) {
+        return res.status(400).json({message:"no applicant found with this phone number, please try again to get as  National identity",status:"fail"})
+      }
+      return res.status(200).json({data})
+    }
+    // if(req.params.nID && req.params.phoneNumber){
+    //   const data = await Applicant.findOne({phoneNumber:req.params.phoneNumber, nID:req.params.nID
+    //     ,isApproved:false});
+    //   if(!data) {
+    //     return res.status(400).json({message:"no applicant found with this phone number, please try again to get as  National identity",status:"fail"})
+    //   }
+    //   return res.status(200).json({data})
+    // }
+  } catch (error) {
+    return res.status(500).json({message:error.message,status:"fail"})
+  }
+}
+
+// get all un approved applications
+exports.getAllUnapprovedApplicants = async(req,res)=>{
+  try {
+    const all = await Applicant.find({isApproved:false})
+    return res.status(200).json(all)
+  } catch (error) {
+    return res.status(500).json({message:error.message,status:"fail"})
+  }
+}

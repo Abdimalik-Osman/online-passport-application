@@ -211,9 +211,9 @@ const Navdata = () => {
                     parentId: "setting",
                   },
                   {
-                    id: "CompleteApplicantData",
-                    label: "Complete Applicant Data",
-                    link: "/CompleteApplicant",
+                    id: "approveApplicantData",
+                    label: "Approve Applicant Data",
+                    link: "/approve",
                     parentId: "setting",
                   },
                 ]

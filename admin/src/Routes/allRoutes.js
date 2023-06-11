@@ -16,6 +16,7 @@ import UserRole from "../pages/UserRoles";
 import EmployeeRegistration from "../pages/Employee";
 import CreateUser from "../pages/CreateUser/index";
 import CreateApplicant from "../pages/CreateNewApplicant";
+import ApproveApplicants from "../pages/ApproveApplicants";
 
 const authProtectedRoutes = [
   
@@ -23,6 +24,7 @@ const authProtectedRoutes = [
   { path: "/index", component: DashboardEcommerce },
   { path: "/UserRole", component: UserRole },
   { path: "/CreateEmployee", component: EmployeeRegistration },
+  { path: "/approve", component: ApproveApplicants },
   { path: "/register", component: CreateUser },
   { path: "/new", component: CreateApplicant },
 

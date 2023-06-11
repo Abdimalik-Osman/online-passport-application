@@ -15,7 +15,9 @@ import {
     FETCH_NATIONAL_ID ,
     FETCH_UNAVAILABLE_HOURS ,
     FETCH_AVAILABLE_DATES ,
-    FETCH_AVAILABLE_DATES_ERROR 
+    FETCH_AVAILABLE_DATES_ERROR, 
+    FETCH_UNAPPROVED_APPLICANTS,
+    UNAPPROVED_APPLICANTS
     
 }  from "./loginActions"
 
@@ -138,6 +140,25 @@ if (action.type === GET_ALL_USER) {
               districtData: action.payload.data,     
             };
           }
+
+               // fetch all unapproved
+         if (action.type === FETCH_UNAPPROVED_APPLICANTS) {
+          return {
+            ...state,
+            unapprovedApplicants: action.payload.data,
+            
+          };
+        }
+
+
+        // get unapproved applicant information
+             // get national Id     
+             if (action.type === UNAPPROVED_APPLICANTS) {
+              return {
+                ...state,
+                applicantInfo: action.payload.data,     
+              };
+            }
       //register
   //       if (action.type === REGISTER_EMPLOYEE_SUCCESS) {
   //   return {

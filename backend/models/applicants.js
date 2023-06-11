@@ -25,7 +25,9 @@ let applicantSchema = new Schema(
     nID:{type:Number, default:null},
     type:{type:String, default:"Ordinary"},
     isExpired:{type:Boolean, default:false},
-    isTaken:{type:Boolean, default:false}
+    isTaken:{type:Boolean, default:false},
+    isApproved:{type:Boolean, default:false},
+    imagePath:{type:String, default:null},
   },
   { timestamps: true }
 );

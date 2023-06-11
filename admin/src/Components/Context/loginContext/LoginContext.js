@@ -24,7 +24,10 @@ import {
     FETCH_NATIONAL_ID ,
     FETCH_UNAVAILABLE_HOURS ,
     FETCH_AVAILABLE_DATES ,
-    FETCH_AVAILABLE_DATES_ERROR 
+    FETCH_AVAILABLE_DATES_ERROR, 
+    FETCH_UNAPPROVED_APPLICANTS,
+    
+    UNAPPROVED_APPLICANTS
 
 } from "./loginActions";
 import reducer from "./loginReducer";
@@ -90,8 +93,10 @@ const initialState = {
   workingHours: [],
   unavailableDates: [],
   availableDates: [],
+  unapprovedApplicants: [],
   nationalID:{},
   data:{},
+  applicantInfo:{}
   // isLoading: false,
 };
 
@@ -348,8 +353,33 @@ const fetchNationalId = async (id) => {
   }
 };
 
+  // fetch unapproved applications
+  const fetchUnapprovedApplicants = async () => {
+    try {
+      const data = await axios.get("/applicants/unapproved/all");
+      dispatch({ type: FETCH_UNAPPROVED_APPLICANTS, payload: { data } });
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+};
 
-
+// approve
+const fetchSingleUnapprovedApplicant = async (nID,phoneNumber) => {
+  try {
+    const data = await axios.get(`/profile/person/${nID}/${phoneNumber}`);
+    dispatch({ type: UNAPPROVED_APPLICANTS, payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
@@ -372,7 +402,9 @@ const fetchNationalId = async (id) => {
         fetchSelectedState,
         fetchWorkingHours,
         fetchSingleDistrict,
-        fetchStates
+        fetchStates,
+        fetchUnapprovedApplicants,
+        fetchSingleUnapprovedApplicant
       }}
     >
       {children}
