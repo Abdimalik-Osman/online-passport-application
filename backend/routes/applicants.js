@@ -1,4 +1,6 @@
 const express = require('express');
+const multer = require('multer');
+const path = require('path');
 const ApplicantController = require("../controllers/applicants")
 
 const router = express.Router();
@@ -14,4 +16,5 @@ router.patch('/update/:id',ApplicantController.updateApplicant)
 router.get('/view/:appointmentNumber/:phoneNumber',ApplicantController.viewApplicant)
 router.get('/pending/:nID?/:phoneNumber?',ApplicantController.getPendingApplicants)
 router.get('/unapproved/all',ApplicantController.getAllUnapprovedApplicants)
+
 module.exports = router;

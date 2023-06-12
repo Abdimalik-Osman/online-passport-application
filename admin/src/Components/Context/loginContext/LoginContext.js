@@ -370,7 +370,7 @@ const fetchNationalId = async (id) => {
 // approve
 const fetchSingleUnapprovedApplicant = async (nID,phoneNumber) => {
   try {
-    const data = await axios.get(`/profile/person/${nID}/${phoneNumber}`);
+    const data = await axios.get(`/applicants/pending/${nID}/${phoneNumber}`);
     dispatch({ type: UNAPPROVED_APPLICANTS, payload: { data } });
     // console.log(data);
   } catch (error) {
@@ -378,6 +378,25 @@ const fetchSingleUnapprovedApplicant = async (nID,phoneNumber) => {
     toast.error(error.message, {
       position: toast.POSITION.TOP_RIGHT,
     });
+  }
+};
+
+
+// update applicant information
+const updateApplicantInfo = async (data) => {
+  // console.log(data);
+  try {
+    const updateApplicant = await axios.patch(`/applicants/update/${data.id}`, data);
+    toast.success(updateApplicant.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+    // fetchEmployees();
+    // console.log(updateApplicant);5
+  } catch (error) {
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+    console.log(error);
   }
 };
   const handlePrint = useReactToPrint({
@@ -404,7 +423,8 @@ const fetchSingleUnapprovedApplicant = async (nID,phoneNumber) => {
         fetchSingleDistrict,
         fetchStates,
         fetchUnapprovedApplicants,
-        fetchSingleUnapprovedApplicant
+        fetchSingleUnapprovedApplicant,
+        updateApplicantInfo
       }}
     >
       {children}

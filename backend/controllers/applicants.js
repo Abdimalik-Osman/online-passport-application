@@ -11,6 +11,27 @@ const UnAvailableDate = require("../models/unavailableDate")
 const AvailableTime = require("../models/availableTime");
 const DistrictWorkingHours = require("../models/workingHours");
 const nodemailer = require("nodemailer")
+const path = require("path")
+const multer = require("multer")
+
+// Set up multer storage for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+// Set up multer middleware
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 10, // Increase the file size limit to 10MB
+  },
+});
+
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -408,9 +429,13 @@ exports.getAvailableDates = async(req, res)=>{
   }
 }
 
-exports.updateApplicant = async(req,res)=>{
+exports.updateApplicant = upload.single('image'), async(req,res)=>{
   try {
-    const updated = await Applicant.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true});
+    const updated = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
+      imagePath: req.file ? req.file.filename : null,
+      isApproved: true
+    }
+    },{new:true});  
     if(!updated) return res.status(400).json({message:"Error occurred while updating this applicant..",status:"fail"})
     return res.status(200).json({message:"application updated successfully",status:"success"})
   } catch (error) {
@@ -446,22 +471,23 @@ exports.viewApplicant = async (req,res) => {
 // get approve applicant information
 exports.getPendingApplicants = async(req,res)=>{
   try {
-    if(!req.params.nID && !req.params.phoneNumber){
+    if((!req.params.nID || req.params.nID === "ALL") && ( !req.params.phoneNumber || req.params.phoneNumber ==="ALL")){
       return res.status(400).json({message:"please provide  your national identity or your phone number",status:"fail"})
     }
-    if(req.params.nID && !req.params.phoneNumber){
-      const data = await Applicant.findOne({serialNumber:req.params.nID,isApproved:false});
+    if(req.params.nID && req.params.phoneNumber ==="ALL" && req.params.nID !=='ALL' ){
+      console.log(req.params.nID)
+      const data = await Applicant.findOne({nID:req.params.nID,isApproved:false});
       if(!data) {
         return res.status(400).json({message:"no applicant found with this national identity, please try again to get as phone number",status:"fail"})
       }
-      return res.status(200).json({data})
+      return res.status(200).json(data)
     }
-    if(!req.params.nID && req.params.phoneNumber){
+    if((!req.params.nID || req.params.nID === undefined || req.params.nID ==="ALL") && req.params.phoneNumber && req.params.phoneNumber !== "ALL"){
       const data = await Applicant.findOne({phoneNumber:req.params.phoneNumber,isApproved:false});
       if(!data) {
         return res.status(400).json({message:"no applicant found with this phone number, please try again to get as  National identity",status:"fail"})
       }
-      return res.status(200).json({data})
+      return res.status(200).json(data)
     }
     // if(req.params.nID && req.params.phoneNumber){
     //   const data = await Applicant.findOne({phoneNumber:req.params.phoneNumber, nID:req.params.nID
