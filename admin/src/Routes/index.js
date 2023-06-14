@@ -10,7 +10,7 @@ import { AuthProtected, AccessRoute } from './AuthProtected';
 
 const Index = () => {
     const availablePublicRoutesPaths = publicRoutes.map((r) => r.path);
-    const availableAuthRoutesPath = authProtectedRoutes.map((r) => r.path);
+    const availableAuthRoutesPath = authProtectedRoutes?.map((r) => r.path);
     return (
         <React.Fragment>
             <Switch>
@@ -30,20 +30,22 @@ const Index = () => {
                 </Route>
 
                 <Route path={availableAuthRoutesPath}>
-                    <NonAuthLayout>
+
+                    <AuthProtected>
                         <VerticalLayout>
                             <Switch>
-                                {authProtectedRoutes.map((route, idx) => (
+                                {authProtectedRoutes?.map((route, idx) => (
                                     <AccessRoute
                                         path={route.path}
                                         component={route.component}
                                         key={idx}
                                         exact={true}
+                                        allowedPages={authProtectedRoutes}
                                     />
                                 ))}
                             </Switch>
                         </VerticalLayout>
-                    </NonAuthLayout>
+                        </AuthProtected>
                 </Route>
             </Switch>
         </React.Fragment>

@@ -25,7 +25,7 @@ const authProtectedRoutes = [
   { path: "/UserRole", component: UserRole },
   { path: "/CreateEmployee", component: EmployeeRegistration },
   { path: "/approve", component: ApproveApplicants },
-  { path: "/register", component: CreateUser },
+  // { path: "/register", component: CreateUser },
   { path: "/new", component: CreateApplicant },
 
   
@@ -46,7 +46,7 @@ const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/login", component: Login },
   { path: "/forgot-password", component: ForgetPasswordPage },
-  // { path: "/register", component: Register },
+  { path: "/register", component: Register },
  
   
 ];

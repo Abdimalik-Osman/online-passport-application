@@ -429,14 +429,43 @@ exports.getAvailableDates = async(req, res)=>{
   }
 }
 
-exports.updateApplicant = upload.single('image'), async(req,res)=>{
+exports.updateApplicant = async(req,res)=>{
   try {
+    let takeDate = new Date();
+    takeDate.setDate(takeDate.getDate() + 1);;
+  // console.log(takeDate)
     const updated = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
-      imagePath: req.file ? req.file.filename : null,
+      // imagePath: req.file ? req.file.filename : null,
+      arrivalDate:takeDate,
       isApproved: true
     }
     },{new:true});  
     if(!updated) return res.status(400).json({message:"Error occurred while updating this applicant..",status:"fail"})
+    const emailBody = `Dear ${updated?.fullname}, your information has been approved successfully so, you will arrive the office at ${moment(takeDate).format("DD/MM/YYYY")}, and you will receive email notification when the date is reached. Please arrive earlier to receive your passport, thanks.`;
+    
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: true,
+      auth: {
+        user: 'myfather8818@gmail.com',
+        pass:'oqsvvrqmzgjhxuux',
+        
+      }
+    })
+    const emailOption = {
+      from: 'myfather88818@gmail.com',
+      to: "engabdimalik8818@gmail.com",
+      subject: emailBody,
+      text:'Appointment Scheduled'
+    }
+    
+    transport.sendMail(emailOption, (error, info) => {
+      if (error) return error.message;
+    
+      console.log(`The email sent ${info.response}`);
+    })
     return res.status(200).json({message:"application updated successfully",status:"success"})
   } catch (error) {
     return res.status(500).json({message:error.message, status:"fail"})

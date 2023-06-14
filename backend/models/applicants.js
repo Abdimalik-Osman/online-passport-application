@@ -15,7 +15,7 @@ let applicantSchema = new Schema(
     POB:{type:String, default:null},
     occupation:{type:String, default:null},
     appointmentDate:{type:Date, default:null},
-    
+    maritalStatus:{type:Date, default:null},
     // passportType:
     applyingDate:{type:Date, default:new Date()},
     appointmentTime:{type:String, default:"10:00",required:true},
@@ -28,6 +28,7 @@ let applicantSchema = new Schema(
     isTaken:{type:Boolean, default:false},
     isApproved:{type:Boolean, default:false},
     imagePath:{type:String, default:null},
+    arrivalDate:{type:Date, default:null},
   },
   { timestamps: true }
 );

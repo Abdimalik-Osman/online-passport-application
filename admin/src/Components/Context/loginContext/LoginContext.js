@@ -148,15 +148,19 @@ const AppProvider = ({ children }) => {
         console.log(error);
       }
     };
-
+    const getCurrentUserId = () => {
+      const { _id } = localStorage.getItem("userData");
+      //  let user= jwtDecode(jwt);
+      return _id;
+    };
     // login user
     const loginUser = async (user) => {
-      console.log(user);
+      // console.log(user);
       dispatch({ type: "REGISTER_LOGIN_BEGIN" });
       try {
         const res = await axios.post("/users/login", user);
-        console.log(res.message);
         console.log(res);
+        // console.log(res);
         if (res?.data?.status == "success") {
           addToLocalStorage(res);
         }
@@ -177,6 +181,13 @@ const AppProvider = ({ children }) => {
       } catch (error) {
         console.log(error);
       }
+    };
+
+    const logoutUser = () => {
+      dispatch({ type: LOGOUT_USER });
+      removeFromLocalStorage();
+      removeIDFromLocalStorage();
+      // removeCartItems()
     };
   // registering users
   const EmployeeRegister = async (data) => {
@@ -416,6 +427,8 @@ const updateApplicantInfo = async (data) => {
         getAllUsers,
         UpdateUser,
         loginUser,
+        logoutUser,
+        getCurrentUserId,
         fetchNationalId,
         fetchAvailableDates,
         fetchSelectedState,

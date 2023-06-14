@@ -10,7 +10,7 @@ const generateToken = (user) => {
 
 // Create new user
 exports.register = async (req, res) => {
-  const { empId, isAdmin,username, password, status } = req.body;
+  const { empId, isAdmin,username, password, userStatus } = req.body;
   
   //check if the user is already registered
   const userExists = await User.findOne({username});
@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: "User already exists", status:"fail" });
   }
 //create new user
-  const user = await User.create({ username, password,empId,isAdmin, status });
+  const user = await User.create({ username, password,empId,isAdmin, userStatus });
 
   if (user) {
     res.status(201).json({
@@ -40,12 +40,15 @@ exports.login = async (req, res) => {
 
   if (user && (await user.comparePassword(password))) {
     res.json({
+      data:{
       _id: user._id,
       username: user.username,
       isAdmin:user.isAdmin,
       empId:user.empId,
-      status:user.status,
+      userStatus:user.status,
       token: generateToken(user),
+      status: "success"
+      },
     });
   } else {
     res.status(401).json({ message: "Invalid email or password",status:"fail" });

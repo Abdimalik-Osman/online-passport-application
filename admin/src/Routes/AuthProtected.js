@@ -1,48 +1,59 @@
-import React, { useEffect } from "react";
-import { Redirect, Route, useHistory } from "react-router-dom";
-import {setAuthorization} from "../helpers/api_helper";
+import React, { useContext, useEffect } from "react";
+import { Redirect, Route } from "react-router-dom";
+import { setAuthorization } from "../helpers/api_helper";
 import { useDispatch } from "react-redux";
 
 import { useProfile } from "../Components/Hooks/UserHooks";
 
 import { logoutUser } from "../store/actions";
-
+import { LoginContext } from "../Components/Context/loginContext/LoginContext";
+import Cover404 from "../pages/NotFound";
 
 const AuthProtected = (props) => {
+  const { User } = useContext(LoginContext);
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
-  const history = useHistory()
   useEffect(() => {
-    if (!userProfile ||  !loading || token) {
-      // setAuthorization(token);
-      history.push("/dashboard");
+    if (userProfile && !loading && token) {
+      setAuthorization(token);
+    } else if (!userProfile && loading && !token) {
+      dispatch(logoutUser());
     }
-    // } else if (!userProfile && loading && !token) {
-    //   history.push("/dashboard");
-    // }
-  }, [token, userProfile, loading, dispatch]);
+  }, []);
 
   /*
     redirect is un-auth access protected routes via url
     */
+  // console.log(User?.token);
 
-  if (!userProfile && loading && !token) {
+  if (User?.status == "fail") {
     return (
-      history.push("/dashboard")
-      // <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
-      // <Redirect to={{ pathname: "/dashboard", state: { from: props.location } }} />
+      <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
+    );
+  }
+  if (!User) {
+    return (
+      <Redirect to={{ pathname: "/login", state: { from: props.location } }} />
     );
   }
 
   return <>{props.children}</>;
 };
 
-const AccessRoute = ({ component: Component, ...rest }) => {
+
+const AccessRoute = ({ component: Component,allowedPages, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={props => {
-        return (<> <Component {...props} /> </>);
+      render={(props) => {
+        console.log(props?.location?.pathname?.substring(1));
+        return (
+          <>
+            {" "}
+            {allowedPages?.includes(props.location.pathname.substring(1) ) ? <Component {...props} /> :  <Cover404 />}
+             
+          </>
+        );
       }}
     />
   );
