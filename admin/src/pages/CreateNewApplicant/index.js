@@ -368,88 +368,12 @@ const CreateApplicant = () => {
       <div className="page-content">
         <Container fluid>
           <BreadCrumb title="Create Users" pageTitle="Setting" />
-          <Row>
-            <Col lg={12}>
-              <Card>
-                <CardHeader>
-                  <Row className="g-4 mb-3">
-                    <Col className="col-sm-auto">
-                      <div>
-                        {<ToastContainer />}
-                        <div>
-                          <subHeaderComponentMemo />
-                          <h4 className="card-title mb-0">Add User</h4>
-                        </div>
-                      </div>
-                    </Col>
-                    <Col className="col-sm">
-                      <div className="d-flex justify-content-sm-end">
-                        <div>
-                          <Button
-                            color="success"
-                            className="add-btn me-1"
-                            onClick={addModal}
-                            id="create-btn">
-                            <i className="ri-add-line align-bottom me-1"></i>{" "}
-                            Add
-                          </Button>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
-                </CardHeader>
-
-                <CardBody>
-                  <Row className="g-4 mb-3"></Row>
-
-                  <div id="customerList">
-                    {allUsers.length > 0 && (
-                      <DataTable
-                        columns={columns}
-                        data={filteredItems}
-                        pagination
-                        paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
-                        subHeader
-                        subHeaderComponent={subHeaderComponentMemo}
-                        // selectableRows
-                        persistTableHead
-                        progressPending={userLoading}
-                        progressComponent={<SpinnerBorder />}
-                        // sortFunction={customSort}
-                      />
-                    )}
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-
+     
           {/* end of container */}
 
-          <Modal
-            isOpen={modal_list}
-            toggle={() => {
-              tog_list();
-            }}
-            centered
-            size="lg"
-            backdrop={"static"}>
-            <div className="bg-light p-3 modal-header">
-              <h5 className="modal-title">
-                {" "}
-                {isEditing ? "update User" : "Add New Item"}{" "}
-              </h5>
-
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => {
-                  closeModalMuscab();
-                }}
-                aria-label="Close"></button>
-            </div>
+        
             <form onSubmit={handleSubmit}>
-              <ModalBody>
+            
               
               
                 <div className="mb-3" id="modal-id" style={{ display: "none" }}>
@@ -464,8 +388,34 @@ const CreateApplicant = () => {
                     readOnly
                   />
                 </div>
-
+                <Row>
+                <Col md={3}>
+                    <div className="mb-3">
+                      <Label htmlFor="national-id" className="form-label">
+                        National-ID <span className="text-danger">*</span>
+                      </Label>
+                      <Input
+                        name="national-id"
+                        type="text"
+                        // placeholder="Enter your National ID"
+                        required
+                        onChange={(e) => setNationalId(e.target.value)}
+                        value={nationalId}
+                      />
+                    </div>
+                  </Col>
+                  <Col md={4}>
+                    <div className="mt-4  w-100">
+                      <button
+                        type="button"
+                        className="btn  btn-primary"
+                        onClick={checkNationalId}
+                        aria-label="Check">CHECK</button>
+                    </div>
+                  </Col>
+                </Row>
                 {/*personal information  */}
+                
                 <Row>
                 <legend  className="text-center">Personal Information</legend>
                   {/* <Col md={8}>
@@ -494,33 +444,10 @@ const CreateApplicant = () => {
                     </div>
                   </Col> */}
 
-                  <Col md={8}>
-                    <div className="mb-3">
-                      <Label htmlFor="national-id" className="form-label">
-                        National-ID <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="national-id"
-                        type="text"
-                        // placeholder="Enter your National ID"
-                        required
-                        onChange={(e) => setNationalId(e.target.value)}
-                        value={nationalId}
-                      />
-                    </div>
-                  </Col>
-                  <Col md={4}>
-                    <div className="mt-4  w-100">
-                      <button
-                        type="button"
-                        className="btn  btn-primary"
-                        onClick={checkNationalId}
-                        aria-label="Check">CHECK</button>
-                    </div>
-                  </Col>
+                 
 
                   {/* first name */}
-                  <Col md={6} sm={12} lg={4}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="firstName" className="form-label">
                         First Name
@@ -536,7 +463,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* last name */}
-                  <Col md={6} sm={12} lg={4}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="lastName" className="form-label">
                         Last Name
@@ -552,7 +479,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* mother first name */}
-                  <Col md={6} sm={12} lg={4}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="mFname" className="form-label">
                         Mother First Name
@@ -568,7 +495,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* mother Last name */}
-                  <Col md={6} sm={12} lg={4}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="mLname" className="form-label">
                         Mother Last Name
@@ -682,7 +609,7 @@ const CreateApplicant = () => {
                 <Row className="shadow-lg b-3">
                 <legend  className="text-center my-3">Contact Information</legend>
                   {/* Contact Number */}
-                  <Col md={6} sm={12} lg={6}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="contactNumber" className="form-label">
                         Contact Number
@@ -697,7 +624,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* Email */}
-                  <Col md={6} sm={12} lg={6}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="email" className="form-label">
                         Contact Email
@@ -711,7 +638,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* emergency contact name */}
-                  <Col md={6} sm={12} lg={6}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="emergencyContactName" className="form-label">
                         Emergency Contact Name
@@ -726,7 +653,7 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                   {/* Emergency Contact Number */}
-                  <Col md={6} sm={12} lg={6}>
+                  <Col md={6} sm={12} lg={3}>
                     <div className="mb-2">
                       <Label htmlFor="emergencyContactNumber" className="form-label">
                         Emergency Contact Number
@@ -837,26 +764,9 @@ const CreateApplicant = () => {
                     </div>
                   </Col>
                 </Row>
-              </ModalBody>
-
-              <ModalFooter>
-                <div className="hstack gap-2 justify-content-end">
-                  <button
-                    type="button"
-                    className="btn btn-light"
-                    onClick={() => closeModalMuscab()}>
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-success"
-                    id="add-btn">
-                    {isEditing ? "Update" : "Save"}
-                  </button>
-                </div>
-              </ModalFooter>
+            
             </form>
-          </Modal>
+        
         </Container>
       </div>
     </React.Fragment>

@@ -29,6 +29,7 @@ let applicantSchema = new Schema(
     isApproved:{type:Boolean, default:false},
     imagePath:{type:String, default:null},
     arrivalDate:{type:Date, default:null},
+    approvedDate:{type:Date, default:null},
   },
   { timestamps: true }
 );

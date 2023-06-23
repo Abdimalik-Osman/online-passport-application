@@ -204,6 +204,18 @@ const Navdata = () => {
                     link: "/new",
                     parentId: "setting",
                   },
+                {
+                    id: "ApprovedApplicants",
+                    label: "Approved Applicants",
+                    link: "/Approved",
+                    parentId: "setting",
+                  },
+                {
+                    id: "CreateApplicant",
+                    label: "Un Approved Applicants",
+                    link: "/unApproved",
+                    parentId: "setting",
+                  },
                   {
                     id: "CheckApplicantData",
                     label: "Check Applicant Data",

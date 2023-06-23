@@ -11,6 +11,7 @@ import Cover404 from "../pages/NotFound";
 
 const AuthProtected = (props) => {
   const { User } = useContext(LoginContext);
+  console.log(User)
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
   useEffect(() => {
@@ -50,7 +51,7 @@ const AccessRoute = ({ component: Component,allowedPages, ...rest }) => {
         return (
           <>
             {" "}
-            {allowedPages?.includes(props.location.pathname.substring(1) ) ? <Component {...props} /> :  <Cover404 />}
+             <Component {...props} />
              
           </>
         );

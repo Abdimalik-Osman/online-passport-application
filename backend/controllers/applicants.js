@@ -336,7 +336,7 @@ if (isExists) {
 
 exports.getAllApplicants = async(req,res)=>{
     try {
-        const applicants = await Applicant.find({});
+        const applicants = await Applicant.find({isApproved:true});
         if(!applicants){
           return res.status(400).json({ message: "no applicants found", status:"fail" });
         }
@@ -429,6 +429,7 @@ exports.getAvailableDates = async(req, res)=>{
   }
 }
 
+//update applicants
 exports.updateApplicant = async(req,res)=>{
   try {
     let takeDate = new Date();
@@ -437,7 +438,8 @@ exports.updateApplicant = async(req,res)=>{
     const updated = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
       // imagePath: req.file ? req.file.filename : null,
       arrivalDate:takeDate,
-      isApproved: true
+      isApproved: true,
+      approvedDate:new Date()
     }
     },{new:true});  
     if(!updated) return res.status(400).json({message:"Error occurred while updating this applicant..",status:"fail"})
@@ -540,3 +542,42 @@ exports.getAllUnapprovedApplicants = async(req,res)=>{
     return res.status(500).json({message:error.message,status:"fail"})
   }
 }
+
+// get number of applicants who is registered this month
+exports.getNumberOfRegisteredApplicantsThisMonth = async(req,res)=>{
+  try {
+      // Get the current date
+      const currentDate = new Date();
+
+      // Get the current year, month, and day
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const currentDay = currentDate.getDate();
+
+      // Get the first day of the current month
+      const startOfMonth = new Date(currentYear, currentMonth, 1);
+
+      // Get the last day of the current month
+      const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
+
+      console.log(new Date(startOfMonth), new Date(endOfMonth))
+      let registeredApplicants;
+       registeredApplicants = await Applicant.find({
+        createdAt: {
+          $gte: startOfMonth,
+          $lt:endOfMonth
+        }
+      });
+      
+      if(!registeredApplicants || !registeredApplicants.length <= 0){
+         registeredApplicants = 0;
+         return res.status(200).json(registeredApplicants);
+      }
+
+      return res.status(200).json(registeredApplicants)
+  } catch (error) {
+    return res.status(500).json({message: error.message});
+  }
+}
+
+// 

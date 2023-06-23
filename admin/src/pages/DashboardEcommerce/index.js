@@ -64,7 +64,7 @@ const DashboardEcommerce = () => {
     {
       id: 1,
       cardColor: "success",
-      label: "Total Customers",
+      label: "Total Applicants",
       badge: "ri-arrow-right-up-line",
       badgeClass: "success",
       // percentage: "+29.08",
@@ -80,7 +80,7 @@ const DashboardEcommerce = () => {
     {
       id: 2,
       cardColor: "secondary",
-      label: "Active Users",
+      label: "Un Approved Applicants",
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",
@@ -96,7 +96,7 @@ const DashboardEcommerce = () => {
     {
       id: 2,
       cardColor: "secondary",
-      label: "Expire Recievers",
+      label: "Today's Applicants",
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",
@@ -113,7 +113,7 @@ const DashboardEcommerce = () => {
     {
       id: 3,
       cardColor: "secondary",
-      label: "Today Tickets",
+      label: "Total Employees",
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",

@@ -26,6 +26,7 @@ import {
     FETCH_AVAILABLE_DATES ,
     FETCH_AVAILABLE_DATES_ERROR, 
     FETCH_UNAPPROVED_APPLICANTS,
+    FETCH_APPROVED_APPLICANTS,
     
     UNAPPROVED_APPLICANTS
 
@@ -51,8 +52,8 @@ const getIDlocalStroge = (id, status, useeer) => {
 };
 
 const removeIDFromLocalStorage = () => {
-  localStorage.setItem("_id", "");
-  localStorage.setItem("useeer", "");
+  localStorage.removeItem("user");
+  localStorage.removeItem("useeer");
 };
 // addOTPToLocalStorage()
 // const removeFromLocalStorage = () => {
@@ -64,7 +65,7 @@ const addToLocalStorage = (user) => {
   localStorage.setItem("user", JSON.stringify(user));
 };
 const removeFromLocalStorage = () => {
-  localStorage.setItem("user", "");
+  localStorage.removeItem("user");
 };
 const user = localStorage.getItem("user");
 const useeer = localStorage.getItem("useeer");
@@ -94,6 +95,7 @@ const initialState = {
   unavailableDates: [],
   availableDates: [],
   unapprovedApplicants: [],
+  approvedApplicants: [],
   nationalID:{},
   data:{},
   applicantInfo:{}
@@ -377,6 +379,19 @@ const fetchNationalId = async (id) => {
       });
     }
 };
+  // fetch approved applications
+  const fetchApprovedApplicants = async () => {
+    try {
+      const data = await axios.get("/applicants/approved/all");
+      dispatch({ type: FETCH_APPROVED_APPLICANTS, payload: { data } });
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+};
 
 // approve
 const fetchSingleUnapprovedApplicant = async (nID,phoneNumber) => {
@@ -437,6 +452,7 @@ const updateApplicantInfo = async (data) => {
         fetchStates,
         fetchUnapprovedApplicants,
         fetchSingleUnapprovedApplicant,
+        fetchApprovedApplicants,
         updateApplicantInfo
       }}
     >

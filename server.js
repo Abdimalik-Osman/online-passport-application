@@ -17,6 +17,7 @@ const HolyDayRouter = require("./backend/routes/holydays")
 const EmployeeRouter = require("./backend/routes/employees")
 const WorkingHoursRouter = require("./backend/routes/workingHours")
 const usersRouter = require("./backend/routes/users")
+const menusRouter = require("./backend/routes/menus")
 const moment = require("moment")
 const PORT = process.env.PORT || 3000
 connectDB();
@@ -39,6 +40,7 @@ app.use("/api/holydays",HolyDayRouter);
 app.use("/api/employees",EmployeeRouter);
 app.use("/api/workingHours",WorkingHoursRouter);
 app.use("/api/users",usersRouter);
+app.use("/api/menus",menusRouter);
 
 // takeDate = new Date();
 //     takeDate.setDate(takeDate.getDate() + 1);;

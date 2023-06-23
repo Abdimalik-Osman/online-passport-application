@@ -17,6 +17,8 @@ import EmployeeRegistration from "../pages/Employee";
 import CreateUser from "../pages/CreateUser/index";
 import CreateApplicant from "../pages/CreateNewApplicant";
 import ApproveApplicants from "../pages/ApproveApplicants";
+import UnApprovedApplicants from "../pages/UnApproved";
+import ApprovedApplicants from "../pages/Approved";
 
 const authProtectedRoutes = [
   
@@ -25,6 +27,8 @@ const authProtectedRoutes = [
   { path: "/UserRole", component: UserRole },
   { path: "/CreateEmployee", component: EmployeeRegistration },
   { path: "/approve", component: ApproveApplicants },
+  { path: "/UnApproved", component: UnApprovedApplicants },
+  { path: "/Approved", component: ApprovedApplicants },
   // { path: "/register", component: CreateUser },
   { path: "/new", component: CreateApplicant },
 

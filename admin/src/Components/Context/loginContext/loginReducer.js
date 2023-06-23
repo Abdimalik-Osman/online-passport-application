@@ -17,7 +17,8 @@ import {
     FETCH_AVAILABLE_DATES ,
     FETCH_AVAILABLE_DATES_ERROR, 
     FETCH_UNAPPROVED_APPLICANTS,
-    UNAPPROVED_APPLICANTS
+    UNAPPROVED_APPLICANTS,
+    FETCH_APPROVED_APPLICANTS
     
 }  from "./loginActions"
 
@@ -146,6 +147,13 @@ if (action.type === GET_ALL_USER) {
           return {
             ...state,
             unapprovedApplicants: action.payload.data,
+            
+          };
+        }
+         if (action.type === FETCH_APPROVED_APPLICANTS) {
+          return {
+            ...state,
+            approvedApplicants: action.payload.data,
             
           };
         }

@@ -7,7 +7,6 @@ let EmployeeSchema = new Schema(
     empPhone: { type:String, default: null},
     sex: { type:String, default:"Male"},
     isManager: { type:Boolean, default: false},
-    isActive: { type:Boolean, default: true}
   },
   { timestamps: true }
 );
