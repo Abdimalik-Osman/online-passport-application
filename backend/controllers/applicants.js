@@ -13,7 +13,7 @@ const DistrictWorkingHours = require("../models/workingHours");
 const nodemailer = require("nodemailer")
 const path = require("path")
 const multer = require("multer")
-
+const cron = require("node-cron")
 // Set up multer storage for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -546,38 +546,151 @@ exports.getAllUnapprovedApplicants = async(req,res)=>{
 // get number of applicants who is registered this month
 exports.getNumberOfRegisteredApplicantsThisMonth = async(req,res)=>{
   try {
-      // Get the current date
-      const currentDate = new Date();
 
-      // Get the current year, month, and day
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-      const currentDay = currentDate.getDate();
 
-      // Get the first day of the current month
-      const startOfMonth = new Date(currentYear, currentMonth, 1);
+const startOfMonth = moment().startOf('month').toDate();
+const endOfMonth = moment().endOf('month').toDate();
 
-      // Get the last day of the current month
-      const endOfMonth = new Date(currentYear, currentMonth + 1, 0);
+// Find customers registered within the current month
+ const apps =  await Applicant.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } })
 
-      console.log(new Date(startOfMonth), new Date(endOfMonth))
-      let registeredApplicants;
-       registeredApplicants = await Applicant.find({
-        createdAt: {
-          $gte: startOfMonth,
-          $lt:endOfMonth
-        }
-      });
-      
-      if(!registeredApplicants || !registeredApplicants.length <= 0){
-         registeredApplicants = 0;
-         return res.status(200).json(registeredApplicants);
-      }
-
-      return res.status(200).json(registeredApplicants)
+  return res.status(200).json(apps)
   } catch (error) {
     return res.status(500).json({message: error.message});
   }
 }
 
-// 
+// get the registered applications from range
+exports.getApplicantsFromRange = async(req,res) =>{
+  try {
+        let from = new Date(req.params.startDate);
+    let to = new Date(req.params.endDate);
+    let fromDay = from.getDate();
+    let fromMonth = from.getMonth();
+    let fromYear = from.getFullYear();
+    let toDay = to.getDate();
+    let toMonth = to.getMonth();
+    let toYear = to.getFullYear();
+    // console.log(fromYear, fromMonth + 1, fromDay);
+    // console.log(toYear, toMonth + 1, toDay);
+    const startDate = new Date(fromYear, fromMonth, fromDay);
+
+    const endDate = new Date(toYear, toMonth, toDay + 1);
+    if (startDate == "Invalid Date") {
+      return res
+        .status(500)
+        .json({ success: false, message: "Invalid Start Date" });
+    }
+    if (endDate == "Invalid Date") {
+      return res
+        .status(500)
+        .json({ success: false, message: "Invalid End Date" });
+    }
+
+    const applicants = await Applicant.aggregate([
+      {
+        $match:{
+          createdAt: {$gte: new Date(startDate), $lte: new Date(endDate)}
+        }
+      }
+    ]).sort({createdAt: -1});
+    return res.status(200).json(applicants)
+  } catch (error) {
+    return res.status(500).json({message: error.message});
+  }
+}
+
+exports.sendSmsToApplicants = async(req,res)=>{
+  try {
+    let from = new Date();
+    let to = new Date();
+    let fromDay = from.getDate();
+    let fromMonth = from.getMonth();
+    let fromYear = from.getFullYear();
+    let toDay = to.getDate();
+    let toMonth = to.getMonth();
+    let toYear = to.getFullYear();
+    // console.log(fromYear, fromMonth + 1, fromDay);
+    // console.log(toYear, toMonth + 1, toDay);
+    const appointment = new Date(fromYear, fromMonth, fromDay);
+    console.log(appointment)
+    // const endDate = new Date(toYear, toMonth, toDay + 1);
+
+        // Schedule the task to run every minute
+       cron.schedule('10 23 21 * * *', async () => {
+          try {
+            // Get the current date and time in the Africa/Nairobi timezone
+            // const currentTime = moment().tz('Africa/Nairobi');
+    
+            // Check if the current time is 11:35:00 AM
+    
+              // Find customers whose card expiration is less than 5 days from the current date
+              const applicants = await Applicant.aggregate([
+                {
+                  $match:{
+                    appointmentDate:new Date(appointment)
+                  }
+                }
+              ])
+              // console.log(applicants)
+              // const phone  =  616328920
+            //   const message = `Dear Abdimalik Osman Hassan, your card is expiring soon. Please renew your card before .`;
+            //   await axios.post(
+            //     "https://tabaarakict.so/SendSMS.aspx?user=Asal&pass=TV@ccess2016&cont=" +
+            //     message+
+            //     "&rec=" +
+            //     phone +
+            //     ""
+            //   )
+              // Send SMS notifications to the expiring customers
+               applicants?.forEach(async(applicant) => {
+                const message = `Dear ${applicant?.fullname}, today is your appointment so you have to come today thanks.`;
+                // const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, with ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
+    
+                const transport = nodemailer.createTransport({
+                  service: 'gmail',
+                  host: 'smtp.gmail.com',
+                  port: 587,
+                  secure: true,
+                  auth: {
+                    user: 'myfather8818@gmail.com',
+                    pass:'oqsvvrqmzgjhxuux',
+                    
+                  }
+                })
+                const emailOption = {
+                  from: 'myfather88818@gmail.com',
+                  to: "engabdimalik8818@gmail.com",
+                  subject: message,
+                  text:'Appointment Scheduled'
+                }
+                
+                transport.sendMail(emailOption, (error, info) => {
+                  if (error) throw error;
+                
+                  console.log(`The email sent ${info.response}`);
+                })
+                // await axios.post(
+                //   "https://tabaarakict.so/SendSMS.aspx?user=Asal&pass=TV@ccess2016&cont=" +
+                //   message+
+                //   "&rec="+
+                //   customer.customer_info.customerPhone+
+                //   ""
+                //   );
+                });
+                console.log('SMS notifications sent to expiring customers.');
+    
+            
+          } catch (err) {
+            console.error(err);
+          }
+        },{
+            scheduled: true,
+            timezone: "Africa/Nairobi",
+        });
+       
+        console.log('Node.js application started and running in the background.');
+      } catch (err) {
+        console.error(err);
+      }
+}

@@ -11,6 +11,7 @@ const NationalID = require("./backend/routes/nationalProfile");
 const CidRouter = require("./backend/routes/CID");
 const ApplicantRouter = require("./backend/routes/applicants")
 const DistrictRouter = require("./backend/routes/district")
+const {sendSmsToApplicants} = require("./backend/controllers/applicants")
 // const HolyDayRouter = require("./backend/routes/holydays")
 // const DistrictRouter = require("./backend/routes/district")
 const HolyDayRouter = require("./backend/routes/holydays")
@@ -42,6 +43,7 @@ app.use("/api/workingHours",WorkingHoursRouter);
 app.use("/api/users",usersRouter);
 app.use("/api/menus",menusRouter);
 
+sendSmsToApplicants()
 // takeDate = new Date();
 //     takeDate.setDate(takeDate.getDate() + 1);;
 //   console.log(takeDate)

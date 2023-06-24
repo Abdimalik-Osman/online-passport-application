@@ -17,5 +17,6 @@ router.get('/view/:appointmentNumber/:phoneNumber',ApplicantController.viewAppli
 router.get('/pending/:nID?/:phoneNumber?',ApplicantController.getPendingApplicants)
 router.get('/unapproved/all',ApplicantController.getAllUnapprovedApplicants)
 router.get('/registered/month/all',ApplicantController.getNumberOfRegisteredApplicantsThisMonth)
+router.get('/date/:startDate/:endDate',ApplicantController.getApplicantsFromRange)
 
 module.exports = router;
