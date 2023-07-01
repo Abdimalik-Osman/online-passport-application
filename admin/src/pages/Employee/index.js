@@ -6,6 +6,8 @@ import React, {
   useRef,
   useMemo,
 } from "react";
+import {Link} from "react-router-dom";
+import Select from "react-select";
 import { Helmet } from "react-helmet";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import TableContainer from "../../Components/Common/TableContainer";
@@ -37,9 +39,10 @@ import "./styleEmp.css";
 import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
 import moment from "moment";
 
+
 const EmployeeRegistration = () => {
   const {
-    EmployeeRegister, getEmployees, fetchEmployees
+    EmployeeRegister, getEmployees, fetchEmployees,fetchStates,districts,selectedState,districtData,fetchSelectedState,fetchSingleDistrict
    
   } = useContext(LoginContext);
   
@@ -70,9 +73,15 @@ const EmployeeRegistration = () => {
   const [object_id, setObject] = useState();
   const [modal_list, setmodal_list] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  const [selectedStateId, setSelectedState] = useState("");
+  const [districtName, setDistrictName] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions2, setSelectedOptions2] = useState([]);
+  const [stateName, setStateName] = useState("");
+  const [stateId, setStateId] = useState("");
   useEffect(()=>{
     fetchEmployees()
+    fetchStates()
   },[])
   const tog_list = () => {
     setChecked(false);
@@ -115,6 +124,38 @@ const EmployeeRegistration = () => {
     setEmployeePhone(e.target.value.slice(0, limit));
   };
 
+  
+  const options =  districts?.map((item) => ({
+    value: item?.districtInfo[0]?._id,
+    label: item?.stateName,
+  }));
+  console.log(selectedState)
+  const options2 =
+    selectedState?.length > 0 &&
+    selectedState?.map((item) => ({
+      value: item?._id,
+      label: item?.districtName,
+    }));
+  const handleChange1 = (selected) => {
+    setSelectedOptions(selected);
+    // setStateId(selected.value);
+    console.log(selected.value)
+    // dispatch(getSingleDistrict(selected.value));
+    fetchSingleDistrict(selected.value)
+    setStateName(selected.label);
+    setSelectedOptions2([]);
+  };
+  const handleChange2 = (selected) => {
+    setSelectedOptions2(selected);
+
+    // dispatch(getDistrictInfo(selected.value));
+    fetchSelectedState(selected.value)
+    setSelectedState(selected.value);
+    setDistrictName(selected?.label);
+    // dispatch(getDistrictWorkingHours(selected.value));
+
+    // dispatch(getUnavailableDates(selected.value));
+  };
   const handlerSubmit = (e) => {
     if (isEditing == false) {
       e.preventDefault();
@@ -137,8 +178,8 @@ const EmployeeRegistration = () => {
           isManager: empType == "Manager"? true : false,
           isActive: status == "Active"? true : false,
           empPhone: employeePhone,
-          sex:sex
-
+          sex:sex,
+          districtId:selectedStateId
         };
 
         EmployeeRegister(data);
@@ -167,8 +208,8 @@ const EmployeeRegistration = () => {
           isManager: empType == "Manager"? true : false,
           isActive: status == "Active"? true : false,
           empPhone: employeePhone,
-          sex:sex
-
+          sex:sex,
+          districtId:selectedStateId
         };
         EmployeeRegister(data);
         setmodal_list(false);
@@ -224,6 +265,32 @@ const EmployeeRegistration = () => {
     }
   };
 
+  const editPop = (data) => {
+    setmodal_list(true);
+    setSelectedState(data.districtId);
+    setEmployeeId(data._id);
+    setEmployeeName(data.empName);
+    setSex(data.sex);
+    setEmployeePhone(data.empPhone);
+    setEmpType(data.isManager);
+    setStatus(data.isActive);
+
+
+    // if (data.siteId == null || data.siteId == ""){
+    //   setChecked(false);
+    //   setDisable(false);
+    // }else{
+    //   setChecked(true);
+    //   setDisable(true);
+    // }
+    setIsEditing(true);
+  };
+  const deletPop = (data) => {
+    setmodal_delete(true);
+    setEmployeeId(data);
+    
+  };
+console.log(districts);
   document.title = "Employee Registration  ";
   const handleValidDate = (date) => {
     const date1 = moment(new Date(date)).format("DD MMM Y");
@@ -263,39 +330,39 @@ const EmployeeRegistration = () => {
         filterable: true,
         Cell: (cell) => <>{handleValidDate(cell.value)}</>,
       },
-      //   {
-      //     Header: "Action",
-      //     Cell: (cellProps) => {
-      //       return (
-      //         <ul className="list-inline hstack gap-2 mb-0">
-      //           <li className="list-inline-item edit" title="Edit">
-      //             <Link
-      //               to="#"
-      //               className="text-primary d-inline-block edit-item-btn"
-      //               onClick={(row) => {
-      //                 const customerData = cellProps.row.original;
-      //                 editPop(customerData);
-      //               }}
-      //             >
-      //               <i className="ri-pencil-fill fs-16"></i>
-      //             </Link>
-      //           </li>
-      //           <li className="list-inline-item" title="Remove">
-      //             <Link
-      //               to="#"
-      //               className="text-danger d-inline-block remove-item-btn"
-      //               onClick={(row) => {
-      //                 const customerData = cellProps.row.original;
-      //                 deletPop(customerData);
-      //               }}
-      //             >
-      //               <i className="ri-delete-bin-5-fill fs-16"></i>
-      //             </Link>
-      //           </li>
-      //         </ul>
-      //       );
-      //     },
-      //   },
+        {
+          Header: "Action",
+          Cell: (cellProps) => {
+            return (
+              <ul className="list-inline hstack gap-2 mb-0">
+                <li className="list-inline-item edit" title="Edit">
+                  <Link
+                    to="#"
+                    className="text-primary d-inline-block edit-item-btn"
+                    onClick={(row) => {
+                      const customerData = cellProps.row.original;
+                      editPop(customerData);
+                    }}
+                  >
+                    <i className="ri-pencil-fill fs-16"></i>
+                  </Link>
+                </li>
+                <li className="list-inline-item" title="Remove">
+                  <Link
+                    to="#"
+                    className="text-danger d-inline-block remove-item-btn"
+                    onClick={(row) => {
+                      const customerData = cellProps.row.original;
+                      deletPop(customerData);
+                    }}
+                  >
+                    <i className="ri-delete-bin-5-fill fs-16"></i>
+                  </Link>
+                </li>
+              </ul>
+            );
+          },
+        },
     ]
     // [handleCustomerClick]
   );
@@ -525,7 +592,7 @@ const EmployeeRegistration = () => {
              
 
               <Row>
-                <Col lg={6}>
+                <Col lg={4} md={6} sm={12}>
                   <div className="input-group my-4">
                     <Label
                       className="input-group-text"
@@ -539,6 +606,34 @@ const EmployeeRegistration = () => {
                     </select>
                   </div>
                 </Col>
+                <Col lg={4} md={6} sm={12}>
+                    <div className="my-2">
+                      <label className="form-label">
+                       Select State <span className="text-danger">*</span>
+                      </label>
+                      <Select
+                        className=""
+                        options={options}
+                        value={selectedOptions}
+                        onChange={handleChange1}
+                        // onChange={}
+                />
+                    </div>
+                  </Col>
+                <Col lg={4} md={6} sm={12}>
+                    <div className="my-2">
+                      <label className="form-label">
+                        Regions <span className="text-danger">*</span>
+                      </label>
+                      <Select
+                        className=""
+                        options={options2}
+                        value={selectedOptions2}
+                        onChange={handleChange2}
+                        // onChange={}
+                />
+                    </div>
+                  </Col>
               </Row>
             
             </ModalBody>

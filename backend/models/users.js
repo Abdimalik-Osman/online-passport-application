@@ -7,7 +7,8 @@ let UserSchema = new Schema(
    username:{type: String,default:null},
    password:{type: String,default:null},
    isAdmin:{type:Boolean,default:false},
-   status:{type:String,default:false}
+   status:{type:String,default:false},
+   districtId: { type:Schema.Types.ObjectId, ref:"districts", default: false},
   },
   { timestamps: true }
 );

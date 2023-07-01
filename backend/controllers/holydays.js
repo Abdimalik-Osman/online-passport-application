@@ -1,5 +1,5 @@
 const HolyDay = require('../models/holydays');
-
+const DistrictHolyday = require("../models/districtHolidays");
 exports.createHolyDay = async(req,res)=>{
     try {
     
@@ -29,6 +29,7 @@ exports.getHolyDayData = async(req,res)=>{
 // get holy day
 exports.getSingleHolyDay = async(req,res)=>{
     try {
+        
         // console.log("here")
         console.log(req.params.appointmentDate)
         if (new Date(req.params.appointmentDate).getDay() === 5) {
@@ -37,6 +38,7 @@ exports.getSingleHolyDay = async(req,res)=>{
         const selectedAppointment = new Date(req.params.appointmentDate);
         const selectedDay = selectedAppointment.getDate();
         const selectedMonth = selectedAppointment.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
+        const selectedYear = selectedAppointment.getFullYear(); // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
         const holyDayInfo = await HolyDay.findOne({
           day: selectedDay,
           month: selectedMonth,
@@ -45,7 +47,15 @@ exports.getSingleHolyDay = async(req,res)=>{
         if (holyDayInfo) {
           return res.status(400).json({ message: `Selected date is a holy day of ${holyDayInfo?.message}`,status:"fail"});
         }
-
+        const districtHolyday = await DistrictHolyday.findOne({
+            districtId: req.params.id,
+            day: selectedDay,
+            month: selectedMonth,
+            year: selectedYear
+        })
+        if (districtHolyday) {
+            return res.status(400).json({ message: `Selected date is a holy day of ${districtHolyday?.message}`,status:"fail"});
+          }
         return res.status(200).json({message:"you can select it",status:"success"});
     } catch (error) {
         return res.status(500).json({message:error.message,status:"fail"})

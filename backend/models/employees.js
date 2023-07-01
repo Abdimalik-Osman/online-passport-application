@@ -7,6 +7,7 @@ let EmployeeSchema = new Schema(
     empPhone: { type:String, default: null},
     sex: { type:String, default:"Male"},
     isManager: { type:Boolean, default: false},
+    districtId: { type:Schema.Types.ObjectId, ref:"districts", default: false},
   },
   { timestamps: true }
 );
