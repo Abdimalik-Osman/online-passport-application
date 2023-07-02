@@ -19,6 +19,7 @@ import CreateApplicant from "../pages/CreateNewApplicant";
 import ApproveApplicants from "../pages/ApproveApplicants";
 import UnApprovedApplicants from "../pages/UnApproved";
 import ApprovedApplicants from "../pages/Approved";
+import RegisterHolydays from "../pages/RegisterHolyday";
 
 const authProtectedRoutes = [
   
@@ -29,7 +30,8 @@ const authProtectedRoutes = [
   { path: "/approve", component: ApproveApplicants },
   { path: "/UnApproved", component: UnApprovedApplicants },
   { path: "/Approved", component: ApprovedApplicants },
-  // { path: "/register", component: CreateUser },
+  { path: "/Holydays", component: RegisterHolydays },
+  { path: "/register", component: CreateUser },
   { path: "/new", component: CreateApplicant },
 
   
@@ -50,7 +52,7 @@ const publicRoutes = [
   { path: "/logout", component: Logout },
   { path: "/login", component: Login },
   { path: "/forgot-password", component: ForgetPasswordPage },
-  { path: "/register", component: Register },
+  // { path: "/register", component: Register },
  
   
 ];

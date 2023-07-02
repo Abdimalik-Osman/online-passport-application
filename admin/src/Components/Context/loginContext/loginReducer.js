@@ -18,7 +18,8 @@ import {
     FETCH_AVAILABLE_DATES_ERROR, 
     FETCH_UNAPPROVED_APPLICANTS,
     UNAPPROVED_APPLICANTS,
-    FETCH_APPROVED_APPLICANTS
+    FETCH_APPROVED_APPLICANTS,
+    FETCH_DISTRICT_HOLYDAYS
     
 }  from "./loginActions"
 
@@ -167,6 +168,14 @@ if (action.type === GET_ALL_USER) {
                 applicantInfo: action.payload.data,     
               };
             }
+
+             // fetch all district holydays
+    if (action.type === FETCH_DISTRICT_HOLYDAYS) {
+      return {
+        ...state,
+        districtHolydays: action.payload.data,
+      };
+    }
       //register
   //       if (action.type === REGISTER_EMPLOYEE_SUCCESS) {
   //   return {

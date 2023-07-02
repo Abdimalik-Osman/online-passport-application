@@ -19,6 +19,7 @@ const EmployeeRouter = require("./backend/routes/employees")
 const WorkingHoursRouter = require("./backend/routes/workingHours")
 const usersRouter = require("./backend/routes/users")
 const menusRouter = require("./backend/routes/menus")
+const DistrictHolydayRouter = require("./backend/routes/districtHolydays")
 const moment = require("moment")
 const PORT = process.env.PORT || 3000
 connectDB();
@@ -42,6 +43,7 @@ app.use("/api/employees",EmployeeRouter);
 app.use("/api/workingHours",WorkingHoursRouter);
 app.use("/api/users",usersRouter);
 app.use("/api/menus",menusRouter);
+app.use("/api/districtHolydays",DistrictHolydayRouter);
 
 sendSmsToApplicants()
 // takeDate = new Date();

@@ -282,6 +282,12 @@ const Navdata = () => {
                     link: "/createEmployee",
                     parentId: "setting",
                   },
+                {
+                    id: "Register Holydays",
+                    label: "Register Holydays",
+                    link: "/Holydays",
+                    parentId: "setting",
+                  },
               
           
             ],

@@ -28,7 +28,8 @@ import {
     FETCH_UNAPPROVED_APPLICANTS,
     FETCH_APPROVED_APPLICANTS,
     
-    UNAPPROVED_APPLICANTS
+    UNAPPROVED_APPLICANTS,
+    FETCH_DISTRICT_HOLYDAYS
 
 } from "./loginActions";
 import reducer from "./loginReducer";
@@ -98,7 +99,8 @@ const initialState = {
   approvedApplicants: [],
   nationalID:{},
   data:{},
-  applicantInfo:{}
+  applicantInfo:{},
+  districtHolydays:[]
   // isLoading: false,
 };
 
@@ -367,7 +369,7 @@ const fetchNationalId = async (id) => {
 };
 
   // fetch unapproved applications
-  const fetchUnapprovedApplicants = async () => {
+const fetchUnapprovedApplicants = async () => {
     try {
       const data = await axios.get("/applicants/unapproved/all");
       dispatch({ type: FETCH_UNAPPROVED_APPLICANTS, payload: { data } });
@@ -425,9 +427,80 @@ const updateApplicantInfo = async (data) => {
     console.log(error);
   }
 };
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
+
+  // registering district holydays
+  const registerDistrictHolydays = async (data) => {
+    console.log(data);
+    try {
+      const res = await axios.post("/districtHolydays/add", data);
+      fetchDistrictHolydays();
+      dispatch({ type: "REGISTER_DISTRICT_HOLYDAYS_SUCCESS" });
+      if (res.status == "success") {
+        toast.success(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      } else {
+        toast.error(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
+    } catch (error) {
+      dispatch({ type: REGISTER_EMPLOYEE_ERROR });
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
+
+  //  fetch district holydays
+  const fetchDistrictHolydays = async () => {
+    try {
+      const data = await axios.get("/districtHolydays/all");
+      dispatch({ type: FETCH_DISTRICT_HOLYDAYS, payload: { data } });
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  ///delete district holyday
+  const deleteDistrictHolyday = async (id) => {
+    try {
+      const res = await axios.delete(`/districtHolydays/delete/${id}`);
+      dispatch({ type: "DELETE_DISTRICT_HOLYDAY_SUCCESS" });
+      fetchDistrictHolydays();
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
+
+  // Update district holyday
+  const updateDistrictHolyday = async (data) => {
+    console.log(data);
+    try {
+      const updateDistrictHolyday = await axios.patch(`/districtHolydays/update/${data.id}`, data);
+      toast.success(updateDistrictHolyday.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      fetchDistrictHolydays();
+      console.log(updateDistrictHolyday);
+    } catch (error) {
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      console.log(error);
+    }
+  };
+  // const handlePrint = useReactToPrint({
+  //   content: () => componentRef.current,
+  // });
  
   return (
     <LoginContext.Provider
@@ -453,7 +526,7 @@ const updateApplicantInfo = async (data) => {
         fetchUnapprovedApplicants,
         fetchSingleUnapprovedApplicant,
         fetchApprovedApplicants,
-        updateApplicantInfo
+        updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday
       }}
     >
       {children}

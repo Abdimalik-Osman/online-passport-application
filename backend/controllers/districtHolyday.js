@@ -28,7 +28,17 @@ exports.getSingleDistrictHolydays = async(req,res)=>{
 // create new district holyday
 exports.createHolyday = async(req,res)=>{
     try {
-        const newHolyday = await DistrictHolyday.create(req.body);
+        const selectedDate = new Date(req.body.holyday);
+        const selectedDay = selectedDate.getDate();
+        const selectedMonth = selectedDate.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
+        const selectedYear = selectedDate.getFullYear();
+        const newHolyday = await DistrictHolyday.create({
+            year: selectedYear,
+            month: selectedMonth,
+            day: selectedDay,
+            message: req.body.message,
+            districtId: req.body.districtId
+        });
         if(newHolyday){
             return res.status(200).json({message:"new record inserted successfully",status:"success"});
         }else{

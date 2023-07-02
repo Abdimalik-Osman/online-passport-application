@@ -58,6 +58,12 @@ const CreateUser = () => {
   const [id, setId] = useState("");
   const [checked, setChecked] = useState(true);
   const [state, setState] = useState(true);
+  const [selectedStateId, setSelectedState] = useState("");
+  const [districtName, setDistrictName] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectedOptions2, setSelectedOptions2] = useState([]);
+  const [stateName, setStateName] = useState("");
+  const [stateId, setStateId] = useState("");
   const tog_list = () => {
     setmodal_list(!modal_list);
   };
@@ -77,7 +83,7 @@ const CreateUser = () => {
     getEmployees,
     fetchEmployees,
     isLoading,
-    UpdateUser,User,userLoading
+    UpdateUser,User,userLoading,fetchStates,districts,selectedState,districtData,fetchSelectedState,fetchSingleDistrict
   } = useContext(LoginContext);
   console.log(changePassword);
   const { error, registrationError, success } = useSelector((state) => ({
@@ -94,8 +100,37 @@ const CreateUser = () => {
       item.username &&
       item.username.toLowerCase().includes(filterText.toLowerCase())
   );
-  console.log(filteredItems);
-  console.log(filterText);
+  const options =  districts?.map((item) => ({
+    value: item?.districtInfo[0]?._id,
+    label: item?.stateName,
+  }));
+  console.log(selectedState)
+  const options2 =
+    selectedState?.length > 0 &&
+    selectedState?.map((item) => ({
+      value: item?._id,
+      label: item?.districtName,
+    }));
+  const handleChange1 = (selected) => {
+    setSelectedOptions(selected);
+    // setStateId(selected.value);
+    console.log(selected.value)
+    // dispatch(getSingleDistrict(selected.value));
+    fetchSingleDistrict(selected.value)
+    setStateName(selected.label);
+    setSelectedOptions2([]);
+  };
+  const handleChange2 = (selected) => {
+    setSelectedOptions2(selected);
+
+    // dispatch(getDistrictInfo(selected.value));
+    fetchSelectedState(selected.value)
+    setSelectedState(selected.value);
+    setDistrictName(selected?.label);
+    // dispatch(getDistrictWorkingHours(selected.value));
+
+    // dispatch(getUnavailableDates(selected.value));
+  };
   const subHeaderComponentMemo = React.useMemo(() => {
     const handleClear = () => {
       if (filterText) {
@@ -119,6 +154,7 @@ const CreateUser = () => {
   useEffect(() => {
     getAllUsers();
     fetchEmployees();
+    fetchStates()
   }, []);
 
   console.log(getEmployees);
@@ -150,7 +186,7 @@ const CreateUser = () => {
         password: password,
         isAdmin: role == "Yes" ? true : false,
         empId: employeeId?.value,
-        
+        districtId:selectedStateId,
         // phoneNumber: phoneNumber,
         status:state
       };
@@ -172,7 +208,7 @@ const CreateUser = () => {
         password: password,
         isAdmin: role == "Yes" ? true : false,
         empId: employeeId?.value,
-        // phoneNumber: phoneNumber,
+        districtId:selectedStateId,
         state:state,
         status: changePassword == "Yes" ? true : false,
         id: id,
@@ -574,6 +610,34 @@ const CreateUser = () => {
                             />
                           </div>
                         </Col> */}
+                        <Col lg={4} md={6} sm={12}>
+                    <div className="my-2">
+                      <label className="form-label">
+                       Select State <span className="text-danger">*</span>
+                      </label>
+                      <Select
+                        className=""
+                        options={options}
+                        value={selectedOptions}
+                        onChange={handleChange1}
+                        // onChange={}
+                />
+                    </div>
+                  </Col>
+                <Col lg={4} md={6} sm={12}>
+                    <div className="my-2">
+                      <label className="form-label">
+                        Regions <span className="text-danger">*</span>
+                      </label>
+                      <Select
+                        className=""
+                        options={options2}
+                        value={selectedOptions2}
+                        onChange={handleChange2}
+                        // onChange={}
+                />
+                    </div>
+                  </Col>
                 </Row>
               </ModalBody>
 
