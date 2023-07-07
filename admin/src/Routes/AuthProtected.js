@@ -11,7 +11,7 @@ import Cover404 from "../pages/NotFound";
 
 const AuthProtected = (props) => {
   const { User } = useContext(LoginContext);
-  console.log(User)
+  // console.log(User)
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
   useEffect(() => {

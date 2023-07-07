@@ -30,6 +30,7 @@ let applicantSchema = new Schema(
     imagePath:{type:String, default:null},
     arrivalDate:{type:Date, default:null},
     approvedDate:{type:Date, default:null},
+    isCanceled:{type:Boolean, default:false},
   },
   { timestamps: true }
 );

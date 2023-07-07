@@ -18,5 +18,8 @@ router.get('/pending/:nID?/:phoneNumber?',ApplicantController.getPendingApplican
 router.get('/unapproved/all',ApplicantController.getAllUnapprovedApplicants)
 router.get('/registered/month/all',ApplicantController.getNumberOfRegisteredApplicantsThisMonth)
 router.get('/date/:startDate/:endDate',ApplicantController.getApplicantsFromRange)
+router.get('/specific/:date',ApplicantController.getSpecificAppointment)
+router.post('/cancel/appointment',ApplicantController.cancelAppointment);
+router.patch('/update/appointment/:id',ApplicantController.updateAppointment);
 
 module.exports = router;

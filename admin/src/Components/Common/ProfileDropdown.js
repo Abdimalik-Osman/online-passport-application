@@ -39,8 +39,8 @@ const ProfileDropdown = () => {
     setIsProfileDropdown(!isProfileDropdown);
   };
 
-  console.log(User);
-  console.log(User?.user?.username);
+  // console.log(User);
+  // console.log(User?.user?.username);
   return (
     <React.Fragment>
       <Dropdown

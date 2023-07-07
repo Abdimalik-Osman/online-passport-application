@@ -440,6 +440,7 @@ const updateApplicantInfo = async (data) => {
           position: toast.POSITION.TOP_RIGHT,
         });
       } else {
+        console.log(res)
         toast.error(res.message, {
           position: toast.POSITION.TOP_RIGHT,
         });

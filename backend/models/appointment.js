@@ -7,7 +7,8 @@ let appointmentSchema = new Schema(
     phoneNumber:{type:String, default:null},
     appointmentNumber: { type: String, default:null},
     appointmentDate:{type:Date, default:null},
-    appointmentTime:{type:String, default:null}
+    appointmentTime:{type:String, default:null},
+    isCanceled: { type:Boolean, default:false},
   },
   { timestamps: true }
 );

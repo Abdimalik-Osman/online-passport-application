@@ -28,10 +28,23 @@ exports.getSingleDistrictHolydays = async(req,res)=>{
 // create new district holyday
 exports.createHolyday = async(req,res)=>{
     try {
-        const selectedDate = new Date(req.body.holyday);
-        const selectedDay = selectedDate.getDate();
-        const selectedMonth = selectedDate.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
+        const selectedDate = new Date(req.body.year);
+        let selectedDay = selectedDate.getDate();
+        let selectedMonth = selectedDate.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the correct month number 
         const selectedYear = selectedDate.getFullYear();
+        if(selectedMonth < 10){
+            selectedMonth = "0" + selectedMonth;
+        }
+        if(selectedDay < 10){
+            selectedDay = "0" + selectedDay;
+        }
+        const checking = await DistrictHolyday.findOne({
+            year: selectedYear,
+            month: selectedMonth,
+            day: selectedDay,
+            districtId: req.body.districtId
+        });
+        if(checking) return res.status(400).json({message:"this date is already registered",status:"fail"});
         const newHolyday = await DistrictHolyday.create({
             year: selectedYear,
             month: selectedMonth,

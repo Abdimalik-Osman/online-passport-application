@@ -43,10 +43,12 @@ import React, {
   
   const RegisterHolydays = () => {
     const {
+      User,
       EmployeeRegister, getEmployees, fetchEmployees,fetchStates,districts,selectedState,districtData,fetchSelectedState,fetchSingleDistrict,
-      registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday
+      registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday,
      
     } = useContext(LoginContext);
+    
 
     const [checked, setChecked] = useState(true);
   
@@ -87,7 +89,10 @@ import React, {
 
   
  
-   
+    // register new district holyday
+    const myItemString = localStorage.getItem('user');
+    const user = JSON.parse(myItemString);
+    const districtId = user?.data.districtId;
     const handlerSubmit = (e) => {
       if (isEditing == false) {
         e.preventDefault();
@@ -102,9 +107,12 @@ import React, {
   
           const data = {
             year,
-            message
+            message,
+            districtId:districtId
           };
-  
+        
+          // console.log(user?.data.districtId)
+
           registerDistrictHolydays(data);
           setmodal_list(false);
   // 
@@ -126,7 +134,8 @@ import React, {
   
           const data = {
             year,
-            message
+            message,
+            districtId:districtId
           };
           registerDistrictHolydays(data);
           setmodal_list(false);
@@ -155,7 +164,8 @@ import React, {
         } else {
           const data = {
             year,
-            message
+            message,
+            districtId:districtId
           };
           console.log(data);
           updateDistrictHolyday(data);
@@ -191,8 +201,8 @@ import React, {
     //   setEmployeeId(data);
       
     };
-  console.log(districts);
-    document.title = "Employee Registration  ";
+  // console.log(districts);
+    document.title = "Holyday Registration  ";
     const handleValidDate = (date) => {
       const date1 = moment(new Date(date)).format("DD MMM Y");
       return date1;

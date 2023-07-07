@@ -336,7 +336,7 @@ if (isExists) {
 
 exports.getAllApplicants = async(req,res)=>{
     try {
-        const applicants = await Applicant.find({isApproved:true});
+        const applicants = await Applicant.find({isApproved:true,isCanceled:false});
         if(!applicants){
           return res.status(400).json({ message: "no applicants found", status:"fail" });
         }
@@ -474,6 +474,73 @@ exports.updateApplicant = async(req,res)=>{
   }
 }
 
+// update appointment date
+exports.updateAppointment = async(req,res)=>{
+  try {
+    let updatedAppointment = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
+      appointmentDate: req.body.appointmentDate,
+      appointmentTime:req.body.appointmentTime,
+      isCanceled:false
+    }},{$new:true});
+    await Appointment.findOneAndUpdate({applicantId: req.params.id},{$set:{
+      appointmentDate: req.body.appointmentDate,
+      appointmentTime:req.body.appointmentTime,
+      isCanceled:false
+    }},{$new:true});
+    if(!updatedAppointment){
+      return res.status(400).json({message:"Appointment can not be updated",status:"fail"})
+    }
+    return res.status(200).json({message:"Appointment updated successfully",status:"success"})
+    
+  } catch (error) {
+    return res.status(500).json({message:error.message, status:"fail"})
+  }
+}
+
+// get specific appointment date from Applicants
+exports.getSpecificAppointment = async(req,res)=>{
+  try {
+    // console.log(moment(req.params.date).format('YYYY-MM-DD'))
+      const all = await Applicant.findOne({appointmentDate:moment(req.params.date).format('YYYY-MM-DD')});
+      if(!all){
+        return res.status(400).json({message:'not appointment found in this date',status:"fail"})
+      }
+      // await Applicant.updateMany({isCanceled:null},{isCanceled:false});
+      // await Appointment.updateMany({isCanceled:null},{isCanceled:false});
+      return res.status(200).json(all)
+  } catch (error) {
+    return res.status(500).json({message:error.message, status:"fail"})
+  }
+}
+// cancel appointment 
+exports.cancelAppointment = async(req,res)=>{
+  try {
+    const all = req.body.canceledAppointments?.map(async (element) => {
+      await Appointment.findOneAndUpdate(
+        { applicantId: element?._id },
+        { $set: { isCanceled: true } }
+      );
+      await Applicant.findByIdAndUpdate(
+        { _id: element?._id },
+        { $set: { isCanceled: true } }
+      );
+      // const districtInfo = await District.findOne({"districtInfo._id":element?.districtId});
+      // await AvailableTime.findOneAndUpdate({"availableInfo.date":moment(element?.appointmentDate).format("YYYY-MM-DD")},{$set:{
+      //   "availableInfo.availableNumber":districtInfo?.hourlySlots,
+      //   // "availableInfo.dailySlots":districtInfo?.dailySlots,
+
+      // }},{new:true})
+    });
+    
+    await Promise.all(all);
+    return res
+      .status(200)
+      .json({ message: "Appointments canceled successfully", status: "success" });
+
+  } catch (error) {
+    return res.status(500).json({message:error.message, status:"fail"})
+  }
+}
 
 // view applicant data
 exports.viewApplicant = async (req,res) => {
