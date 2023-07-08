@@ -95,9 +95,9 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
   }
   });
 // check if its holyday
-  export const checkIsHolyday = createAsyncThunk('holydays/single', async (appointmentDate,thunkAPI) => {
+  export const checkIsHolyday = createAsyncThunk('holydays/single', async ({appointmentDate,id},thunkAPI) => {
     try{
-    const response = await axios.get(`http://localhost:4000/api/holydays/single/${appointmentDate}`);
+    const response = await axios.get(`http://localhost:4000/api/holydays/single/${appointmentDate}/${id}`);
     console.log(response.data)
     return response.data;
     }catch (err) {

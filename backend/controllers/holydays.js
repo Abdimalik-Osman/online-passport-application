@@ -1,5 +1,6 @@
 const HolyDay = require('../models/holydays');
 const DistrictHolyday = require("../models/districtHolidays");
+const { listenerCount } = require('../models/CID');
 exports.createHolyDay = async(req,res)=>{
     try {
     
@@ -36,9 +37,22 @@ exports.getSingleHolyDay = async(req,res)=>{
             return res.status(400).json({ message: 'Appointments cannot be booked on Fridays',status:"fail" });
         }
         const selectedAppointment = new Date(req.params.appointmentDate);
-        const selectedDay = selectedAppointment.getDate();
-        const selectedMonth = selectedAppointment.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
+        let selectedDay = selectedAppointment.getDate();
+        let selectedMonth = selectedAppointment.getMonth() + 1; // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
         const selectedYear = selectedAppointment.getFullYear(); // Months in JavaScript are zero-indexed, so we add 1 to get the //correct month number 
+        if(selectedMonth < 10){
+            selectedMonth = "0" + selectedMonth;
+        }
+        if(selectedDay < 10){
+            selectedDay = "0" + selectedDay;
+        }
+        const districtHolyday = await DistrictHolyday.findOne({
+            districtId: req.params.id,
+            day: selectedDay,
+            month: selectedMonth,
+            year: selectedYear
+        })
+       
         const holyDayInfo = await HolyDay.findOne({
           day: selectedDay,
           month: selectedMonth,
@@ -47,12 +61,7 @@ exports.getSingleHolyDay = async(req,res)=>{
         if (holyDayInfo) {
           return res.status(400).json({ message: `Selected date is a holy day of ${holyDayInfo?.message}`,status:"fail"});
         }
-        const districtHolyday = await DistrictHolyday.findOne({
-            districtId: req.params.id,
-            day: selectedDay,
-            month: selectedMonth,
-            year: selectedYear
-        })
+       
         if (districtHolyday) {
             return res.status(400).json({ message: `Selected date is a holy day of ${districtHolyday?.message}`,status:"fail"});
           }

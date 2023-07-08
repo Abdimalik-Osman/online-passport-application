@@ -10,6 +10,7 @@ const PaymentLog = require("../models/paymentLog")
 const UnAvailableDate = require("../models/unavailableDate")
 const AvailableTime = require("../models/availableTime");
 const DistrictWorkingHours = require("../models/workingHours");
+const User = require("../models/users");
 const nodemailer = require("nodemailer")
 const path = require("path")
 const multer = require("multer")
@@ -336,11 +337,21 @@ if (isExists) {
 
 exports.getAllApplicants = async(req,res)=>{
     try {
-        const applicants = await Applicant.find({isApproved:true,isCanceled:false});
-        if(!applicants){
-          return res.status(400).json({ message: "no applicants found", status:"fail" });
+        let applicants;
+        const user = await User.findOne({_id:req.params.userId });
+        if(user?.isAdmin !== true ){
+          applicants = await Applicant.find({
+            districtId:req.params.districtId,
+            isApproved:true,
+            isCanceled:false});
+            return res.status(200).json(applicants);
+        }else{
+          applicants = await Applicant.find({isApproved:true,isCanceled:false});
+          if(!applicants){
+            return res.status(400).json({ message: "no applicants found", status:"fail" });
+          }
+          return res.status(200).json(applicants);
         }
-        return res.status(200).json(applicants);
     } catch (err) {
         return res.status(500).json({ message: err.message, status:"fail" });
     }
@@ -352,6 +363,20 @@ exports.getSingleApplicant = async(req,res)=>{
         const singleApplicant = await Applicant.findOne({_id:req.params.id});
         if(!singleApplicant){
           return res.status(400).json({ message:"not found this applicant", status:"fail" });
+        }
+        return res.status(200).json(singleApplicant);
+    } catch (err) {
+        return res.status(500).json({ message:err.message, status:"fail"});
+        
+    }
+}
+// get single district applicants
+exports.getSingleDistrictApplicants = async(req,res)=>{
+    try {
+        
+        const singleApplicant = await Applicant.findOne({districtId:req.params.id});
+        if(!singleApplicant){
+          return res.status(400).json({ message:"No Applicants found int this district", status:"fail" });
         }
         return res.status(200).json(singleApplicant);
     } catch (err) {
@@ -397,7 +422,7 @@ exports.getUnavailableDates = async(req, res)=>{
     return res.status(500).json({message:error.message, status:"fail"})
   }
 }
-// get un available dates
+// get  available dates
 exports.getAvailableDates = async(req, res)=>{
   try {
     
@@ -603,8 +628,18 @@ exports.getPendingApplicants = async(req,res)=>{
 // get all un approved applications
 exports.getAllUnapprovedApplicants = async(req,res)=>{
   try {
-    const all = await Applicant.find({isApproved:false})
+    let all;
+    const user = await User.findOne({_id:req.params.userId});
+    if(user?.isAdmin == true){
+     all = await Applicant.find({isApproved:false})
     return res.status(200).json(all)
+    }else{
+      all = await Applicant.find({
+        districtId:req.params.districtId,
+        isApproved:false
+      })
+      return res.status(200).json(all)
+    }
   } catch (error) {
     return res.status(500).json({message:error.message,status:"fail"})
   }

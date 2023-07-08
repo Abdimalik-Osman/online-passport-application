@@ -104,9 +104,17 @@ import React, {
     const [isError, setIsError] = useState(false);
     const [bgRemove, setBgRemove] = useState("");
   
+    const myItemString = localStorage.getItem('user');
+    const user = JSON.parse(myItemString);
+    const district = user?.data.districtId;
+    const userId = user?.data._id;
+    const data = {
+      districtId:district,
+      userId:userId
+    }
     useEffect(()=>{
         // fetchUnapprovedApplicants()
-        fetchApprovedApplicants()
+        fetchApprovedApplicants(data)
     },[])
     const tog_list = () => {
       setChecked(false);

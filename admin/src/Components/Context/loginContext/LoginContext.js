@@ -369,9 +369,9 @@ const fetchNationalId = async (id) => {
 };
 
   // fetch unapproved applications
-const fetchUnapprovedApplicants = async () => {
+const fetchUnapprovedApplicants = async (user) => {
     try {
-      const data = await axios.get("/applicants/unapproved/all");
+      const data = await axios.get(`/applicants/unapproved/all/${user.districtId}/${user.userId}`);
       dispatch({ type: FETCH_UNAPPROVED_APPLICANTS, payload: { data } });
       // console.log(data);
     } catch (error) {
@@ -382,9 +382,9 @@ const fetchUnapprovedApplicants = async () => {
     }
 };
   // fetch approved applications
-  const fetchApprovedApplicants = async () => {
+  const fetchApprovedApplicants = async (user) => {
     try {
-      const data = await axios.get("/applicants/approved/all");
+      const data = await axios.get(`/applicants/approved/all/${user.districtId}/${user.userId}`);
       dispatch({ type: FETCH_APPROVED_APPLICANTS, payload: { data } });
       // console.log(data);
     } catch (error) {

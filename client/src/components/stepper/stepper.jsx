@@ -133,7 +133,9 @@ function MultiStepForm() {
   const [minDate, setMinDate] = useState('');
   
   // Get the current date in the format required by the input element
-  const currentDate = new Date().toISOString().split('T')[0];
+  const now = new Date();
+  let tom = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Add 1 day in milliseconds
+  const currentDate = tom.toISOString().split('T')[0];
 
   // Set the minimum date of the input element to the current date
   if (!minDate) {
@@ -144,13 +146,13 @@ function MultiStepForm() {
     if(status == "idle"){
       dispatch(fetchData());
     }
-    if(isError){
-      toast.error(error?.message)
-    }
-    if(isAppError) {
-      toast.error(errorMessage?.message);
+    // if(isError){
+    //   toast.error(error?.message)
+    // }
+    // if(isAppError) {
+    //   toast.error(errorMessage?.message);
 
-    }
+    // }
     if(errorMessage?.status == "fail"){
       toast.error(errorMessage?.message);
     }
@@ -214,9 +216,10 @@ function MultiStepForm() {
     const appointmentDate = e.target.value;
     setAppointmentDate(appointmentDate); //
     // setSelectedTime(e.target.value);
+    dispatch(checkIsHolyday({appointmentDate,id}));
+    console.log(selectedState1)
     dispatch(getAvailableDates({ id, appointmentDate }));
 
-    // console.log(workingHours)
   };
 
   // assign  variables
@@ -328,6 +331,11 @@ function MultiStepForm() {
   // handle the next step
   const handleNext = async (e) => {
     e.preventDefault();
+    if(isAppError == true || isAppError){
+      console.log(isAppError)
+      toast.error("Please check all the requirements")
+      return;
+    }
     const data = {
       nID: nID,
       phoneNumber: phoneNumber,
@@ -1011,7 +1019,8 @@ function MultiStepForm() {
         <span className="text-danger">{validationErrors.appointmentDate}</span>
       )} */}
                 </div>
-                <div className="mt-2 form-control disabled">
+               {errorMessage?.status !== "success" && 
+               <div className="mt-2 form-control disabled">
                   {availableDates?.length === 0
                     ? workingHours &&
                       workingHours?.map((item) => (
@@ -1057,7 +1066,7 @@ function MultiStepForm() {
                           </span>
                         </p>
                       ))}
-                </div>
+                </div>}
               </div>
             </div>
             {/* <div className="col">

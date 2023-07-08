@@ -7,15 +7,16 @@ const router = express.Router();
 
 // create an applicant
 router.post('/add',ApplicantController.createApplicant)
-router.get('/approved/all',ApplicantController.getAllApplicants)
+router.get('/approved/all/:districtId/:userId',ApplicantController.getAllApplicants)
 router.get('/single/:id',ApplicantController.getSingleApplicant)
+router.get('/districts/single/:id/:userId',ApplicantController.getSingleDistrictApplicants)
 router.get('/date/unavailable/all/:id',ApplicantController.getUnavailableDates)
 router.post('/dates/availableTime/all',ApplicantController.getAvailableDates)
 router.delete('/delete/:id',ApplicantController.deleteApplicant)
 router.patch('/update/:id',ApplicantController.updateApplicant)
 router.get('/view/:appointmentNumber/:phoneNumber',ApplicantController.viewApplicant)
 router.get('/pending/:nID?/:phoneNumber?',ApplicantController.getPendingApplicants)
-router.get('/unapproved/all',ApplicantController.getAllUnapprovedApplicants)
+router.get('/unapproved/all/:districtId/:userId',ApplicantController.getAllUnapprovedApplicants)
 router.get('/registered/month/all',ApplicantController.getNumberOfRegisteredApplicantsThisMonth)
 router.get('/date/:startDate/:endDate',ApplicantController.getApplicantsFromRange)
 router.get('/specific/:date',ApplicantController.getSpecificAppointment)
