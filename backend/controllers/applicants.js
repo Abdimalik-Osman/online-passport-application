@@ -502,6 +502,10 @@ exports.updateApplicant = async(req,res)=>{
 // update appointment date
 exports.updateAppointment = async(req,res)=>{
   try {
+    const app = await Applicant.findById({_id:req.params.id});
+    if(app?.appointmentDate.equals(moment(req.body.appointmentDate).format('YYYY-MM-DD') )){
+      return res.status(400).json({message: "you cannot book an appointment at the same day.",status:"fail"})
+    }
     let updatedAppointment = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
       appointmentDate: req.body.appointmentDate,
       appointmentTime:req.body.appointmentTime,
@@ -573,18 +577,13 @@ exports.viewApplicant = async (req,res) => {
     if(!req.params.appointmentNumber || req.params.appointmentNumber === undefined){
       return res.stat(404).json({message:"Please enter appointment number",status:"fail"});
     }
-    if(!req.params.phoneNumber || req.params.phoneNumber === undefined){
-      return res.stat(404).json({message:"Please enter phone number",status:"fail"});
-    }
-     const applicantInfo = await Appointment.findOne({appointmentNumber:req.params.appointmentNumber, phoneNumber:req.params.phoneNumber})
-     if(!applicantInfo) return res.status(400).json({message:"this appointment does not exist",status:"fail"})
-     console.log(applicantInfo?._id)
-     const applicantData = await Applicant.findOne({phoneNumber:applicantInfo?.phoneNumber})
-     if (!applicantData){
-      return res.stat(404).json({message:"No applicant data was not found",status:"fail"});
-     }
+
+     const appointmentInfo = await Appointment.findOne({appointmentNumber:req.params.appointmentNumber})
+     if(!appointmentInfo) return res.status(400).json({message:"this appointment does not exist",status:"fail"})
+     console.log(appointmentInfo?._id)
+    const info = await Applicant.findById({_id:appointmentInfo?.applicantId})
     //  console.log(applicantData)
-     return res.status(200).json(applicantData)
+     return res.status(200).json(info)
   } catch (error) {
     return res.status(500).json({message:error.message, status:"fail"})
   }
