@@ -4,12 +4,8 @@ const { listenerCount } = require('../models/CID');
 exports.createHolyDay = async(req,res)=>{
     try {
     
-            const newHolyDay = new HolyDay({
-                day:req.body.day,
-                month:req.body.month
-        });
-        await newHolyDay.save();
-
+            const newHolyDay = await HolyDay.create(req.body);
+    if(!newHolyDay) return res.status(400).json({message:"error while creating new holiday",status:"fail"});
     return res.status(201).json({message: 'new HolyDay successfully inserted',status:"success"})
     } catch (error) {
         return res.status(500).json({message:error.message,status:"fail"});

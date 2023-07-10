@@ -284,7 +284,8 @@ if (isExists) {
         applicantId: newApplicant._id,
         appointmentNumber:appointmentNumber,
         appointmentDate:req.body.appointmentDate,
-        appointmentTime:req.body.appointmentTime
+        appointmentTime:req.body.appointmentTime,
+        phoneNumber:req.body.phoneNumber
       })
       await newAppointment.save()
       
@@ -503,7 +504,7 @@ exports.updateApplicant = async(req,res)=>{
 exports.updateAppointment = async(req,res)=>{
   try {
     const app = await Applicant.findById({_id:req.params.id});
-    if(app?.appointmentDate.equals(moment(req.body.appointmentDate).format('YYYY-MM-DD') )){
+    if(app?.appointmentDate == moment(req.body.appointmentDate).format('YYYY-MM-DD')){
       return res.status(400).json({message: "you cannot book an appointment at the same day.",status:"fail"})
     }
     let updatedAppointment = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
