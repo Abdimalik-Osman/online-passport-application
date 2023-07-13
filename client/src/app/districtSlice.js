@@ -144,6 +144,7 @@ export const districtSlice = createSlice({
       state.isSuccess = false
       state.isLoading = false
       state.error = null
+      state.message = ""
     },
     getData:(state)=> {
       
@@ -261,7 +262,7 @@ export const districtSlice = createSlice({
       .addCase(getNationalId.rejected, (state, action) => {
         state.status = 'failed';
         state.error =  action.payload;
-        // state.message = action.payload;
+        state.message = action.payload;
         state.isError = true;
         state.isLoading = false;
       })

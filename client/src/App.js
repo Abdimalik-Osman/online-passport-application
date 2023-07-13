@@ -6,6 +6,7 @@ import StepperOne from './components/stepper/stepper1';
 import StepperTwo from './components/stepper/stepper2';
 import StepperThree from './components/stepper/stepper3';
 import StepperFour from "./components/stepper/stepper4";
+import UpdateAppointment from "./components/updateAppointment";
 
 function App() {
   const steps = [
@@ -20,6 +21,7 @@ function App() {
     <Routes>
       <Route path="/" element={<MultiStepForm />} />
       <Route path="/view" element={<ViewApplicant />} />
+      <Route path="/update" element={<UpdateAppointment />} />
     </Routes>
   </BrowserRouter>
   )

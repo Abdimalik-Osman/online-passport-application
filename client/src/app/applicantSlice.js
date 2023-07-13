@@ -45,9 +45,9 @@ export const getSingleApplicant = createAsyncThunk('applicants/single', async (i
 
 }
 });
-export const getApplicantInfo = createAsyncThunk('applicants/view', async ({appointmentNumber,phoneNumber},thunkAPI) => {
+export const getApplicantInfo = createAsyncThunk('applicants/view', async (appointmentNumber,thunkAPI) => {
   try{
-  const response = await axios.get(url+`/view/${appointmentNumber}/${phoneNumber}`);
+  const response = await axios.get(url+`/view/${appointmentNumber}`);
   return response.data;
   }catch (err) {
     return thunkAPI.rejectWithValue(err.response.data);
@@ -107,6 +107,17 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
   }
   });
 
+    // update appointment
+    export const updateAppointment = createAsyncThunk('appointment/update', async (data,thunkAPI) => {
+      try{
+      const response = await axios.patch(url+`/update/appointment/${data.id}`,data);
+      return response.data;
+      }catch (err) {
+        return thunkAPI.rejectWithValue(err.response.data);
+        // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+        // return thunkAPI.rejectWithValue(message); 
+    }
+    });
 // export const addItem = createAsyncThunk('items/addItem', async (item) => {
 //   const response = await axios.post('/api/items', item);
 //   return response.data;
@@ -132,6 +143,7 @@ export const applicantSlice = createSlice({
       state.isSuccess = false
       state.isLoading = false
       state.error = null
+      state.message = ""
     },
     getData:(state)=> {
       
@@ -274,9 +286,27 @@ export const applicantSlice = createSlice({
         state.error =  action.payload;
         state.isError = true;
         state.isLoading = false;
+        state.isSuccess = false;
+        state.message = action.payload;
+      })
+      .addCase(updateAppointment.pending, (state) => {
+        state.isLoading = true;
+        state.status = 'loading';
+      })
+      .addCase(updateAppointment.fulfilled, (state, action) => {
+        const { _id, ...updatedItem } = action.payload;
+        const existingItem = state.applicants.find((item) => item._id === _id);
+        if (existingItem) {
+          Object.assign(existingItem, updatedItem);
+        }
+      })
+      .addCase(updateAppointment.rejected, (state, action) => {
+        state.status = 'failed';
+        state.isLoading = false;
+        state.isError = true
+        state.error =  action.payload;
         // state.message = action.payload;
       })
-
     //   .addCase(addItem.fulfilled, (state, action) => {
     //     state.applicants.push(action.payload);
     //   })

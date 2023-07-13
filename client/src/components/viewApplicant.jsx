@@ -27,7 +27,7 @@ const ViewApplicant = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("test")
-    dispatch(getApplicantInfo({appointmentNumber:"APPT1007",phoneNumber:"5535354"}));
+    dispatch(getApplicantInfo({appointmentNumber:"APPT1007"}));
     if(errorMessage?.status == "fail" || errorMessage?.status ==="fail"){
       console.log(errorMessage);
       toast.error(errorMessage?.message)

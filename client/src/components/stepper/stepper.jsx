@@ -109,7 +109,6 @@ function MultiStepForm() {
   const [selectedDate, setSelectedDate] = useState("");
   const {
     status,
-    error,
     message,
     nationalID,
     districts,
@@ -123,6 +122,7 @@ function MultiStepForm() {
     isLoading
     
   } = useSelector((state) => state.district);
+  const error = useSelector((state) => state.district.error);
   const appMessage = useSelector((state) => state.applicant.message);
   const applicantInfo = useSelector((state) => state.applicant.applicantInfo);
   const appStatus = useSelector((state) => state.applicant.status);
@@ -146,24 +146,29 @@ function MultiStepForm() {
     if(status == "idle"){
       dispatch(fetchData());
     }
-    // if(isError){
-    //   toast.error(error?.message)
-    // }
-    // if(isAppError) {
-    //   toast.error(errorMessage?.message);
-
-    // }
+    if (error?.status === "fail" || error?.status === "fail") {
+      toast.error(error.message);
+        dispatch(reset());
+    }
+    if (error?.status === "success") {
+      toast.success(error.message);
+        dispatch(reset());
+        // dispatch(appReset());
+    }
     if(errorMessage?.status == "fail"){
       toast.error(errorMessage?.message);
+        // dispatch(reset());
+        dispatch(appReset());
     }
     if(errorMessage?.status == "success"){
       toast.success(errorMessage?.message);
+        dispatch(appReset());
     }
-    return ()=>{
-      dispatch(reset());
-    dispatch(appReset());
-    }
-  }, [isLoading, dispatch, isAppError,isAppLoading, isAppSuccess, isSuccess, isError]);
+    // return ()=>{
+    //   dispatch(reset());
+    // dispatch(appReset());
+    // }
+  }, [isLoading, dispatch,error]);
   // console.log(districts)
 
   // handle the previous step
@@ -253,11 +258,11 @@ function MultiStepForm() {
 
   // handle click or get national id information
   const handleClick = async () => {
- 
+    
     dispatch(getNationalId(nID));
+    console.log(error)
     if (error?.status === "fail" || error?.status == "fail") {
-      toast.error(error.message);
-      console.log(error)
+      // toast.error(error.message);
      return
     }
     const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
@@ -331,29 +336,12 @@ function MultiStepForm() {
   // handle the next step
   const handleNext = async (e) => {
     e.preventDefault();
-    if(isAppError == true || isAppError){
+    if( appStatus == "failed" || status == 'failed' ) {
       console.log(isAppError)
       toast.error("Please check all the requirements")
       return;
     }
-    const data = {
-      nID: nID,
-      phoneNumber: phoneNumber,
-      emergencyContactName: emergencyContactName,
-      emergencyContactNumber: emergencyContactNumber,
-      fullname: fName + " " + lName,
-      motherName: mFname + " " + mLname,
-      POB: pob,
-      DOB: selectedDate,
-      amount,
-      status: status1,
-      email: email,
-      occupation: occupation,
-      appointmentTime: selectedTime,
-      appointmentDate: appointmentDate,
-      districtId: selectedState1,
-      sex: selectedSex,
-    };
+    
     if (
       step == 1 &&
       (mFname == "" ||
@@ -465,7 +453,7 @@ function MultiStepForm() {
                     type="button"
                     onClick={handleClick}
                     className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                    NEXT
+                    CHECK ID
                   </button>
                 </div>
 
