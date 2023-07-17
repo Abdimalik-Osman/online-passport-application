@@ -20,6 +20,7 @@ import ApproveApplicants from "../pages/ApproveApplicants";
 import UnApprovedApplicants from "../pages/UnApproved";
 import ApprovedApplicants from "../pages/Approved";
 import RegisterHolydays from "../pages/RegisterHolyday";
+import ApplicantImage from "../pages/applicantImage";
 
 const authProtectedRoutes = [
   
@@ -33,6 +34,7 @@ const authProtectedRoutes = [
   { path: "/Holydays", component: RegisterHolydays },
   { path: "/register", component: CreateUser },
   { path: "/new", component: CreateApplicant },
+  { path: "/image", component: ApplicantImage },
 
   
   //User Profile

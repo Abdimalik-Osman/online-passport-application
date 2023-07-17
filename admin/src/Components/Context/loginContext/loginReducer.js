@@ -19,7 +19,8 @@ import {
     FETCH_UNAPPROVED_APPLICANTS,
     UNAPPROVED_APPLICANTS,
     FETCH_APPROVED_APPLICANTS,
-    FETCH_DISTRICT_HOLYDAYS
+    FETCH_DISTRICT_HOLYDAYS,
+    FETCH_APPLICANT_IMAGE
     
 }  from "./loginActions"
 
@@ -174,6 +175,14 @@ if (action.type === GET_ALL_USER) {
       return {
         ...state,
         districtHolydays: action.payload.data,
+      };
+    }
+
+    // fetch applicant image
+    if (action.type === FETCH_APPLICANT_IMAGE) {
+      return {
+        ...state,
+        applicantImage: action.payload.data,     
       };
     }
       //register

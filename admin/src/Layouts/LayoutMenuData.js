@@ -228,6 +228,12 @@ const Navdata = () => {
                     link: "/approve",
                     parentId: "setting",
                   },
+                  {
+                    id: "images",
+                    label: "ApplicantImage",
+                    link: "/image",
+                    parentId: "setting",
+                  },
                 ]
         },
         // {

@@ -29,7 +29,8 @@ import {
     FETCH_APPROVED_APPLICANTS,
     
     UNAPPROVED_APPLICANTS,
-    FETCH_DISTRICT_HOLYDAYS
+    FETCH_DISTRICT_HOLYDAYS,
+    FETCH_APPLICANT_IMAGE
 
 } from "./loginActions";
 import reducer from "./loginReducer";
@@ -100,7 +101,8 @@ const initialState = {
   nationalID:{},
   data:{},
   applicantInfo:{},
-  districtHolydays:[]
+  districtHolydays:[],
+  applicantImage:{}
   // isLoading: false,
 };
 
@@ -427,6 +429,30 @@ const updateApplicantInfo = async (data) => {
     console.log(error);
   }
 };
+const uploadImage = async (image) => {
+  console.log(image);
+  try {
+    const res = await axios.post("/applicants/upload", image);
+    
+    dispatch({ type: "UPLOAD_IMAGE_SUCCESS" });
+    if (res.status == "success") {
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      console.log(res)
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  } catch (error) {
+    dispatch({ type: "UPLOAD_IMAGE_FAIL" });
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
 
   // registering district holydays
   const registerDistrictHolydays = async (data) => {
@@ -502,7 +528,18 @@ const updateApplicantInfo = async (data) => {
   // const handlePrint = useReactToPrint({
   //   content: () => componentRef.current,
   // });
- 
+  const getApplicantImage = async (id) => {
+    try {
+      const data = await axios.get(`/applicants/images/${id}`);
+      dispatch({ type: FETCH_APPLICANT_IMAGE, payload: { data } });
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  };
   return (
     <LoginContext.Provider
       value={{
@@ -527,7 +564,9 @@ const updateApplicantInfo = async (data) => {
         fetchUnapprovedApplicants,
         fetchSingleUnapprovedApplicant,
         fetchApprovedApplicants,
-        updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday
+        updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday,
+        uploadImage,
+        getApplicantImage
       }}
     >
       {children}

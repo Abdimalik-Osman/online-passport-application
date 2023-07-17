@@ -22,5 +22,6 @@ router.get('/date/:startDate/:endDate',ApplicantController.getApplicantsFromRang
 router.get('/specific/:date',ApplicantController.getSpecificAppointment)
 router.post('/cancel/appointment',ApplicantController.cancelAppointment);
 router.patch('/update/appointment/:id',ApplicantController.updateAppointment);
+router.get('/images/:id',ApplicantController.getUserImage);
 
 module.exports = router;

@@ -17,6 +17,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
+    "mime": "^3.0.0",
     "moment": "^2.29.4",
     "mongoose": "^7.0.3",
     "mongoose-auto-increment": "^5.0.1",
@@ -26,7 +27,8 @@
     "nodemailer": "^6.9.3",
     "prop-types": "^15.8.1",
     "react-data-table-component": "^7.5.3",
-    "react-helmet": "^6.1.0"
+    "react-helmet": "^6.1.0",
+    "sharp": "^0.32.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"

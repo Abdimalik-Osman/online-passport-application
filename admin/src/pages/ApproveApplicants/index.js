@@ -43,7 +43,7 @@ import React, {
   const ApproveApplicants = () => {
     const {
       EmployeeRegister, getEmployees, fetchEmployees,   fetchUnapprovedApplicants,fetchSingleUnapprovedApplicant,applicantInfo,
-      unapprovedApplicants, updateApplicantInfo
+      unapprovedApplicants, updateApplicantInfo, uploadImage
      
     } = useContext(LoginContext);
     const [fName, setFname] = useState();
@@ -76,7 +76,7 @@ import React, {
     const [selectedDate, setSelectedDate] = useState("");
     const [EmployeeId, setEmployeeId] = useState();
     const [employeeName, setEmployeeName] = useState("");
-    const [image, setImage] = useState("");
+    const [file, setFile] = useState("");
     const [employeePhone, setEmployeePhone] = useState("");
     const [employeeEmail, setEmployeeEmail] = useState();
     const [BaseSalary, setBaseSalary] = useState();
@@ -489,10 +489,10 @@ import React, {
       const apiKey = "77i7YWurRk3wxLQW2MfrMkd4";
       const url = "https://api.remove.bg/v1.0/removebg";
       const formData = new FormData();
-      formData.append("image_file", image, image.name);
+      formData.append("image_file", file, file.name);
       formData.append("size", "auto");
-      formData.append("width", "600px");
-      formData.append("height", "600px");
+      // formData.append("width", "600px");
+      // formData.append("height", "600px");
     
       fetch(url, {
         method: "POST",
@@ -502,7 +502,7 @@ import React, {
         body: formData
       })
         .then((res) => {
-          const filenameFromUrl = image.name; // Extract filename from the URL
+          const filenameFromUrl = file.name; // Extract filename from the URL
           const fileType = res.headers.get("Content-Type");
           return Promise.all([filenameFromUrl, fileType, res.blob()]);
         })
@@ -539,11 +539,13 @@ import React, {
       if(!applicantInfo){
         toast.error("no applicant information available");
       }
-      if(!bgRemove){
-        toast.error("please select image");
-      }
-      console.log(bgRemove)
-      updateApplicantInfo({id:applicantInfo._id,bgRemove},)
+      // if(!bgRemove){
+      //   toast.error("please select image");
+      // }
+      console.log(file)
+      const formData = new FormData();
+      formData.append('image', bgRemove);
+      uploadImage(bgRemove)
 
 
     }
@@ -1179,7 +1181,7 @@ import React, {
               <Row>
               <Col md={6} sm={12} lg={4}>
                     <div className="my-3">
-                    <Input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                    <Input type="file" name="image" onChange={(e) => setFile(e.target.files[0])} />
                    
                    </div>
 
@@ -1199,7 +1201,7 @@ import React, {
               <Row>
                 <Col md={6} sm={12} lg={5}>
                   <div className="mb-2">
-                  {image && <img className="mt-3" src={URL.createObjectURL(image)} style={{ width: "400px", height: "400px",  }} />}
+                  {file && <img className="mt-3" src={URL.createObjectURL(file)} style={{ width: "400px", height: "400px",  }} />}
                   </div>
                 </Col>
                 <Col md={6} sm={12} lg={5}>
@@ -1279,7 +1281,7 @@ import React, {
 //           <input
 //             type="file"
 //             className="form-control"
-//             onChange={(e) => setImage(e.target.files[0])}
+//             onChange={(e) => setFile(e.target.files[0])}
 //           />
 //         </div>
 //         <div className="form-group m-4">

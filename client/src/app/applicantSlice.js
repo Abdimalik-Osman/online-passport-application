@@ -81,6 +81,17 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
         // return thunkAPI.rejectWithValue(message); 
     }
     });
+  // get single applicant
+  export const uploadImage = createAsyncThunk('applicants/upload', async (data,thunkAPI) => {
+      try{
+      const response = await axios.post(url+`/upload`,data);
+      return response.data;
+      }catch (err) {
+        return thunkAPI.rejectWithValue(err.response.data);
+        // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+        // return thunkAPI.rejectWithValue(message); 
+    }
+    });
 
   // delete applicant
   export const deleteApplicant = createAsyncThunk('applicants/delete', async (id,thunkAPI) => {
@@ -307,6 +318,31 @@ export const applicantSlice = createSlice({
         state.error =  action.payload;
         // state.message = action.payload;
       })
+
+      .addCase(uploadImage.pending, (state) => {
+        state.isLoading = true;
+        
+        state.status = 'loading';
+      })
+      .addCase(uploadImage.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // state.applicants.push(action.payload);
+        state.message = action.payload;
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state = initialState
+      })
+      .addCase(uploadImage.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error =  action.payload;
+        state.isLoading = false;
+        state.isError = true
+        // state.message = action.payload;
+      })
+
+
+
     //   .addCase(addItem.fulfilled, (state, action) => {
     //     state.applicants.push(action.payload);
     //   })

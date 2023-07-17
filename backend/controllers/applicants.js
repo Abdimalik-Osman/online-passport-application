@@ -14,24 +14,11 @@ const User = require("../models/users");
 const nodemailer = require("nodemailer")
 const path = require("path")
 const multer = require("multer")
-const cron = require("node-cron")
+const cron = require("node-cron");
+const Image = require("../models/images");
+const sharp = require("sharp");
 // Set up multer storage for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/images');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-// Set up multer middleware
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10, // Increase the file size limit to 10MB
-  },
-});
+const mime = require('mime');
 
 // July 1    somalia united day
 // October 12   national flag day
@@ -795,4 +782,20 @@ exports.sendSmsToApplicants = async(req,res)=>{
       } catch (err) {
         console.error(err);
       }
+}
+
+exports.getUserImage = async(req,res)=>{
+  try {
+    
+      
+        const image = await Image.findById(req.params.id);
+        if (!image) {
+          return res.status(404).json({ message: 'Image not found' });
+        }
+    
+        res.header('Content-Type', mime.getType(image.originalName));
+        res.send(image.processedImage);
+  } catch (error) {
+    return res.status(500).json({message: error.message,status:"fail"})
+  }
 }
