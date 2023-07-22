@@ -28,6 +28,7 @@ import {
   checkIsHolyday,
   appReset,
 } from "../../app/applicantSlice";
+import moment from "moment/moment";
 
 function MultiStepForm() {
   const navigate = useNavigate("/")
@@ -55,8 +56,8 @@ function MultiStepForm() {
   const [stateName, setStateName] = useState("");
   const [step, setStep] = useState(1);
   let [amount, setAmount] = useState("150");
-  let [type, setType] = useState("");
-  let [officeName, setOfficeName] = useState("");
+  let [payment, setPayment] = useState("EVC-PLUS");
+  let [payNumber, setPayNumber] = useState(616328920);
   let [location, setLocation] = useState("");
   let [officeNumber, setOfficeNumber] = useState("");
   let [isChecked, setIsChecked] = useState(false);
@@ -164,6 +165,53 @@ function MultiStepForm() {
       toast.success(errorMessage?.message);
         dispatch(appReset());
     }
+   
+  
+    if (nationalID) {
+     
+      let mFirstName = "";
+          let mLastName = "";
+          let firstName = "";
+          let lastName = "";
+        const text = nationalID?.fullName;
+        const fullname = text?.split(" ");
+        const motherName = nationalID?.motherName;
+        const motherFullname = motherName?.split(" ");
+  
+        const fname = fullname?.[0];
+        const secondName = fullname?.[1];
+        firstName = fname?.concat(" ", secondName);
+        lastName = fullname?.[2];
+        // ----------------
+        const mFname = motherFullname?.[0];
+        const mSecondName = motherFullname?.[1];
+        mFirstName = mFname?.concat(" ", mSecondName);
+        mLastName = motherFullname?.[2];
+      
+          
+          const defaultSex = nationalID?.sex === "Male" ? "Male" : "Female";
+          setSelectedSex(defaultSex);
+          if (nationalID?.DOB) {
+            const apiDate = new Date(nationalID.DOB); // convert date string to date object
+            // setDob(apiDate?.toISOString()?.substr(0, 10));
+            console.log(apiDate);
+          
+            // Now you can proceed with formatting the date if apiDate is valid
+            let time = apiDate.toISOString().substr(0, 10);
+            setSelectedDate(time);
+          } else {
+            // If applicantInfo?.DOB is null or undefined, use the current date
+            let time = moment(new Date()).format("DD-MM-YYYY");
+            setSelectedDate(time);  
+          }
+          setMFname(mFirstName);
+          setMLname(mLastName);
+          setFname(firstName);
+          setLName(lastName);
+          // setDob(apiDate?.toISOString()?.substr(0, 10));
+        
+      
+    }
     // return ()=>{
     //   dispatch(reset());
     // dispatch(appReset());
@@ -228,28 +276,7 @@ function MultiStepForm() {
   };
 
   // assign  variables
-  let mFirstName = "";
-  let mLastName = "";
-  let firstName = "";
-  let lastName = "";
-  if (nationalID) {
-    if (status != "failed" || status === "loading") {
-      const text = nationalID?.fullName;
-      const fullname = text?.split(" ");
-      const motherName = nationalID?.motherName;
-      const motherFullname = motherName?.split(" ");
-
-      const fname = fullname?.[0];
-      const secondName = fullname?.[1];
-      firstName = fname?.concat(" ", secondName);
-      lastName = fullname?.[2];
-      // ----------------
-      const mFname = motherFullname?.[0];
-      const mSecondName = motherFullname?.[1];
-      mFirstName = mFname?.concat(" ", mSecondName);
-      mLastName = motherFullname?.[2];
-    }
-  }
+ 
 
   // handle check for agreement
   const handleIsCheck = () => {
@@ -258,23 +285,20 @@ function MultiStepForm() {
 
   // handle click or get national id information
   const handleClick = async () => {
-    
+    if(!nID){
+      toast.error('Please enter your national ID');
+      return
+    }
     dispatch(getNationalId(nID));
     console.log(error)
     if (error?.status === "fail" || error?.status == "fail") {
       // toast.error(error.message);
      return
     }
-    const defaultSex = (await nationalID?.sex) === "Male" ? "Male" : "Female";
-    setSelectedSex(defaultSex);
-    const apiDate = new Date(nationalID?.DOB); // convert date string to date object
-    setDob(apiDate?.toISOString()?.substr(0, 10));
-    setSelectedDate(apiDate?.toISOString()?.substr(0, 10));
-    setMFname(mFirstName);
-    setMLname(mLastName);
-    setFname(firstName);
-    setLName(lastName);
-    setDob(apiDate?.toISOString()?.substr(0, 10));
+    if(nationalID){
+      setStep(step + 1);
+    }
+   
 
   };
 
@@ -343,7 +367,13 @@ function MultiStepForm() {
     }
     
     if (
-      step == 1 &&
+      step == 1 &&  !nationalID
+    ) {
+      
+      return;
+    }
+    if (
+      step == 2 &&
       (mFname == "" ||
         lName == "" ||
         fName == "" ||
@@ -358,7 +388,7 @@ function MultiStepForm() {
     }
     // console.log("here",formData.mFname)
     if (
-      step == 2 &&
+      step == 3 &&
       (emergencyContactName == "" ||
         emergencyContactNumber == "" ||
         phoneNumber == "")
@@ -367,8 +397,13 @@ function MultiStepForm() {
       toast.error("please fill the required fields");
       return;
     }
+    if(step == 3 && (phoneNumber == 
+    emergencyContactNumber) ){
+      toast.error("Your phone number and emergency contact number cannot be same.");
+      return;
+    }
     if (
-      step === 4 &&
+      step === 5 &&
       (appointmentDate === undefined ||
         appointmentDate === "" ||
         selectedState1 === undefined ||
@@ -377,7 +412,7 @@ function MultiStepForm() {
       toast.error("please fill the required fields");
       return;
     }
-    if (step === 4 && isChecked == false) {
+    if (step === 5 && isChecked == false) {
       toast.error("please check the checkbox if you agreed the terms");
       return;
     }
@@ -412,50 +447,59 @@ function MultiStepForm() {
         style={{ display: isOpen == true ? "none" : "" }}
         className="bg-cyan-900 w-100 h-100 py-10 text-white lg:px-12 ">
         <ToastContainer />
-        {step === 1 && (
+        {step === 1 &&(
+          <form onSubmit={handleNext} className="shadow-2xl px-4 mt-5" style={{ height: "550px" }}>
+  <div className="border-b border-gray-900/10 pb-6">
+    <h2 className="text-base font-extrabold leading-9 text-white">
+      NATIONAL IDENTITY AUTHENTICATION
+    </h2>
+    <p className="mt-1 text-sm leading-6 text-white">
+      PLEASE ENTER YOUR NATIONAL ID IF YOU HAVE NATIONAL IDENTITY AND GET YOUR PERSONAL INFORMATION,
+      TO FILL AUTOMATICALLY TO YOUR PERSONAL INFORMATION.
+      <br />
+      IF YOUR HAVE REGISTERED THIS NATIONAL IDENTITY ALREADY THE SYSTEM WILL ALLOW YOU TO REGISTER ANOTHER TIME
+    </p>
+
+    <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 m-0">
+      <div className="col-span-1">
+        <input
+          type="text"
+          name="nID"
+          placeholder="Enter Your National ID"
+          value={nID}
+          onChange={(e) => setNID(e.target.value)}
+          autoComplete="address-level2"
+          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        />
+      </div>
+      <div className="col-span-1 lg:col-span-1">
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                  CHECK NATIONAL ID
+                </button>
+              </div>
+    </div>
+  </div>
+</form>
+
+        )
+
+        }
+        {step === 2 && (
           // personal information form
           <form onSubmit={handleNext} className=" shadow-2xl px-4 ">
             <div className="border-b border-gray-900/10 pb-6">
               <h2 className="text-base font-extrabold leading-9 text-white">
-                Personal Information
+                PERSONAL INFORMATION
               </h2>
               <p className="mt-1 text-sm leading-6 text-white">
-                Please fill your personal information, firstly you will enter
-                your NATIONAL ID for getting your personal information and
-                checking if you are ready for applying this system. please enter
-                your national ID and double click the check button fill you
-                personal information.
+                PLEASE FILL YOUR PERSONAL INFORMATION, SOME FIELDS ARE NOT EDITABLE ONLY FILL THE EDITABLE FIELDS.
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
-                <div className="sm:col-span-4">
-                  {/* <label
-                  htmlFor="nID"
-                  className="block text-sm font-medium leading-6 text-gray-900">
-                  NATIONAL ID
-                </label> */}
-                  <input
-                    type="text"
-                    name="nID"
-                    placeholder="Enter Your National ID"
-                    value={nID}
-                    onChange={(e) => setNID(e.target.value)}
-                    autoComplete="address-level2"
-                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-                  {/* {validationErrors.nID && (
-        <span className="text-danger">{validationErrors.nID}</span>
-      )} */}
-                </div>
-
-                <div className="sm:col-span-2">
-                  <button
-                    type="button"
-                    onClick={handleClick}
-                    className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                    CHECK ID
-                  </button>
-                </div>
+           
 
                 {/* //FIRST NAME */}
                 <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1 ">
@@ -655,17 +699,23 @@ function MultiStepForm() {
               </div>
 
               <div className="d-flex justify-content-center align-items-center">
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto rounded-md bg-sky-500 w-50 py-2 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                  NEXT
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                Previous
+              </button>
+              <button
+                type="submit"
+                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                NEXT
+              </button>
+            </div>
             </div>
           </form>
         )}
         {/* CONTACT INFORMATION */}
-        {step === 2 && (
+        {step === 3 && (
           // contact information form
           <form onSubmit={handleNext} className=" shadow-2xl px-12 lg:p-11">
             <div className="border-b border-gray-900/10 pb-6">
@@ -673,13 +723,11 @@ function MultiStepForm() {
                 CONTACT INFORMATION
               </h2>
               <p className="mt-1 text-sm leading-6 text-white">
-                Please use a permanent contact information where you can receive
-                updates.
+                PLEASE USE PERMANENT CONTACT INFORMATION WHERE YOU CAN RECEIVE
+                UPDATED FROM YOUR PASSPORT INFORMATION.
               </p>
               <p className="mt-1 text-sm leading-6 text-white">
-                Please fill all the contact information the required can be
-                recognized by red star if you don't see the red star it means it
-                optional.
+               PLEASE FILL ALL THE REQUIRED FIELDS, IF YOU SEE RED STAR IT MEANS ITS OPTIONAL
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
@@ -687,7 +735,7 @@ function MultiStepForm() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900">
+                    className="block text-sm font-medium leading-6 text-white">
                     YOUR CONTACT NUMBER
                   </label>
                   <div className="mt-2">
@@ -711,7 +759,7 @@ function MultiStepForm() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="last-name"
-                    className="block text-sm font-medium leading-6 text-gray-900">
+                    className="block text-sm font-medium leading-6 text-white">
                     YOUR E-MAIL
                   </label>
                   <div className="mt-2">
@@ -730,7 +778,7 @@ function MultiStepForm() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900">
+                    className="block text-sm font-medium leading-6 text-white">
                     EMERGENCY CONTACT NAME
                   </label>
                   <div className="mt-2">
@@ -754,7 +802,7 @@ function MultiStepForm() {
                 <div className="sm:col-span-3">
                   <label
                     htmlFor="mLname"
-                    className="block text-sm font-medium leading-6 text-gray-900">
+                    className="block text-sm font-medium leading-6 text-white">
                     EMERGENCY CONTACT NUMBER
                   </label>
                   <div className="mt-2">
@@ -794,9 +842,9 @@ function MultiStepForm() {
           </form>
         )}
         {/* PASSPORT INFORMATION */}
-        {step === 3 && (
+        {step === 4 && (
           // passport information
-          <form onSubmit={handleNext} className=" px-4 shadow-2xl text-white">
+          <form onSubmit={handleNext} className=" px-4 shadow-2xl text-white" style={{height:"595px"}}>
             <div className="border-b border-gray-900/10 pb-12">
               <h4 className="text-base font-semibold leading-3 text-white">
                 PASSPORT INFORMATION
@@ -805,9 +853,7 @@ function MultiStepForm() {
                 <br />
                 <b> NOTE: </b>
                 <br />
-                Please bring your proof of Philippine citizenship by election,
-                naturalization, re-acquisition on the date of your personal
-                appearance.
+                THIS STEP IS THE PASSPORT INFORMATION IT'S STATIC ITS ONLY NEW PASSPORTS AND THE PAYMENT IS PERMANENT.
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
@@ -889,7 +935,7 @@ function MultiStepForm() {
           </form>
         )}
         {/* APPOINTMENT INFORMATION */}
-        {step === 4 && (
+        {step === 5 && (
           // passport information
 
           <form onSubmit={handleNext} className=" px-4 shadow-2xl">
@@ -900,20 +946,25 @@ function MultiStepForm() {
               <br />
               <b> NOTE: </b>
               <br />
-              Please first select the state and then select the district that
-              you can get from the passport, and then choose your appointment
-              date, if the date you selected is full in terms that district
-              please select another date and then select the time that you can
-              go there
+              <ol>
+                <li>FIRSTLY PLEASE SELECT THE STATE AND THEN SELECT THE THAT YOU CAN GET FROM THE PASSPORT</li>
+              </ol> 
+              <ol>
+                <li>THEN CHOOSE YOUR APPOINTMENT
+              DATE AND TIME, IF THE DATE YOU SELECTED IS FULL IN TERMS THAT DISTRICT
+              PLEASE SELECT ANOTHER DATE AND THEN SELECT THE TIME THAT YOU CAN
+              GO THERE.</li>
+              </ol> 
+              
               <br />
               <b>NOTE:</b>
               <br />
-              if you miss the appointment you selected at that your appointment
-              will be cancelled immediately and you have to pay another fee.
-              please go there the time you appointed to go there.
+              IF YOU MISS THE APPOINTMENT YOU SELECTED AT YOUR APPOINTMENT TIME, THEN IT
+              WILL BE CANCELED IMMEDIATELY AND YOU WILL HAVE TO PAY ANOTHER FEE.
+              PLEASE GO THERE THE TIME YOU APPOINTED TO GO THERE.
             </p>
             <p className=" text-sm leading-8 text-white">
-              please check the checkbox if you have agreed our personal terms
+              PLEASE CHECK THE CHECKBOX IF YOU HAVE AGREED OUR PERSONAL TERMS.  
             </p>
             {/* <div className="row"> */}
             <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
@@ -1144,7 +1195,7 @@ function MultiStepForm() {
             </div>
           </form>
         )}
-        {step === 5 && (
+        {step === 6 && (
           <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
             <p className="mt-1 text-sm leading-6 text-white">
               PLEASE PREVIEW YOUR INFORMATION BEFORE SUBMITTING AND MAKE
@@ -1578,14 +1629,93 @@ function MultiStepForm() {
               </button>
               <button
                 type="button"
-                onClick={handleSubmit}
-                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-black shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                Submit
+                onClick={handleNext}
+                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                Next
               </button>
             </div>
           </div>
         )}
+        {step === 7 && (
+          <form className="shadow-lg mx-6 px-5" style={{height:"596px"}}>
+          <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
+            <p className="mt-1 text-sm leading-6 text-white">
+              PLEASE PROCEED THE PAYMENT INFORMATION TO MAKE YOUR PASSPORT APPOINTMENT SUCCESSFULLY
+            </p>
+            <p className="leading-6 text-white">
+              <b>NB:</b> WE HAVE ONLY PAYMENT METHOD THAT WE CAN GET TO PROCEED YOUR PAYMENT.
+            </p>
+
+            <legend>PAYMENT INFORMATION</legend>
+            <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3  sm:grid-cols-6 m-0">
+      
+
+              {/* payment type */}
+              <div className="col-span-3  lg:col-span-3 lg:my-1">
+                  <label
+                    htmlFor="payment"
+                    className="block text-sm font-medium leading-6 text-white">
+                    PAYMENT TYPE
+                  </label>
+                  <div className="">
+                    <select
+                      id="payment"
+                      name="payment"
+                      autoComplete="payment"
+                      onChange={(e) => setPayment(e.target.value)}
+                      disabled
+                      
+                      placeholder="Marital Status"
+                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                      <option value={"EVC-PLUS"}>EVC-PLUS </option>
+                    </select>
+                  </div>
+                </div>
+              {/* pay number */}
+              <div className="col-span-3  lg:col-span-2 ">
+                <label
+                  htmlFor="pob"
+                  className="block text-sm font-medium leading-6 text-white">
+                  Number of payment
+                </label>
+                <div className="">
+                  <input
+                    type="number"
+                    name="paymentNumber"
+                    value={payNumber}
+                    onChange={(e) => setPayNumber(e.target.value)}
+                    disabled
+                    placeholder="Payment Number"
+                    autoComplete="payment number"
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+       
+                </div>
+              </div>
+            </div>
+            <div className="d-flex justify-content-center align-items-center">
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                Proceed
+              </button>
+            </div>
+           
+
+          
+            
+          </div>
+          </form>
+        )}
       </div>
+      
     </>
   );
 }

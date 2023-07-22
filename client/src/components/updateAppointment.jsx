@@ -316,18 +316,14 @@ function MultiStepForm() {
       {/* <HorizontalStepper isOpen={isOpen} /> */}
       <div className="bg-cyan-900 w-100 h-100 py-10 text-white lg:px-12 ">
         <ToastContainer />
-        personal information form
-        <form className=" shadow-2xl px-4 " onSubmit={handleSubmit}>
+          <form className=" shadow-2xl px-4 " onSubmit={handleSubmit}>
           <div className="border-b border-gray-900/10 pb-6">
+
             <h2 className="text-base font-extrabold leading-9 text-white">
-              Personal Information
+              APPOINTMENT UPDATE
             </h2>
             <p className="mt-1 text-sm leading-6 text-white">
-              Please fill your personal information, firstly you will enter your
-              NATIONAL ID for getting your personal information and checking if
-              you are ready for applying this system. please enter your national
-              ID and double click the check button fill you personal
-              information.
+             UPDATING AN APPOINTMENT IS VALID ONLY WHEN YOU HAVE AN APPOINTMENT
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
@@ -360,70 +356,149 @@ function MultiStepForm() {
                 </button>
               </div>
               {applicantInfo && applicantInfo?.districtId && (
-                <>
-                  <div className="sm:col-span-2">
-                    <div className="form-group">
-                      <label htmlFor="date">Appointment Date</label>
-                      <input
-                        type="date"
-                        name="appointmentDate"
-                        onChange={dateHandleChange}
-                        min={minDate}
-                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
 
-                  <div className="sm:col-span-2">
-                    <div className="mt-4 form-control disabled">
-                      {availableDates?.length === 0
-                        ? workingHours &&
-                          workingHours?.map((item) => (
-                            <div key={item.startTime} className="">
-                              <div className="form-group">
-                                <input
-                                  type="radio"
-                                  name="time"
-                                  value={item.startTime}
-                                  id={item.startTime}
-                                  className="mx-2"
-                                  checked={selectedTime === item.startTime}
-                                  onChange={handleTimeChange}
-                                />
-                                <label htmlFor={item.startTime}>
-                                  {item.startTime} ------- {item.endTime}{" "}
-                                  Available
-                                </label>
-                              </div>
-                            </div>
-                          ))
-                        : availableDates?.map((info, i) => (
-                            <p key={info.time}>
-                              <input
-                                type="radio"
-                                name="time"
-                                value={info.time}
-                                id={info.time}
-                                className="mx-2"
-                                disabled={info.availableNumber === 0}
-                                // checked={selectedTime === i.startTime}
-                                onChange={handleTimeChange}
-                              />{" "}
-                              {info.time} --{" "}
-                              {availableDates[i + 1]
-                                ? availableDates[i + 1].time
-                                : "Next Hour"}
-                              ={" "}
-                              <span>
-                                {info.availableNumber == 0
-                                  ? "FULL"
-                                  : `${info.availableNumber} available slots`}
-                                {/* { info.availableNumber == 0 ? "Full" : ""} */}
-                              </span>
-                            </p>
-                          ))}
+                <>
+             
+              <div className="sm:col-span-3">
+                <Select
+                  className="block w-full rounded-md 3order-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  options={options}
+                  value={selectedOptions}
+                  onChange={handleChange1}
+                />
+              </div>
+              <div className="sm:col-span-3">
+                <Select
+                  className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  options={options2}
+                  value={selectedOptions2}
+                  onChange={handleChange2}
+                />
+              </div>
+
+              {/* 1502440 */}
+
+              {/* <hr /> */}
+
+              <div className="sm:col-span-3">
+                {selectedState?.length > 0 &&
+                  selectedState?.map((item) => (
+                    <div>
+                      <div className="form-group">
+                        <label htmlFor="dailyApplicants">
+                          Daily Applicants Can Service
+                        </label>
+                        <input
+                          type="Number"
+                          name="office"
+                          disabled
+                          value={item.dailySlots}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
+                      <div className="form-group my-2">
+                        <label htmlFor="office">Office Name</label>
+                        <input
+                          type="text"
+                          name="office"
+                          disabled
+                          value={item.officeName}
+                          // onChange={(e)=>setOfficeName(e.target.value)}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label htmlFor="location">Location</label>
+                        <textarea
+                          type="text"
+                          name="location"
+                          disabled
+                          value={item.location}
+                          // onChange={(e)=>setLocation(e.target.value)}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
+
+                      <div className="form-group my-2">
+                        <label htmlFor="contactNumber">
+                          Office Contact Number
+                        </label>
+                        <input
+                          type="Number"
+                          name="contactNumber"
+                          disabled
+                          value={item.contactNumber}
+                          // onChange={(e)=>setOfficeNumber(e.target.value)}
+                          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  ))}
+              </div>
+              <div className="sm:col-span-3">
+                <div className="form-group">
+                  <label htmlFor="date">Appointment Date</label>
+                  <input
+                    type="date"
+                    name="appointmentDate"
+                    onChange={dateHandleChange}
+                    min={minDate}
+                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                  {/* {validationErrors.appointmentDate && (
+        <span className="text-danger">{validationErrors.appointmentDate}</span>
+      )} */}
+                </div>
+               {errorMessage?.status !== "success" && 
+               <div className="mt-2 form-control disabled">
+                  {availableDates?.length === 0
+                    ? workingHours &&
+                      workingHours?.map((item) => (
+                        <div key={item.startTime} className="">
+                          <div className="form-group">
+                            <input
+                              type="radio"
+                              name="time"
+                              value={item.startTime}
+                              id={item.startTime}
+                              className="mx-2"
+                              checked={selectedTime === item.startTime}
+                              onChange={handleTimeChange}
+                            />
+                            <label htmlFor={item.startTime}>
+                              {item.startTime} ------- {item.endTime} Available
+                            </label>
+                          </div>
+                        </div>
+                      ))
+                    : availableDates?.map((info, i) => (
+                        <p key={info.time}>
+                          <input
+                            type="radio"
+                            name="time"
+                            value={info.time}
+                            id={info.time}
+                            className="mx-2"
+                            disabled={info.availableNumber === 0}
+                            // checked={selectedTime === i.startTime}
+                            onChange={handleTimeChange}
+                          />{" "}
+                          {info.time} --{" "}
+                          {availableDates[i + 1]
+                            ? availableDates[i + 1].time
+                            : "Next Hour"}
+                          ={" "}
+                          <span>
+                            {info.availableNumber == 0
+                              ? "FULL"
+                              : `${info.availableNumber} available slots`}
+                            {/* { info.availableNumber == 0 ? "Full" : ""} */}
+                          </span>
+                        </p>
+                      ))}
+                </div>}
+              
+            </div>
                 </>
               )}
              {
