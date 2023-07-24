@@ -815,24 +815,27 @@ exports.getAppointmentByDate = async(req,res)=>{
 exports.cancelAppointment = async(req, res) =>{
   try {
 
-    const canceled =  await Applicant.find({
-      appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD"), 
+    const appointments =  await Applicant.find({
+      appointmentDate:moment(req.body.appointmentDate).format("YYYY-MM-DD"), 
       districtId:req.params.districtId
   });
-
-  const d = canceled.map(async(ele)=>{
-    await Applicant.updateMany({ appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD"),
+  if(!appointments){
+    return res.status(400).json({message:"no appointments available in this district"});
+  }
+  let canceled ;
+  
+   canceled = await Applicant.updateMany({ appointmentDate:moment(req.body.appointmentDate).format("YYYY-MM-DD"),
     districtId:req.params.districtId}, {$set:{isCancelled:true}},{new:true})
     await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
       isCanceled: true
     }},{new:true});
-  })
+  
 
-    if(canceled){
-      await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
-        isCanceled: true
-      }},{new:true});
-    }
+    // if(canceled){
+    //   await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
+    //     isCanceled: true
+    //   }},{new:true});
+    // }
     if(!canceled) return res.status(400).json({message:"error occurred while cancelling the appointment",status:"fail"})
     return res.status(200).json({message:"successfully canceled the appointment.",status:"success"})
   } catch (error) {

@@ -540,6 +540,30 @@ const uploadImage = async (image) => {
       });
     }
   };
+
+  // cancel appointment
+  const cancelAppointment = async (data) => {
+    console.log(data);
+    try {
+      const res = await axios.patch(`/applicants/appointments/cancel/${data.districtId}`, data);
+      if(res.status == "success") {
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } if(res.status == "fail") {
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+      // fetchDistrictHolydays();
+      console.log(res);
+    } catch (error) {
+      toast.error(error.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+      // console.log(error);
+    }
+  };
   return (
     <LoginContext.Provider
       value={{
@@ -566,7 +590,8 @@ const uploadImage = async (image) => {
         fetchApprovedApplicants,
         updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday,
         uploadImage,
-        getApplicantImage
+        getApplicantImage,
+        cancelAppointment
       }}
     >
       {children}

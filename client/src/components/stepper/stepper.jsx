@@ -166,6 +166,17 @@ function MultiStepForm() {
         dispatch(appReset());
     }
    
+    if(appMessage?.status == "success"){
+      toast.success(appMessage?.message);
+      navigate("/")
+        dispatch(appReset());
+    }
+    if(appMessage?.status == "fail"){
+      toast.error(appMessage?.message);
+        dispatch(appReset());
+        
+    }
+   
   
     if (nationalID) {
      

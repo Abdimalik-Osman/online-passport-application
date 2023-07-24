@@ -31,6 +31,7 @@ let applicantSchema = new Schema(
     arrivalDate:{type:Date, default:null},
     approvedDate:{type:Date, default:null},
     isCanceled:{type:Boolean, default:false},
+    ratio :{type:Number, default:25}
   },
   { timestamps: true }
 );
