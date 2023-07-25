@@ -144,7 +144,7 @@ const Login = (props) => {
     }, 1700);
   }, [dispatch, error]);
 
-  document.title = "Asal TV | ERP - Enterprise Resource & Planning";
+  document.title = "Somali Online Passport Application";
   return (
     <React.Fragment>
       <ParticlesAuth>
@@ -156,10 +156,10 @@ const Login = (props) => {
                   <div>
                     <Link to="/" className="d-inline-block auth-logo">
                       {/* <img src={logoLight} alt="" height="20" /> */}
-                      <h4>Asal</h4>
+                      <h4>Somali Online Passport Application</h4>
                     </Link>
                   </div>
-                  <p className="mt-3 fs-15 fw-medium">Asal TV</p>
+                  <p className="mt-3 fs-15 fw-medium">Somali Online Passport Application</p>
                 </div>
               </Col>
             </Row>

@@ -166,16 +166,16 @@ function MultiStepForm() {
         dispatch(appReset());
     }
    
-    if(appMessage?.status == "success"){
-      toast.success(appMessage?.message);
-      navigate("/")
-        dispatch(appReset());
-    }
-    if(appMessage?.status == "fail"){
-      toast.error(appMessage?.message);
-        dispatch(appReset());
+    // if(appMessage?.status == "success"){
+    //   toast.success(appMessage?.message);
+    //   navigate("/")
+    //     dispatch(appReset());
+    // }
+    // if(appMessage?.status == "fail"){
+    //   toast.error(appMessage?.message);
+    //     dispatch(appReset());
         
-    }
+    // }
    
   
     if (nationalID) {
@@ -295,15 +295,16 @@ function MultiStepForm() {
   };
 
   // handle click or get national id information
-  const handleClick = async () => {
+  const handleClick =  (e) => {
+    e.preventDefault()
     if(!nID){
       toast.error('Please enter your national ID');
       return
     }
     dispatch(getNationalId(nID));
     console.log(error)
-    if (error?.status === "fail" || error?.status == "fail") {
-      // toast.error(error.message);
+    if (error?.status === "fail" || error?.status == false) {
+      toast.error(error.message);
      return
     }
     if(nationalID){
@@ -369,8 +370,10 @@ function MultiStepForm() {
   
 
   // handle the next step
-  const handleNext = async (e) => {
+  const handleNext =  (e) => {
+
     e.preventDefault();
+    
     if( appStatus == "failed" || status == 'failed' ) {
       console.log(isAppError)
       toast.error("Please check all the requirements")
@@ -380,7 +383,7 @@ function MultiStepForm() {
     if (
       step == 1 &&  !nationalID
     ) {
-      
+      toast.error("this national id already exists")
       return;
     }
     if (
@@ -458,8 +461,8 @@ function MultiStepForm() {
         style={{ display: isOpen == true ? "none" : "" }}
         className="bg-cyan-900 w-100 h-100 py-10 text-white lg:px-12 ">
         <ToastContainer />
-        {step === 1 &&(
-          <form onSubmit={handleNext} className="shadow-2xl px-4 mt-5" style={{ height: "550px" }}>
+{step === 1 &&(
+  <form onSubmit={handleClick} className="shadow-2xl px-4 mt-5" style={{ height: "550px" }}>
   <div className="border-b border-gray-900/10 pb-6">
     <h2 className="text-base font-extrabold leading-9 text-white">
       NATIONAL IDENTITY AUTHENTICATION
@@ -485,8 +488,8 @@ function MultiStepForm() {
       </div>
       <div className="col-span-1 lg:col-span-1">
                 <button
-                  type="button"
-                  onClick={handleClick}
+                  type="submit"
+                  
                   className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
                   CHECK NATIONAL ID
                 </button>

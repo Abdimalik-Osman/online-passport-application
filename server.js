@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors())
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
 })); // Use this after the variable declaration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

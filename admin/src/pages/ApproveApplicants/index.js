@@ -63,8 +63,8 @@ import React, {
     const [appointmentDate, setAppointmentDate] = useState();
     const [appointmentTime, setAppointmentTime] = useState();
     const [phoneNumber, setPhoneNumber] = useState();
-    // const [employeeId, setEmployeeId] = useState("");
-    // const [isEditing, setIsEditing] = useState(false);
+    const [image, setImage] = useState();
+    const [appImage, setAppImage] = useState();
     const [changePassword, setChangePassword] = useState("No");
     const [nationalId, setNationalId] = useState("");
     // const [modal_list, setmodal_list] = useState(false);
@@ -644,7 +644,7 @@ import React, {
             <div className="bg-light p-3 modal-header">
               <h5 className="modal-title">
                 {" "}
-                {isEditing ? "update User" : "Add New Item"}{" "}
+                {isEditing ? "Approve Applicant" : "Add New Applicant"}{" "}
               </h5>
 
               <button
@@ -880,6 +880,19 @@ import React, {
                       />
                     </div>
                   </Col>
+                  <Col md={6} sm={12} lg={4}>
+                    <div className="mb-3">
+                      <label className="form-label">
+                        Applicant Image <span className="text-danger">*</span>
+                      </label>
+                      <Input type="file" name="image" onChange={(e) => setImage(e.target.files[0])} />
+                    </div>
+                  </Col>
+                  <Col md={6} sm={12} lg={5}>
+                  <div className="mb-2">
+                  {image && <img className="mt-3" src={URL.createObjectURL(image)} style={{ width: "400px", height: "400px",  }} />}
+                  </div>
+                </Col>
                 </Row>
 
                 {/* contact information */}
@@ -1118,7 +1131,7 @@ import React, {
             <div className="bg-light p-3 modal-header">
               <h5 className="modal-title">
                 {" "}
-                {isEditing ? "update User" : "Add New Item"}{" "}
+                {isEditing ? "Approve Applicant" : "Add New Applicant"}{" "}
               </h5>
 
               <button

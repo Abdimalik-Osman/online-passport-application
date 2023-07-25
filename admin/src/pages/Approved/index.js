@@ -315,7 +315,7 @@ import React, {
         // setEmployeeId(data);
         
       };
-    document.title = "Employee Registration  ";
+    document.title = "Approved Applicants  ";
     const handleValidDate = (date) => {
       const date1 = moment(new Date(date)).format("DD MMM Y");
       return date1;
@@ -532,8 +532,8 @@ import React, {
               <script src="html2pdf.bundle.min.js"></script>
             </Helmet>
             <BreadCrumb
-              title="Applicants "
-              pageTitle="Un Approved Applicants"
+              title="Approved Applicants "
+              pageTitle="Applicants"
             />
             <embed
               style={{

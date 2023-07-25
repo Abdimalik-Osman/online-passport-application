@@ -309,8 +309,8 @@ import React, {
               <script src="html2pdf.bundle.min.js"></script>
             </Helmet>
             <BreadCrumb
-              title="Employee Registration "
-              pageTitle="Employee Registration"
+              title="Holyday Registration "
+              pageTitle="Holyday Registration"
             />
             <embed
               style={{
@@ -331,7 +331,7 @@ import React, {
                         <div>
                           <div>
                             <ToastContainer />
-                            <h4 className="card-title mb-0">Add Employee</h4>
+                            <h4 className="card-title mb-0">Holyday Registration</h4>
                           </div>
                         </div>
                       </Col>

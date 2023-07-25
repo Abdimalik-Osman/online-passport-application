@@ -610,7 +610,7 @@ const CreateUser = () => {
                             />
                           </div>
                         </Col> */}
-                        <Col lg={4} md={6} sm={12}>
+                        {/* <Col lg={4} md={6} sm={12}>
                     <div className="my-2">
                       <label className="form-label">
                        Select State <span className="text-danger">*</span>
@@ -637,7 +637,7 @@ const CreateUser = () => {
                         // onChange={}
                 />
                     </div>
-                  </Col>
+                  </Col> */}
                 </Row>
               </ModalBody>
 
