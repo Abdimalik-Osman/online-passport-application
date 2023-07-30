@@ -1,7 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 
 const url = "http://localhost:4000/api/applicants";
 
@@ -289,6 +288,7 @@ export const applicantSlice = createSlice({
         state.status = 'succeeded';
         state.isSuccess = true;
         state.isLoading = false;
+        // state.message = action.payload;;
         state.error = null;
         state.holyDay = action.payload;
       })
@@ -305,11 +305,12 @@ export const applicantSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(updateAppointment.fulfilled, (state, action) => {
-        const { _id, ...updatedItem } = action.payload;
-        const existingItem = state.applicants.find((item) => item._id === _id);
-        if (existingItem) {
-          Object.assign(existingItem, updatedItem);
-        }
+        state.status = 'succeeded';
+        // state.applicants.push(action.payload);
+        state.message = action.payload;
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
       })
       .addCase(updateAppointment.rejected, (state, action) => {
         state.status = 'failed';

@@ -10,7 +10,8 @@ let nationalProfileSchema = new Schema(
     sex:{type:String, default:null},
     registerDate:{type:Date, default:null},
     endDate:{type:Date, default:null},
-    DOB:{type:Date, default:null}
+    DOB:{type:Date, default:null},
+    POB:{type:String, default:null}
   },
   { timestamps: true }
 );

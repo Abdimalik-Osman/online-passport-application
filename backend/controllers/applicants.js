@@ -19,7 +19,7 @@ const Image = require("../models/images");
 const sharp = require("sharp");
 // Set up multer storage for file uploads
 const mime = require('mime');
-
+const axios = require('axios');
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -292,30 +292,37 @@ if (isExists) {
     }
     const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, with ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
     
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: true,
-      auth: {
-        user: 'myfather8818@gmail.com',
-        pass:'oqsvvrqmzgjhxuux',
+    // const transport = nodemailer.createTransport({
+    //   service: 'gmail',
+    //   host: 'smtp.gmail.com',
+    //   port: 587,
+    //   secure: true,
+    //   auth: {
+    //     user: 'myfather8818@gmail.com',
+    //     pass:'oqsvvrqmzgjhxuux',
         
-      }
-    })
-    const emailOption = {
-      from: 'myfather88818@gmail.com',
-      to: "engabdimalik8818@gmail.com",
-      subject: emailBody,
-      text:'Appointment Scheduled'
-    }
+    //   }
+    // })
+    // const emailOption = {
+    //   from: 'myfather88818@gmail.com',
+    //   to: "engabdimalik8818@gmail.com",
+    //   subject: emailBody,
+    //   text:'Appointment Scheduled'
+    // }
     
-    transport.sendMail(emailOption, (error, info) => {
-      if (error) throw error;
+    // transport.sendMail(emailOption, (error, info) => {
+    //   if (error) throw error;
     
-      console.log(`The email sent ${info.response}`);
-    })
-    res.status(201).json({ message: 'Appointment booked successfully',status:"success"});
+    //   console.log(`The email sent ${info.response}`);
+    // })
+       await axios.post(
+     "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+     emailBody+
+     "&rec=" +
+     req.body.phoneNumber +
+     "" )
+  //  await axios.post(`https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=${emailBody}&rec=${req.body.phoneNumber}`)
+    // res.status(201).json({ message: 'Appointment booked successfully',status:"success"});
   } catch (error) {
     return res.status(500).json({ error: error.message, status:"fail"})
   }
@@ -490,13 +497,23 @@ exports.updateApplicant = async(req,res)=>{
 // update appointment date
 exports.updateAppointment = async(req,res)=>{
   try {
+    const districtData = await District.findOne({"districtInfo._id":req.body.districtId})
+    
+    const districtInfo = districtData?.districtInfo?.filter((info)=>{
+      return info._id == req.body.districtId
+    })
     const app = await Applicant.findById({_id:req.params.id});
     if(app?.appointmentDate == moment(req.body.appointmentDate).format('YYYY-MM-DD')){
       return res.status(400).json({message: "you cannot book an appointment at the same day.",status:"fail"})
     }
+    if(app?.appointmentDate <= new Date()) {
+      return res.status(400).json({message: "your appointment was already reached.",status:"fail"})
+    }
+    console.log(req.body)
     let updatedAppointment = await Applicant.findByIdAndUpdate(req.params.id,{$set:{
       appointmentDate: req.body.appointmentDate,
       appointmentTime:req.body.appointmentTime,
+      districtId: req.body.districtId,
       isCanceled:false
     }},{$new:true});
     await Appointment.findOneAndUpdate({applicantId: req.params.id},{$set:{
@@ -507,6 +524,55 @@ exports.updateAppointment = async(req,res)=>{
     if(!updatedAppointment){
       return res.status(400).json({message:"Appointment can not be updated",status:"fail"})
     }
+    // Find the document that matches the districtId and appointmentDate
+const isExists = await AvailableTime.findOne({
+  districtId: req.body.districtId,
+  'availableInfo.date': req.body.appointmentDate,
+  'availableInfo.time': req.body.appointmentTime
+});
+
+if (isExists) {
+  // Update the availableNumber field in the existing document
+  const availableInfo = isExists.availableInfo[0];
+  availableInfo.availableNumber = Math.max(0, availableInfo.availableNumber - 1);
+  await isExists.save();
+}
+ else {
+  // Create a new document with the districtId and appointmentDate
+  const newAvailableTime = new AvailableTime({
+    districtId: req.body.districtId,
+    availableInfo: [{
+      date: req.body.appointmentDate,
+      time: req.body.appointmentTime,
+      availableNumber: districtInfo[0]?.hourlySlots -1 // Set the initial availableNumber to 3 (or any other value you prefer)
+    }]
+  });
+  await newAvailableTime.save();
+  const districtData = await DistrictWorkingHours.findOne({districtId: req.body.districtId});
+  const workingHours = districtData?.workingHours?.filter((data)=>{
+    console.log(data,"====")
+    return data.startTime != req.body.appointmentTime});
+  // console.log(workingHours+"----------")
+  workingHours.map(async(info)=>{
+    const newDates = new AvailableTime({
+      districtId: req.body.districtId,
+      availableInfo: [{
+        date: req.body.appointmentDate,
+        time: info.startTime,
+        availableNumber: districtInfo[0]?.hourlySlots // Set the initial availableNumber to 3 (or any other value you prefer)
+      }]
+    });
+    await newDates.save();
+  })
+
+}
+    let message = `Your Appointment has been updated successfully you will arrive  ${updatedAppointment?.appointmentDate} at ${updatedAppointment?.appointmentTime}`;
+    await axios.post(
+      "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+      message+
+      "&rec=" +
+      updatedAppointment?.phoneNumber +
+      "" )
     return res.status(200).json({message:"Appointment updated successfully",status:"success"})
     
   } catch (error) {

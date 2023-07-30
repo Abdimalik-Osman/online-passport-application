@@ -1,37 +1,29 @@
 // export default Stepper;
+import Joi from "joi";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Joi from "joi";
 // import HorizontalStepper from "./horizontalStepper";
+import { useSelector } from "react-redux";
+import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ModalShow from "./stepper/Modal";
-import Select from "react-select";
-import { useDispatch, useSelector } from "react-redux";
 import {
-  getNationalId,
-  fetchData,
-  getSingleDistrict,
-  getDistrictWorkingHours,
-  getUnavailableDates,
-  getDistrictInfo,
-  useAppDispatch,
-  getAvailableDates,
-  reset,
-} from "../app/districtSlice";
-import {
-  addNewApplicant,
-  deleteApplicant,
-  updateApplicant,
-  getApplicants,
-  getSingleApplicant,
+  appReset,
   checkIsHolyday,
   getApplicantInfo,
-  appReset,
   updateAppointment
 } from "../app/applicantSlice";
+import {
+  fetchData,
+  getAvailableDates,
+  getDistrictInfo,
+  getDistrictWorkingHours,
+  getSingleDistrict,
+  getUnavailableDates,
+  useAppDispatch
+} from "../app/districtSlice";
 
-function MultiStepForm() {
+function UpdateAppointment() {
   const navigate = useNavigate("/");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
@@ -154,24 +146,25 @@ function MultiStepForm() {
     //   toast.error(errorMessage?.message);
 
     // }
-    if (errorMessage?.status == "fail") {
+    if (isAppError) {
       toast.error(errorMessage?.message);
+        // dispatch(appReset());
     }
-    if (errorMessage?.status == "success") {
-      toast.success(errorMessage?.message);
+    if (isAppSuccess) {
+      toast.success(appMessage?.message);
+        // dispatch(appReset());
     }
     return () => {
-      dispatch(reset());
+      // dispatch(reset());
       dispatch(appReset());
     };
   }, [
-    isLoading,
+    
     dispatch,
     isAppError,
-    isAppLoading,
     isAppSuccess,
-    isSuccess,
-    isError,
+    appMessage,
+    errorMessage
   ]);
   // console.log(districts)
 
@@ -225,7 +218,7 @@ function MultiStepForm() {
     setAppointmentDate(appointmentDate); //
     // setSelectedTime(e.target.value);
     dispatch(checkIsHolyday({ appointmentDate, id }));
-    console.log(applicantInfo?.districtId);
+    // console.log(applicantInfo?.districtId);
     dispatch(getAvailableDates({ id, appointmentDate }));
     dispatch(getDistrictWorkingHours(applicantInfo?.districtId));
   };
@@ -303,10 +296,19 @@ function MultiStepForm() {
       toast.error("please provide all required fields.");
       return;
     }
+    if (
+      errorMessage?.status == "fail" || isAppError
+    ) {
+      toast.error(appMessage.message);
+      return;
+    }
     const data ={
       appointmentDate,
-      id:applicantInfo?._id
+      appointmentTime:selectedTime,
+      id:applicantInfo?._id,
+      districtId: districtId ? districtId : applicantInfo?.districtId
     }
+    console.log(isAppSuccess,isAppError,errorMessage,appMessage)
     dispatch(updateAppointment(data))
   };
 
@@ -327,7 +329,8 @@ function MultiStepForm() {
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
-              <div className="sm:col-span-4">
+        
+        <div className="sm:col-span-4">
                 {/* <label
                   htmlFor="nID"
                   className="block text-sm font-medium leading-6 text-gray-900">
@@ -355,6 +358,7 @@ function MultiStepForm() {
                   GET
                 </button>
               </div>
+              
               {applicantInfo && applicantInfo?.districtId && (
 
                 <>
@@ -466,7 +470,8 @@ function MultiStepForm() {
                               onChange={handleTimeChange}
                             />
                             <label htmlFor={item.startTime}>
-                              {item.startTime} ------- {item.endTime} Available
+                              {/* {item.startTime} ------- {item.endTime} Available */}
+                              {item.startTime} -------  Available
                             </label>
                           </div>
                         </div>
@@ -483,11 +488,11 @@ function MultiStepForm() {
                             // checked={selectedTime === i.startTime}
                             onChange={handleTimeChange}
                           />{" "}
-                          {info.time} --{" "}
-                          {availableDates[i + 1]
+                          {info.time} ==== {" "}
+                          {/* {availableDates[i + 1]
                             ? availableDates[i + 1].time
                             : "Next Hour"}
-                          ={" "}
+                          ={" "} */}
                           <span>
                             {info.availableNumber == 0
                               ? "FULL"
@@ -519,4 +524,4 @@ function MultiStepForm() {
   );
 }
 
-export default MultiStepForm;
+export default UpdateAppointment;

@@ -1,34 +1,30 @@
 // export default Stepper;
-import React, { useEffect, useState } from "react";
-import {useNavigate} from "react-router-dom";
 import Joi from "joi";
-import HorizontalStepper from "./horizontalStepper";
+import moment from "moment/moment";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import ModalShow from "./Modal";
-import Select from "react-select";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getNationalId,
-  fetchData,
-  getSingleDistrict,
-  getDistrictWorkingHours,
-  getUnavailableDates,
-  getDistrictInfo,
-  useAppDispatch,
-  getAvailableDates,
-  reset
-} from "../../app/districtSlice";
 import {
   addNewApplicant,
-  deleteApplicant,
-  updateApplicant,
-  getApplicants,
-  getSingleApplicant,
-  checkIsHolyday,
   appReset,
+  checkIsHolyday
 } from "../../app/applicantSlice";
-import moment from "moment/moment";
+import {
+  fetchData,
+  getAvailableDates,
+  getDistrictInfo,
+  getDistrictWorkingHours,
+  getNationalId,
+  getSingleDistrict,
+  getUnavailableDates,
+  reset,
+  useAppDispatch
+} from "../../app/districtSlice";
+import ModalShow from "./Modal";
+import HorizontalStepper from "./horizontalStepper";
 
 function MultiStepForm() {
   const navigate = useNavigate("/")
@@ -1089,7 +1085,7 @@ function MultiStepForm() {
                               onChange={handleTimeChange}
                             />
                             <label htmlFor={item.startTime}>
-                              {item.startTime} ------- {item.endTime} Available
+                              {item.startTime} -------  Available
                             </label>
                           </div>
                         </div>
@@ -1106,17 +1102,18 @@ function MultiStepForm() {
                             // checked={selectedTime === i.startTime}
                             onChange={handleTimeChange}
                           />{" "}
-                          {info.time} --{" "}
-                          {availableDates[i + 1]
+                          {info.time} ==== 
+                          {/* {availableDates[i + 1]
                             ? availableDates[i + 1].time
                             : "Next Hour"}
-                          ={" "}
+                          ={" "} */}
                           <span>
                             {info.availableNumber == 0
                               ? "FULL"
                               : `${info.availableNumber} available slots`}
                             {/* { info.availableNumber == 0 ? "Full" : ""} */}
                           </span>
+                          {/* Next Hour */}
                         </p>
                       ))}
                 </div>}
