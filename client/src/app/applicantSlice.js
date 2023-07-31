@@ -128,20 +128,21 @@ export const addNewApplicant = createAsyncThunk('applicants/add', async (data,th
         // return thunkAPI.rejectWithValue(message); 
     }
     });
-// export const addItem = createAsyncThunk('items/addItem', async (item) => {
-//   const response = await axios.post('/api/items', item);
-//   return response.data;
-// });
 
-// export const updateItem = createAsyncThunk('items/updateItem', async (item) => {
-//   const response = await axios.put(`/api/items/${item._id}`, item);
-//   return response.data;
-// });
+    // send message
+    export const sendMessage = createAsyncThunk('applicants/message', async (data,thunkAPI) => {
 
-// export const deleteItem = createAsyncThunk('items/deleteItem', async (id) => {
-//   await axios.delete(`/api/items/${id}`);
-//   return id;
-// });
+      try{
+        const response = await axios.post(url+'/send/message', data);
+        return response.data;
+        
+    }catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+        // const message = (err.response && err.response.data && err.response.data.message) || err.message || err.toString();
+        // return thunkAPI.rejectWithValue(message); 
+    }
+    });
+    
 
 // Define your slice using createSlice
 export const applicantSlice = createSlice({
@@ -341,8 +342,28 @@ export const applicantSlice = createSlice({
         state.isError = true
         // state.message = action.payload;
       })
-
-
+      .addCase(sendMessage.pending, (state) => {
+        state.isLoading = true;
+        
+        state.status = 'loading';
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        // state.applicants.push(action.payload);
+        state.message = action.payload;
+        state.error = null;
+        state.isLoading = false;
+        state.isSuccess = true;
+        // state = initialState
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error =  action.payload;
+        state.isLoading = false;
+        state.isError = true
+        // state.message = action.payload;
+      })
+      
 
     //   .addCase(addItem.fulfilled, (state, action) => {
     //     state.applicants.push(action.payload);
