@@ -20,6 +20,7 @@ const sharp = require("sharp");
 // Set up multer storage for file uploads
 const mime = require('mime');
 const axios = require('axios');
+const Employee = require("../models/employees");
 // July 1    somalia united day
 // October 12   national flag day
 // 12 April     Somali National Army
@@ -889,7 +890,7 @@ exports.cancelAppointment = async(req, res) =>{
     return res.status(400).json({message:"no appointments available in this district"});
   }
   let canceled ;
-  
+  await appointments.map(async(app)=>{
    canceled = await Applicant.updateMany({ appointmentDate:moment(req.body.appointmentDate).format("YYYY-MM-DD"),
     districtId:req.params.districtId}, {$set:{isCancelled:true}},{new:true})
     await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
@@ -897,13 +898,63 @@ exports.cancelAppointment = async(req, res) =>{
     }},{new:true});
   
 
-    // if(canceled){
-    //   await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
-    //     isCanceled: true
-    //   }},{new:true});
-    // }
     if(!canceled) return res.status(400).json({message:"error occurred while cancelling the appointment",status:"fail"})
+    let message = "Dear Applicant Your appointment was cancelled due to a problem with in the office. Please update your appointment."
+
+      await axios.post(
+        "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+        message+
+        "&rec=" +
+        app?.phoneNumber +
+        "")
+    })
     return res.status(200).json({message:"successfully canceled the appointment.",status:"success"})
+  } catch (error) {
+    return res.status(500).json({message: error.message,status:"fail"});
+  }
+
+}
+
+
+// send message 
+exports.sendMessage = async(req,res)=>{
+  try {
+    // console.log(req.body)
+    const date = new Date();
+    let  t1 = date.getHours();
+    if(t1 < 10){
+      t1 = "0"+t1
+    }else{
+      t1 = t1
+    }
+    
+    const app = await Appointment.findOne({applicantId:req.body.id});
+    // console.log(t1 == app?.appointmentTime.split(":")[0]);
+    
+    console.log(t1 == app?.appointmentTime.split(":")[0])
+    console.log(moment(app?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') +' '+ moment(new Date(), 'YYYY-MM-DD').format('YYYY-MM-DD'))
+    if(moment(app?.appointmentDate, 'YYYY-MM-DD').format('YYYY-MM-DD') == moment(new Date(), 'YYYY-MM-DD').format('YYYY-MM-DD')){
+      
+      if(t1 == app?.appointmentTime.split(":")[0]){
+        const empInfo = await Employee.find({districtId: app?.districtId, isManager:true});
+        let tell = 616328920
+        let number = empInfo[0]?.empPhone ? empInfo[0]?.empPhone : tell;
+        await axios.post(
+          "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+          req.body.message+
+          "&rec=" +
+          number +
+          "")
+          return res.status(200).json({message:"message sent successfully."})
+      }else{
+        console.log(t1);
+        return res.status(400).json({message:"Your appointment time is not reached or has expired, you can send a message only at your appointment  time only.",status:"fail"})
+      }
+    }else{
+      console.log("=---------------------------")
+      return res.status(400).json({message:"Your appointment Date is not reached or has expired, you can send a message only at your appointment  time only.",status:"fail"})
+    }
+    res.send("success");
   } catch (error) {
     return res.status(500).json({message: error.message,status:"fail"});
   }

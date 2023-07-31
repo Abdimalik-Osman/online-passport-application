@@ -25,5 +25,6 @@ router.patch('/update/appointment/:id',ApplicantController.updateAppointment);
 router.get('/images/:id',ApplicantController.getUserImage);
 router.get('/appointment/all/:appointmentDate',ApplicantController.getAppointmentByDate);
 router.patch('/appointments/cancel/:districtId',ApplicantController.cancelAppointment);
+router.post('/send/message',ApplicantController.sendMessage);
 
 module.exports = router;
