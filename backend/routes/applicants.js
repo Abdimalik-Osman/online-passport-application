@@ -23,8 +23,8 @@ router.get('/specific/:date',ApplicantController.getSpecificAppointment)
 router.post('/cancel/appointment',ApplicantController.cancelAppointment);
 router.patch('/update/appointment/:id',ApplicantController.updateAppointment);
 router.get('/images/:id',ApplicantController.getUserImage);
-router.get('/appointment/all/:appointmentDate',ApplicantController.getAppointmentByDate);
-router.patch('/appointments/cancel/:districtId',ApplicantController.cancelAppointment);
+router.get('/appointment/all/:appointmentDate/:districtId',ApplicantController.getAppointmentByDate);
+router.post('/appointments/cancel',ApplicantController.cancelAppointment);
 router.post('/send/message',ApplicantController.sendMessage);
 
 module.exports = router;

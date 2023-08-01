@@ -229,9 +229,9 @@ const Navdata = () => {
                     parentId: "setting",
                   },
                   {
-                    id: "images",
-                    label: "ApplicantImage",
-                    link: "/image",
+                    id: "cancel",
+                    label: "Cancel Appointment",
+                    link: "/cancel",
                     parentId: "setting",
                   },
                 ]

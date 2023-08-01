@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+// import { CircularProgressbar } from 'react-circular-progressbar';
+// import 'react-circular-progressbar/dist/styles.css';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import "../components/view.css";
 // import HorizontalStepper from "./horizontalStepper";
+// Import react-circular-progressbar module and styles
+// Import react-circular-progressbar module and styles
+import {
+  CircularProgressbar,
+  buildStyles
+} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
+// Animation
+
+// Radial separators
+// Animation
+
+// Radial separators
 import {
   appReset,
   getApplicantInfo,
@@ -130,47 +143,47 @@ const ViewApplicant = () => {
   const percentage = applicantInfo?.ratio;
 
   // <CircularProgressbar value={percentage} maxValue={1} text={`${percentage * 100}%`} />;
-  <CircularProgressbar
-  value={percentage}
-  text={`${percentage}%`}
-  styles={{
-    // Customize the root svg element
-    root: {},
-    // Customize the path, i.e. the "completed progress"
-    path: {
-      // Path color
-      stroke: `rgba(62, 152, 199, ${percentage / 100})`,
-      // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
-      strokeLinecap: 'butt',
-      // Customize transition animation
-      transition: 'stroke-dashoffset 0.5s ease 0s',
-      // Rotate the path
-      transform: 'rotate(0.25turn)',
-      transformOrigin: 'center center',
-    },
-    // Customize the circle behind the path, i.e. the "total progress"
-    trail: {
-      // Trail color
-      stroke: '#d6d6d6',
-      // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
-      strokeLinecap: 'butt',
-      // Rotate the trail
-      transform: 'rotate(0.25turn)',
-      transformOrigin: 'center center',
-    },
-    // Customize the text
-    text: {
-      // Text color
-      fill: '#f88',
-      // Text size
-      fontSize: '16px',
-    },
-    // Customize background - only used when the `background` prop is true
-    background: {
-      fill: '#3e98c7',
-    },
-  }}
-/>
+//   <CircularProgressbar
+//   value={percentage}
+//   text={`${percentage}%`}
+//   styles={{
+//     // Customize the root svg element
+//     root: {},
+//     // Customize the path, i.e. the "completed progress"
+//     path: {
+//       // Path color
+//       stroke: `rgba(62, 152, 199, ${percentage / 100})`,
+//       // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
+//       strokeLinecap: 'butt',
+//       // Customize transition animation
+//       transition: 'stroke-dashoffset 0.5s ease 0s',
+//       // Rotate the path
+//       transform: 'rotate(0.25turn)',
+//       transformOrigin: 'center center',
+//     },
+//     // Customize the circle behind the path, i.e. the "total progress"
+//     trail: {
+//       // Trail color
+//       stroke: '#d6d6d6',
+//       // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
+//       strokeLinecap: 'butt',
+//       // Rotate the trail
+//       transform: 'rotate(0.25turn)',
+//       transformOrigin: 'center center',
+//     },
+//     // Customize the text
+//     text: {
+//       // Text color
+//       fill: '#f88',
+//       // Text size
+//       fontSize: '16px',
+//     },
+//     // Customize background - only used when the `background` prop is true
+//     background: {
+//       fill: '#3e98c7',
+//     },
+//   }}
+// />
   return (
     <>
     {/* <ToastContainer /> */}
@@ -225,7 +238,7 @@ const ViewApplicant = () => {
   {
     applicantInfo && applicantInfo?.districtId  && (
       <>
-      <div className="shadow-lg px-2  bg-cyan-900 py-10  text-white" style={{height:"745px"}}>
+      <div className="shadow-lg px-2  bg-cyan-900 py-10  text-white" style={{height:"605px"}}>
     <h4 className="text-center">VIEW APPLICANT STATUS</h4>
       <div className="">
         {/* <div className="circle">
@@ -238,7 +251,14 @@ const ViewApplicant = () => {
           <div className="inside-circle"> {applicantInfo?.ratio}% </div>
         </div> */}
         <div style={{ width: 180, height: 180, marginLeft:"80px" }}>
-    <CircularProgressbar value={applicantInfo?.ratio} />
+    {/* <CircularProgressbar value={applicantInfo?.ratio} /> */}
+    <CircularProgressbar
+        value={percentage}
+        text={`${percentage}%`}
+        styles={buildStyles({
+          strokeLinecap: "butt"
+        })}
+      />
 </div>
       </div>
    <div className="px-5">

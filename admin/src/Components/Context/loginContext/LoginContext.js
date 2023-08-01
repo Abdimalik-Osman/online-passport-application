@@ -1,42 +1,33 @@
 import axios from "axios";
-import { createContext, useReducer, useRef, useMemo } from "react";
-import jwtDecode from "jwt-decode";
-import moment from "moment";
+import { createContext, useReducer, useRef } from "react";
 
-import { useReactToPrint, ReactToPrint } from "react-to-print";
+import { useHistory } from "react-router-dom";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
- 
-    
-    DELETE_EMPLOYEE_SUCCESS,
-    GET_EMPLOYEE__SUCCESS,
-    // FETCH_GETBYIDEMPLOYEE_SUCCESS,
-    FETCH_EMPLOYEE_REPORT,
-    FETCH_SINGLE_EMPLOYEE,
-    REGISTER_EMPLOYEE_ERROR,
-    REGISTER_EMPLOYEE_SUCCESS, 
-    REGISTER_USER, GET_ALL_USER,
-    LOGOUT_USER,
-    FETCH_SINGLE_DISTRICT,
-    FETCH_WORKING_HOURS,
-    FETCH_ALL_DISTRICTS ,
-    FETCH_SELECTED_STATE ,
-    FETCH_NATIONAL_ID ,
-    FETCH_UNAVAILABLE_HOURS ,
-    FETCH_AVAILABLE_DATES ,
-    FETCH_AVAILABLE_DATES_ERROR, 
-    FETCH_UNAPPROVED_APPLICANTS,
-    FETCH_APPROVED_APPLICANTS,
-    
-    UNAPPROVED_APPLICANTS,
-    FETCH_DISTRICT_HOLYDAYS,
-    FETCH_APPLICANT_IMAGE
-
+  DELETE_EMPLOYEE_SUCCESS,
+  FETCH_ALL_DISTRICTS,
+  FETCH_APPLICANT_IMAGE,
+  FETCH_APPOINTMENT,
+  FETCH_APPROVED_APPLICANTS,
+  FETCH_AVAILABLE_DATES,
+  FETCH_AVAILABLE_DATES_ERROR,
+  FETCH_DISTRICT_HOLYDAYS,
+  FETCH_NATIONAL_ID,
+  FETCH_SELECTED_STATE,
+  FETCH_SINGLE_DISTRICT,
+  FETCH_SINGLE_EMPLOYEE,
+  FETCH_UNAPPROVED_APPLICANTS,
+  FETCH_WORKING_HOURS,
+  GET_ALL_USER,
+  GET_EMPLOYEE__SUCCESS,
+  LOGOUT_USER,
+  REGISTER_EMPLOYEE_ERROR,
+  REGISTER_EMPLOYEE_SUCCESS,
+  REGISTER_USER,
+  UNAPPROVED_APPLICANTS
 } from "./loginActions";
 import reducer from "./loginReducer";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useHistory } from "react-router-dom";
 
 export const LoginContext = createContext();
 // const addToLocalStorage = (user) => {
@@ -102,7 +93,8 @@ const initialState = {
   data:{},
   applicantInfo:{},
   districtHolydays:[],
-  applicantImage:{}
+  applicantImage:{},
+  appointments:[]
   // isLoading: false,
 };
 
@@ -541,22 +533,36 @@ const uploadImage = async (image) => {
     }
   };
 
+// fetch appointments by districtId and appointment date
+const getAppointment = async (appointmentDate,districtId) => {
+  try {
+    const data = await axios.get(`/applicants/appointment/all/${appointmentDate}/${districtId}`);
+    dispatch({ type: FETCH_APPOINTMENT, payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
   // cancel appointment
-  const cancelAppointment = async (data) => {
-    console.log(data);
+  const cancelAppointmentFun = async (data) => {
+    // console.log(data);
     try {
-      const res = await axios.patch(`/applicants/appointments/cancel/${data.districtId}`, data);
+      const res = await axios.post(`/applicants/appointments/cancel`, data);
+      console.log(res);
       if(res.status == "success") {
       toast.success(res.message, {
         position: toast.POSITION.TOP_RIGHT,
       });
-    } if(res.status == "fail") {
+    }  else {
       toast.error(res.message, {
         position: toast.POSITION.TOP_RIGHT,
       });
     }
       // fetchDistrictHolydays();
-      console.log(res);
+      
     } catch (error) {
       toast.error(error.message, {
         position: toast.POSITION.TOP_RIGHT,
@@ -564,6 +570,8 @@ const uploadImage = async (image) => {
       // console.log(error);
     }
   };
+
+  // 
   return (
     <LoginContext.Provider
       value={{
@@ -591,7 +599,9 @@ const uploadImage = async (image) => {
         updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday,
         uploadImage,
         getApplicantImage,
-        cancelAppointment
+        cancelAppointmentFun,
+        getAppointment,
+        
       }}
     >
       {children}

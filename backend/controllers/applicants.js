@@ -871,7 +871,7 @@ exports.getUserImage = async(req,res)=>{
 // get appointment
 exports.getAppointmentByDate = async(req,res)=>{
   try {
-    const data = await Applicant.find({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")});
+    const data = await Applicant.find({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD"),districtId:req.params.districtId});
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({message: error.message, status:"fail"});
@@ -881,33 +881,37 @@ exports.getAppointmentByDate = async(req,res)=>{
 // cancel appointment
 exports.cancelAppointment = async(req, res) =>{
   try {
-
-    const appointments =  await Applicant.find({
-      appointmentDate:moment(req.body.appointmentDate).format("YYYY-MM-DD"), 
-      districtId:req.params.districtId
-  });
-  if(!appointments){
-    return res.status(400).json({message:"no appointments available in this district"});
+  // console.log(req.body.applicants)
+  if(!req.body.applicants || req.body.applicants == undefined || req.body.applicants.length == 0){
+    return res.status(400).json({message:"no appointments available to cancel in this district",status:"fail"});
   }
+  // console.log(req.body.applicants)
   let canceled ;
-  await appointments.map(async(app)=>{
-   canceled = await Applicant.updateMany({ appointmentDate:moment(req.body.appointmentDate).format("YYYY-MM-DD"),
-    districtId:req.params.districtId}, {$set:{isCancelled:true}},{new:true})
-    await Appointment.updateMany({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD")},{$set:{
-      isCanceled: true
+  let promise = []
+  promise =  req.body.applicants.map(async(app)=>{
+    console.log(app?.fullname)
+    console.log(app?.phoneNumber)
+   canceled = await Applicant.findOneAndUpdate({ appointmentDate:moment(app?.appointmentDate).format("YYYY-MM-DD"),
+    districtId:app?.districtId}, {$set:{isCanceled:true}},{new:true})
+    await Appointment.findOneAndUpdate({appointmentDate:moment(req.params.appointmentDate).format("YYYY-MM-DD"),
+    districtId:app?.districtId
+  },{$set:{
+    isCanceled: true
     }},{new:true});
   
 
     if(!canceled) return res.status(400).json({message:"error occurred while cancelling the appointment",status:"fail"})
-    let message = "Dear Applicant Your appointment was cancelled due to a problem with in the office. Please update your appointment."
-
-      await axios.post(
-        "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
-        message+
-        "&rec=" +
-        app?.phoneNumber +
-        "")
+    let message = `Dear Applicant Your appointment was cancelled due to ${req.body.message} . Please update your appointment.`
+    console.log("this message is for "+app?.fullname+" and phone nummber "+app?.phoneNumber)
+    // console.log(canceled)
+      // await axios.post(
+      //   "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+      //   message+
+      //   "&rec=" +
+      //   app?.phoneNumber +
+      //   "")
     })
+    await Promise.all(promise)
     return res.status(200).json({message:"successfully canceled the appointment.",status:"success"})
   } catch (error) {
     return res.status(500).json({message: error.message,status:"fail"});

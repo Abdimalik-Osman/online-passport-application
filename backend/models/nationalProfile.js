@@ -15,12 +15,6 @@ let nationalProfileSchema = new Schema(
   },
   { timestamps: true }
 );
-// autoIncrement.initialize(mongoose.connection); // This is important. You can remove initialization in different file
-// nationalProfileSchema.plugin(autoIncrement.plugin, {
-//   model: "Gobolka",
-//   field: "ID",
-//   startAt: 1,
-//   incrementBy: 1,
-// });
+
 const NationalID = mongoose.model("NationalID",nationalProfileSchema)
 module.exports = NationalID
