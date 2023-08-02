@@ -26,5 +26,6 @@ router.get('/images/:id',ApplicantController.getUserImage);
 router.get('/appointment/all/:appointmentDate/:districtId',ApplicantController.getAppointmentByDate);
 router.post('/appointments/cancel',ApplicantController.cancelAppointment);
 router.post('/send/message',ApplicantController.sendMessage);
+router.post('/wafi/payment',ApplicantController.wafiAPiPayment);
 
 module.exports = router;

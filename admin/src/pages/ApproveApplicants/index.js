@@ -1,44 +1,31 @@
+import moment from "moment";
 import React, {
-    useState,
-    useEffect,
-    useContext,
-    componentDidMount,
-    useRef,
-    useMemo,
-  } from "react";
-  import Select from "react-select";
-  import {Link} from "react-router-dom"
-  import { Helmet } from "react-helmet";
-  import BreadCrumb from "../../Components/Common/BreadCrumb";
-  import TableContainer from "../../Components/Common/TableContainer";
-  import { ToastContainer, toast } from "react-toastify";
-  import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Row,
-    Table,
-    Alert,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    UncontrolledDropdown,
-  
-  } from "reactstrap";
-  import "../Employee/styleEmp.css"
-  import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
-  import moment from "moment";
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  Row
+} from "reactstrap";
+import BreadCrumb from "../../Components/Common/BreadCrumb";
+import TableContainer from "../../Components/Common/TableContainer";
+import "../Employee/styleEmp.css";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   
   const ApproveApplicants = () => {
     const {
@@ -523,7 +510,8 @@ import React, {
     //   console.log(employeePhone);
     //   console.log(sex);
     //   console.log(empType);
-    //   console.log(status);
+      console.log(image);
+    uploadImage(image)
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -544,8 +532,8 @@ import React, {
       // }
       console.log(file)
       const formData = new FormData();
-      formData.append('image', bgRemove);
-      uploadImage(bgRemove)
+      formData.append('image', image);
+      uploadImage(file)
 
 
     }

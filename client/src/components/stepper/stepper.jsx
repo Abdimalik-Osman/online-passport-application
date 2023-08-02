@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import {
   addNewApplicant,
   appReset,
-  checkIsHolyday
+  checkIsHolyday,
 } from "../../app/applicantSlice";
 import {
   fetchData,
@@ -21,13 +21,13 @@ import {
   getSingleDistrict,
   getUnavailableDates,
   reset,
-  useAppDispatch
+  useAppDispatch,
 } from "../../app/districtSlice";
 import ModalShow from "./Modal";
 import HorizontalStepper from "./horizontalStepper";
 
 function MultiStepForm() {
-  const navigate = useNavigate("/")
+  const navigate = useNavigate("/");
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [selectedId, setSelectedId] = useState("");
@@ -116,10 +116,10 @@ function MultiStepForm() {
     workingHours,
     isError,
     isSuccess,
-    isLoading
-    
+    isLoading,
+    error,
   } = useSelector((state) => state.district);
-  const error = useSelector((state) => state.district.error);
+  // const errorMessage = useSelector((state) => state.district.error);
   const appMessage = useSelector((state) => state.applicant.message);
   const applicantInfo = useSelector((state) => state.applicant.applicantInfo);
   const appStatus = useSelector((state) => state.applicant.status);
@@ -127,103 +127,109 @@ function MultiStepForm() {
   const isAppError = useSelector((state) => state.applicant.isError);
   const isAppSuccess = useSelector((state) => state.applicant.isSuccess);
   const isAppLoading = useSelector((state) => state.applicant.isLoading);
-  const [minDate, setMinDate] = useState('');
-  
+  const [minDate, setMinDate] = useState("");
+
   // Get the current date in the format required by the input element
   const now = new Date();
   let tom = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Add 1 day in milliseconds
-  const currentDate = tom.toISOString().split('T')[0];
+  const currentDate = tom.toISOString().split("T")[0];
 
   // Set the minimum date of the input element to the current date
   if (!minDate) {
     setMinDate(currentDate);
   }
   useEffect(() => {
-    
-    if(status == "idle"){
+    if (status == "idle") {
       dispatch(fetchData());
     }
-    if (error?.status === "fail" || error?.status === "fail") {
-      toast.error(error.message);
-        dispatch(reset());
-    }
-    if (error?.status === "success") {
-      toast.success(error.message);
-        dispatch(reset());
-        // dispatch(appReset());
-    }
-    if(errorMessage?.status == "fail"){
+    if (isAppError) {
       toast.error(errorMessage?.message);
-        // dispatch(reset());
-        dispatch(appReset());
+      // dispatch(appReset());
     }
-    if(errorMessage?.status == "success"){
-      toast.success(errorMessage?.message);
-        dispatch(appReset());
+    if (isAppSuccess) {
+      toast.success(appMessage?.message);
+      // dispatch(appReset());
     }
-   
-    // if(appMessage?.status == "success"){
-    //   toast.success(appMessage?.message);
-    //   navigate("/")
-    //     dispatch(appReset());
+    if (appMessage?.message == "Appointment booked successfully" || appMessage?.message === "Appointment booked successfully") {
+      // toast.success(appMessage?.message);
+      navigate("/");
+      // dispatch(appReset());
+    }
+
+    if (isError) {
+      toast.error(error.message);
+      // dispatch(reset());
+    }
+    if (isSuccess) {
+      toast.success(message.message);
+      // dispatch(reset());
+      // dispatch(appReset());
+    }
+    // if(errorMessage?.status == "fail"){
+    //   toast.error(errorMessage?.message);
+    //     // dispatch(reset());
+    //     // dispatch(appReset());
     // }
-    // if(appMessage?.status == "fail"){
-    //   toast.error(appMessage?.message);
-    //     dispatch(appReset());
-        
+    // if(errorMessage?.status == "success"){
+    //   toast.success(errorMessage?.message);
+    //     // dispatch(appReset());
     // }
-   
-  
+
     if (nationalID) {
-     
       let mFirstName = "";
-          let mLastName = "";
-          let firstName = "";
-          let lastName = "";
-        const text = nationalID?.fullName;
-        const fullname = text?.split(" ");
-        const motherName = nationalID?.motherName;
-        const motherFullname = motherName?.split(" ");
-  
-        const fname = fullname?.[0];
-        const secondName = fullname?.[1];
-        firstName = fname?.concat(" ", secondName);
-        lastName = fullname?.[2];
-        // ----------------
-        const mFname = motherFullname?.[0];
-        const mSecondName = motherFullname?.[1];
-        mFirstName = mFname?.concat(" ", mSecondName);
-        mLastName = motherFullname?.[2];
-      
-          
-          const defaultSex = nationalID?.sex === "Male" ? "Male" : "Female";
-          setSelectedSex(defaultSex);
-          if (nationalID?.DOB) {
-            const apiDate = new Date(nationalID.DOB); // convert date string to date object
-            // setDob(apiDate?.toISOString()?.substr(0, 10));
-            console.log(apiDate);
-          
-            // Now you can proceed with formatting the date if apiDate is valid
-            let time = apiDate.toISOString().substr(0, 10);
-            setSelectedDate(time);
-          } else {
-            // If applicantInfo?.DOB is null or undefined, use the current date
-            let time = moment(new Date()).format("DD-MM-YYYY");
-            setSelectedDate(time);  
-          }
-          setMFname(mFirstName);
-          setMLname(mLastName);
-          setFname(firstName);
-          setLName(lastName);
-          // setDob(apiDate?.toISOString()?.substr(0, 10));
-        
-      
+      let mLastName = "";
+      let firstName = "";
+      let lastName = "";
+      const text = nationalID?.fullName;
+      const fullname = text?.split(" ");
+      const motherName = nationalID?.motherName;
+      const motherFullname = motherName?.split(" ");
+
+      const fname = fullname?.[0];
+      const secondName = fullname?.[1];
+      firstName = fname?.concat(" ", secondName);
+      lastName = fullname?.[2];
+      // ----------------
+      const mFname = motherFullname?.[0];
+      const mSecondName = motherFullname?.[1];
+      mFirstName = mFname?.concat(" ", mSecondName);
+      mLastName = motherFullname?.[2];
+
+      const defaultSex = nationalID?.sex === "Male" ? "Male" : "Female";
+      setSelectedSex(defaultSex);
+      if (nationalID?.DOB) {
+        const apiDate = new Date(nationalID.DOB); // convert date string to date object
+        // setDob(apiDate?.toISOString()?.substr(0, 10));
+        console.log(apiDate);
+
+        // Now you can proceed with formatting the date if apiDate is valid
+        let time = apiDate.toISOString().substr(0, 10);
+        setSelectedDate(time);
+      } else {
+        // If applicantInfo?.DOB is null or undefined, use the current date
+        let time = moment(new Date()).format("DD-MM-YYYY");
+        setSelectedDate(time);
+      }
+      setMFname(mFirstName);
+      setMLname(mLastName);
+      setFname(firstName);
+      setLName(lastName);
+      // setDob(apiDate?.toISOString()?.substr(0, 10));
     }
-    // return ()=>{
-    //   dispatch(reset());
-    // dispatch(appReset());
-    // }
-  }, [isLoading, dispatch,error]);
+    return () => {
+      dispatch(reset());
+      dispatch(appReset());
+    };
+  }, [
+    isLoading,
+    dispatch,
+    error,
+    isSuccess,
+    isAppError,
+    message,
+    isAppSuccess,
+    appMessage,
+  ]);
   // console.log(districts)
 
   // handle the previous step
@@ -236,10 +242,9 @@ function MultiStepForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setId(e.target.value);
-    
   };
 
-  const options =  districts?.map((item) => ({
+  const options = districts?.map((item) => ({
     value: item?.districtInfo[0]?._id,
     label: item?.stateName,
   }));
@@ -276,14 +281,12 @@ function MultiStepForm() {
     const appointmentDate = e.target.value;
     setAppointmentDate(appointmentDate); //
     // setSelectedTime(e.target.value);
-    dispatch(checkIsHolyday({appointmentDate,id}));
-    console.log(selectedState1)
+    dispatch(checkIsHolyday({ appointmentDate, id }));
+    console.log(selectedState1);
     dispatch(getAvailableDates({ id, appointmentDate }));
-
   };
 
   // assign  variables
- 
 
   // handle check for agreement
   const handleIsCheck = () => {
@@ -291,23 +294,24 @@ function MultiStepForm() {
   };
 
   // handle click or get national id information
-  const handleClick =  (e) => {
-    e.preventDefault()
-    if(!nID){
-      toast.error('Please enter your national ID');
-      return
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (!nID) {
+      toast.error("Please enter your national ID");
+      return;
     }
     dispatch(getNationalId(nID));
-    console.log(error)
+    console.log(error);
     if (error?.status === "fail" || error?.status == false) {
       toast.error(error.message);
-     return
+      return;
     }
-    if(nationalID){
-      setStep(step + 1);
-    }
-   
+    console.log(nationalID)
 
+    if (step == 1 && !nationalID) {
+      toast.error(error.message);
+      return;
+    }
   };
 
   // handle submit
@@ -335,55 +339,61 @@ function MultiStepForm() {
     if (
       !appointmentDate ||
       appointmentDate == undefined ||
-      appointmentDate == "" || !selectedTime || selectedTime == undefined || selectedTime == "" || !selectedState1 || selectedState1 == undefined || selectedState1 == "" || !nID || nID == undefined || nID == "" || !phoneNumber || phoneNumber == undefined || phoneNumber == ""
+      appointmentDate == "" ||
+      !selectedTime ||
+      selectedTime == undefined ||
+      selectedTime == "" ||
+      !selectedState1 ||
+      selectedState1 == undefined ||
+      selectedState1 == "" ||
+      !nID ||
+      nID == undefined ||
+      nID == "" ||
+      !phoneNumber ||
+      phoneNumber == undefined ||
+      phoneNumber == ""
     ) {
       toast.error("please provide all required fields.");
       return;
     }
 
-       dispatch(addNewApplicant(data));
-       console.log(applicantInfo)
-       console.log(errorMessage?.message)
-      if(errorMessage?.status == "fail"){
-        toast.error(errorMessage?.message);
-      }else{
-        toast.success(errorMessage?.message);
-        setIsChecked(false);
-        setSelectedDate("");
-        setSelectedTime('');
-        setEmergencyContactNumber("")
-        setEmergencyContactName("")
-        setDob("")
-        setMLname("")
-        setMFname("")
-        setLName("")
-        setFname("")
-        setNID("")
-        navigate("/")
-      }
-    
-  }
-  
+    dispatch(addNewApplicant(data));
+    console.log(applicantInfo);
+    console.log(errorMessage?.message);
+    if (errorMessage?.status == "fail") {
+      toast.error(errorMessage?.message);
+    } else {
+      toast.success(errorMessage?.message);
+      setIsChecked(false);
+      setSelectedDate("");
+      setSelectedTime("");
+      setEmergencyContactNumber("");
+      setEmergencyContactName("");
+      setDob("");
+      setMLname("");
+      setMFname("");
+      setLName("");
+      setFname("");
+      setNID("");
+      navigate("/");
+    }
+  };
 
   // handle the next step
-  const handleNext =  (e) => {
-
+  const handleNext = (e) => {
     e.preventDefault();
-    
-    if( appStatus == "failed" || status == 'failed' ) {
-      console.log(isAppError)
-      toast.error("Please check all the requirements")
+    // if (!nationalID || nationalID == undefined || nationalID == null) {
+    //   toast.error(error.message);
+    // }
+    if (appStatus == "failed" || status == "failed") {
+      console.log(isAppError);
+      toast.error("Please check all the requirements");
       return;
     }
-    
+   
+
     if (
-      step == 1 &&  !nationalID
-    ) {
-      toast.error("this national id already exists")
-      return;
-    }
-    if (
-      step == 2 &&
+      step == 1 &&
       (mFname == "" ||
         lName == "" ||
         fName == "" ||
@@ -398,7 +408,7 @@ function MultiStepForm() {
     }
     // console.log("here",formData.mFname)
     if (
-      step == 3 &&
+      step == 2 &&
       (emergencyContactName == "" ||
         emergencyContactNumber == "" ||
         phoneNumber == "")
@@ -407,13 +417,14 @@ function MultiStepForm() {
       toast.error("please fill the required fields");
       return;
     }
-    if(step == 3 && (phoneNumber == 
-    emergencyContactNumber) ){
-      toast.error("Your phone number and emergency contact number cannot be same.");
+    if (step == 2 && phoneNumber == emergencyContactNumber) {
+      toast.error(
+        "Your phone number and emergency contact number cannot be same."
+      );
       return;
     }
     if (
-      step === 5 &&
+      step === 4 &&
       (appointmentDate === undefined ||
         appointmentDate === "" ||
         selectedState1 === undefined ||
@@ -422,7 +433,7 @@ function MultiStepForm() {
       toast.error("please fill the required fields");
       return;
     }
-    if (step === 5 && isChecked == false) {
+    if (step === 4 && isChecked == false) {
       toast.error("please check the checkbox if you agreed the terms");
       return;
     }
@@ -432,7 +443,7 @@ function MultiStepForm() {
     // //   if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
     // //     toast.error(errorMessage?.message);
     // //   }else{
-        
+
     // //    dispatch(addNewApplicant(data));
     // //    if (errorMessage?.status === "fail" || errorMessage?.status == "fail") {
     // //     toast.error(errorMessage?.message);
@@ -457,275 +468,278 @@ function MultiStepForm() {
         style={{ display: isOpen == true ? "none" : "" }}
         className="bg-cyan-900 w-100 h-100 py-10 text-white lg:px-12 ">
         <ToastContainer />
-{step === 1 &&(
-  <form onSubmit={handleClick} className="shadow-2xl px-4 mt-5" style={{ height: "550px" }}>
-  <div className="border-b border-gray-900/10 pb-6">
-    <h2 className="text-base font-extrabold leading-9 text-white">
-      NATIONAL IDENTITY AUTHENTICATION
-    </h2>
-    <p className="mt-1 text-sm leading-6 text-white">
-      PLEASE ENTER YOUR NATIONAL ID IF YOU HAVE NATIONAL IDENTITY AND GET YOUR PERSONAL INFORMATION,
-      TO FILL AUTOMATICALLY TO YOUR PERSONAL INFORMATION.
-      <br />
-      IF YOUR HAVE REGISTERED THIS NATIONAL IDENTITY ALREADY THE SYSTEM WILL ALLOW YOU TO REGISTER ANOTHER TIME
-    </p>
-
-    <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 m-0">
-      <div className="col-span-1">
-        <input
-          type="text"
-          name="nID"
-          placeholder="Enter Your National ID"
-          value={nID}
-          onChange={(e) => setNID(e.target.value)}
-          autoComplete="address-level2"
-          className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        />
-      </div>
-      <div className="col-span-1 lg:col-span-1">
-                <button
-                  type="submit"
-                  
-                  className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                  CHECK NATIONAL ID
-                </button>
-              </div>
-    </div>
-  </div>
-</form>
-
-        )
-
-        }
-        {step === 2 && (
+        {/* CONTACT INFORMATION */}
+        {step === 1 && (
           // personal information form
           <form onSubmit={handleNext} className=" shadow-2xl px-4 ">
-            <div className="border-b border-gray-900/10 pb-6">
-              <h2 className="text-base font-extrabold leading-9 text-white">
-                PERSONAL INFORMATION
-              </h2>
-              <p className="mt-1 text-sm leading-6 text-white">
-                PLEASE FILL YOUR PERSONAL INFORMATION, SOME FIELDS ARE NOT EDITABLE ONLY FILL THE EDITABLE FIELDS.
-              </p>
+            {!nationalID || !nationalID?.fullname  && (
+              <>
+                <div className="border-b border-gray-900/10 pb-6">
+                  <h2 className="text-base font-extrabold leading-9 text-white">
+                    NATIONAL IDENTITY AUTHENTICATION
+                  </h2>
+                  <p className="mt-1 text-sm leading-6 text-white">
+                    PLEASE ENTER YOUR NATIONAL ID IF YOU HAVE NATIONAL IDENTITY
+                    AND GET YOUR PERSONAL INFORMATION, TO FILL AUTOMATICALLY TO
+                    YOUR PERSONAL INFORMATION.
+                    <br />
+                    IF YOUR HAVE REGISTERED THIS NATIONAL IDENTITY ALREADY THE
+                    SYSTEM WILL ALLOW YOU TO REGISTER ANOTHER TIME
+                  </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
-           
+                  <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 m-0">
+                    <div className="col-span-1">
+                      <input
+                        type="text"
+                        name="nID"
+                        placeholder="Enter Your National ID"
+                        value={nID}
+                        onChange={(e) => setNID(e.target.value)}
+                        autoComplete="address-level2"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                    <div className="col-span-1 lg:col-span-1">
+                      <button
+                        type="button"
+                        onClick={handleClick}
+                        className="w-full sm:w-auto rounded-md bg-sky-500 w-100 py-2   text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                        CHECK NATIONAL ID
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+            {nationalID && nationalID?.fullName && (
+              <div className="border-b border-gray-900/10 pb-6">
+                <h2 className="text-base font-extrabold leading-9 text-white">
+                  PERSONAL INFORMATION
+                </h2>
+                <p className="mt-1 text-sm leading-6 text-white">
+                  PLEASE FILL YOUR PERSONAL INFORMATION, SOME FIELDS ARE NOT
+                  EDITABLE ONLY FILL THE EDITABLE FIELDS.
+                </p>
 
-                {/* //FIRST NAME */}
-                <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1 ">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    First name
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="fName"
-                      value={fName}
-                      readOnly
-                      onChange={(e) => setFname(e.target.value)}
-                      placeholder="First Name"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-3 sm:grid-cols-6 m-0">
+                  {/* //FIRST NAME */}
+                  <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1 ">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      First name
+                    </label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="fName"
+                        value={fName}
+                        readOnly
+                        onChange={(e) => setFname(e.target.value)}
+                        placeholder="First Name"
+                        autoComplete="given-name"
+                        className="block w-full rounded-md border-0.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
                   </div>
-                </div>
-                {/* LAST NAME */}
-                <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1">
-                  <label
-                    htmlFor="last-name"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    Last name
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="lName"
-                      readOnly
-                      value={lName}
-                      onChange={(e) => setLName(e.target.value)}
-                      placeholder="Last Name"
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                  {/* LAST NAME */}
+                  <div className="sm:col-span-3 my-2 lg:col-span-2 lg:my-1">
+                    <label
+                      htmlFor="last-name"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      Last name
+                    </label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="lName"
+                        readOnly
+                        value={lName}
+                        onChange={(e) => setLName(e.target.value)}
+                        placeholder="Last Name"
+                        autoComplete="family-name"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
                   </div>
-                </div>
-                {/* //MOTHER FIRST NAME */}
-                <div className="sm:col-span-3 my-2 lg:col-span-2  lg:my-1 ">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    MOTHER'S FIRST NAME
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="mFname"
-                      value={mFname}
-                      onChange={(e) => setMFname(e.target.value)}
-                      readOnly
-                      placeholder="Mother's First Name"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                  {/* //MOTHER FIRST NAME */}
+                  <div className="sm:col-span-3 my-2 lg:col-span-2  lg:my-1 ">
+                    <label
+                      htmlFor="first-name"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      MOTHER'S FIRST NAME
+                    </label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="mFname"
+                        value={mFname}
+                        onChange={(e) => setMFname(e.target.value)}
+                        readOnly
+                        placeholder="Mother's First Name"
+                        autoComplete="given-name"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
                   </div>
-                </div>
-                {/*MOTHER'S LAST NAME */}
-                <div className="sm:col-span-3  lg:col-span-2 lg:my-1">
-                  <label
-                    htmlFor="mLname"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    MOTHER'S LAST NAME
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="mLname"
-                      value={mLname}
-                      onChange={(e) => setMLname(e.target.value)}
-                      readOnly
-                      placeholder="Mother's Last Name"
-                      autoComplete="family-name"
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                  {/*MOTHER'S LAST NAME */}
+                  <div className="sm:col-span-3  lg:col-span-2 lg:my-1">
+                    <label
+                      htmlFor="mLname"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      MOTHER'S LAST NAME
+                    </label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="mLname"
+                        value={mLname}
+                        onChange={(e) => setMLname(e.target.value)}
+                        readOnly
+                        placeholder="Mother's Last Name"
+                        autoComplete="family-name"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
                   </div>
-                </div>
-                {/* sex */}
-                <div className="sm:col-span-2 lg:col-span-2  my-2 lg:my-3">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    Gender
-                  </label>
-                  <div className="">
-                    <select
-                      id="selectedSex"
-                      name="selectedSex"
-                      autoComplete=""
-                      value={selectedSex}
-                      onChange={(e) => setSelectedSex(e.target.value)}
-                      placeholder="Select Gender"
-                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                      <option value={""}>Select Your Gender</option>
-                      <option value={"Male"}>Male</option>
-                      <option value={"Female"}>Female</option>
-                    </select>
+                  {/* sex */}
+                  <div className="sm:col-span-2 lg:col-span-2  my-2 lg:my-3">
+                    <label
+                      htmlFor="country"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      Gender
+                    </label>
+                    <div className="">
+                      <select
+                        id="selectedSex"
+                        name="selectedSex"
+                        autoComplete=""
+                        value={selectedSex}
+                        onChange={(e) => setSelectedSex(e.target.value)}
+                        placeholder="Select Gender"
+                        className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                        <option value={""}>Select Your Gender</option>
+                        <option value={"Male"}>Male</option>
+                        <option value={"Female"}>Female</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
 
-                {/* occupation */}
-                <div className="sm:col-span-2 lg:col-span-2">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    OCCUPATION
-                  </label>
-                  <div className="">
-                    <select
-                      id="occupation"
-                      name="occupation"
-                      autoComplete=""
-                      value={occupation}
-                      placeholder="Select Your occupation"
-                      onChange={(e) => setOccupation(e.target.value)}
-                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                      <option value={""}>Select Your Occupation</option>
-                      <option value={"Student"}>Student</option>
-                      <option value={"Employee"}>Employee</option>
-                      <option value={"Others"}>Others</option>
-                    </select>
+                  {/* occupation */}
+                  <div className="sm:col-span-2 lg:col-span-2">
+                    <label
+                      htmlFor="country"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      OCCUPATION
+                    </label>
+                    <div className="">
+                      <select
+                        id="occupation"
+                        name="occupation"
+                        autoComplete=""
+                        value={occupation}
+                        placeholder="Select Your occupation"
+                        onChange={(e) => setOccupation(e.target.value)}
+                        className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                        <option value={""}>Select Your Occupation</option>
+                        <option value={"Student"}>Student</option>
+                        <option value={"Employee"}>Employee</option>
+                        <option value={"Others"}>Others</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
 
-                {/* MARITAL STATUS */}
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    MARITAL STATUS
-                  </label>
-                  <div className="">
-                    <select
-                      id="status"
-                      name="status1"
-                      autoComplete="country-name"
-                      onChange={(e) => setStatus(e.target.value)}
-                      placeholder="Marital Status"
-                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                      <option value={""}>Marital Status</option>
-                      <option value={"Single"}>Single</option>
-                      <option value={"Husband"}>Husband</option>
-                      <option value={"Wife"}>Wife</option>
-                      <option value={"Widow"}>Widow</option>
-                    </select>
+                  {/* MARITAL STATUS */}
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="country"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      MARITAL STATUS
+                    </label>
+                    <div className="">
+                      <select
+                        id="status"
+                        name="status1"
+                        autoComplete="country-name"
+                        onChange={(e) => setStatus(e.target.value)}
+                        placeholder="Marital Status"
+                        className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                        <option value={""}>Marital Status</option>
+                        <option value={"Single"}>Single</option>
+                        <option value={"Husband"}>Husband</option>
+                        <option value={"Wife"}>Wife</option>
+                        <option value={"Widow"}>Widow</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
-                {/* date of birth */}
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="country"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    DATE OF BIRTH
-                  </label>
+                  {/* date of birth */}
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="country"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      DATE OF BIRTH
+                    </label>
 
-                  <div className="">
-                    <input
-                      type="date"
-                      id="selectedDate"
-                      name="selectedDate"
-                      value={selectedDate}
-                      onChange={(event) => setSelectedDate(event.target.value)}
-                      readOnly
-                      // onChange={handleChange}
-                      autoComplete="date"
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
+                    <div className="">
+                      <input
+                        type="date"
+                        id="selectedDate"
+                        name="selectedDate"
+                        value={selectedDate}
+                        onChange={(event) =>
+                          setSelectedDate(event.target.value)
+                        }
+                        readOnly
+                        // onChange={handleChange}
+                        autoComplete="date"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* place of birth */}
-                <div className="sm:col-span-2 mb-2 lg:my-1">
-                  <label
-                    htmlFor="pob"
-                    className="block text-sm font-medium leading-6 text-gray-900 d-none">
-                    PLACE OF BIRTH
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="pob"
-                      value={pob}
-                      onChange={(e) => setPob(e.target.value)}
-                      placeholder="Place of Birth"
-                      autoComplete="place of birth"
-                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {/* {validationErrors.pob && (
+                  {/* place of birth */}
+                  <div className="sm:col-span-2 mb-2 lg:my-1">
+                    <label
+                      htmlFor="pob"
+                      className="block text-sm font-medium leading-6 text-gray-900 d-none">
+                      PLACE OF BIRTH
+                    </label>
+                    <div className="">
+                      <input
+                        type="text"
+                        name="pob"
+                        value={pob}
+                        onChange={(e) => setPob(e.target.value)}
+                        placeholder="Place of Birth"
+                        autoComplete="place of birth"
+                        className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {/* {validationErrors.pob && (
         <span className="text-danger">{validationErrors.pob}</span>
       )} */}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="d-flex justify-content-center align-items-center">
-              <button
-                type="button"
-                onClick={handlePrevious}
-                className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                Previous
-              </button>
-              <button
-                type="submit"
-                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                NEXT
-              </button>
-            </div>
-            </div>
+                <div className="d-flex justify-content-center align-items-center">
+                  {/* <button
+                    type="button"
+                    onClick={handlePrevious}
+                    className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                    Previous
+                  </button> */}
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                    NEXT
+                  </button>
+                </div>
+              </div>
+            )}
           </form>
         )}
-        {/* CONTACT INFORMATION */}
-        {step === 3 && (
+
+        {step === 2 && (
           // contact information form
           <form onSubmit={handleNext} className=" shadow-2xl px-12 lg:p-11">
             <div className="border-b border-gray-900/10 pb-6">
@@ -737,7 +751,8 @@ function MultiStepForm() {
                 UPDATED FROM YOUR PASSPORT INFORMATION.
               </p>
               <p className="mt-1 text-sm leading-6 text-white">
-               PLEASE FILL ALL THE REQUIRED FIELDS, IF YOU SEE RED STAR IT MEANS ITS OPTIONAL
+                PLEASE FILL ALL THE REQUIRED FIELDS, IF YOU SEE RED STAR IT
+                MEANS ITS OPTIONAL
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
@@ -852,9 +867,12 @@ function MultiStepForm() {
           </form>
         )}
         {/* PASSPORT INFORMATION */}
-        {step === 4 && (
+        {step === 3 && (
           // passport information
-          <form onSubmit={handleNext} className=" px-4 shadow-2xl text-white" style={{height:"595px"}}>
+          <form
+            onSubmit={handleNext}
+            className=" px-4 shadow-2xl text-white"
+            style={{ height: "595px" }}>
             <div className="border-b border-gray-900/10 pb-12">
               <h4 className="text-base font-semibold leading-3 text-white">
                 PASSPORT INFORMATION
@@ -863,7 +881,8 @@ function MultiStepForm() {
                 <br />
                 <b> NOTE: </b>
                 <br />
-                THIS STEP IS THE PASSPORT INFORMATION IT'S STATIC ITS ONLY NEW PASSPORTS AND THE PAYMENT IS PERMANENT.
+                THIS STEP IS THE PASSPORT INFORMATION IT'S STATIC ITS ONLY NEW
+                PASSPORTS AND THE PAYMENT IS PERMANENT.
               </p>
 
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-6">
@@ -945,7 +964,7 @@ function MultiStepForm() {
           </form>
         )}
         {/* APPOINTMENT INFORMATION */}
-        {step === 5 && (
+        {step === 4 && (
           // passport information
 
           <form onSubmit={handleNext} className=" px-4 shadow-2xl">
@@ -957,24 +976,27 @@ function MultiStepForm() {
               <b> NOTE: </b>
               <br />
               <ol>
-                <li>FIRSTLY PLEASE SELECT THE STATE AND THEN SELECT THE THAT YOU CAN GET FROM THE PASSPORT</li>
-              </ol> 
+                <li>
+                  FIRSTLY PLEASE SELECT THE STATE AND THEN SELECT THE THAT YOU
+                  CAN GET FROM THE PASSPORT
+                </li>
+              </ol>
               <ol>
-                <li>THEN CHOOSE YOUR APPOINTMENT
-              DATE AND TIME, IF THE DATE YOU SELECTED IS FULL IN TERMS THAT DISTRICT
-              PLEASE SELECT ANOTHER DATE AND THEN SELECT THE TIME THAT YOU CAN
-              GO THERE.</li>
-              </ol> 
-              
+                <li>
+                  THEN CHOOSE YOUR APPOINTMENT DATE AND TIME, IF THE DATE YOU
+                  SELECTED IS FULL IN TERMS THAT DISTRICT PLEASE SELECT ANOTHER
+                  DATE AND THEN SELECT THE TIME THAT YOU CAN GO THERE.
+                </li>
+              </ol>
               <br />
               <b>NOTE:</b>
               <br />
-              IF YOU MISS THE APPOINTMENT YOU SELECTED AT YOUR APPOINTMENT TIME, THEN IT
-              WILL BE CANCELED IMMEDIATELY AND YOU WILL HAVE TO PAY ANOTHER FEE.
-              PLEASE GO THERE THE TIME YOU APPOINTED TO GO THERE.
+              IF YOU MISS THE APPOINTMENT YOU SELECTED AT YOUR APPOINTMENT TIME,
+              THEN IT WILL BE CANCELED IMMEDIATELY AND YOU WILL HAVE TO PAY
+              ANOTHER FEE. PLEASE GO THERE THE TIME YOU APPOINTED TO GO THERE.
             </p>
             <p className=" text-sm leading-8 text-white">
-              PLEASE CHECK THE CHECKBOX IF YOU HAVE AGREED OUR PERSONAL TERMS.  
+              PLEASE CHECK THE CHECKBOX IF YOU HAVE AGREED OUR PERSONAL TERMS.
             </p>
             {/* <div className="row"> */}
             <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
@@ -1068,55 +1090,56 @@ function MultiStepForm() {
         <span className="text-danger">{validationErrors.appointmentDate}</span>
       )} */}
                 </div>
-               {errorMessage?.status !== "success" && 
-               <div className="mt-2 form-control disabled">
-                  {availableDates?.length === 0
-                    ? workingHours &&
-                      workingHours?.map((item) => (
-                        <div key={item.startTime} className="">
-                          <div className="form-group">
+                {errorMessage?.status !== "success" && (
+                  <div className="mt-2 form-control disabled">
+                    {availableDates?.length === 0
+                      ? workingHours &&
+                        workingHours?.map((item) => (
+                          <div key={item.startTime} className="">
+                            <div className="form-group">
+                              <input
+                                type="radio"
+                                name="time"
+                                value={item.startTime}
+                                id={item.startTime}
+                                className="mx-2"
+                                checked={selectedTime === item.startTime}
+                                onChange={handleTimeChange}
+                              />
+                              <label htmlFor={item.startTime}>
+                                {item.startTime} ------- Available
+                              </label>
+                            </div>
+                          </div>
+                        ))
+                      : availableDates?.map((info, i) => (
+                          <p key={info.time}>
                             <input
                               type="radio"
                               name="time"
-                              value={item.startTime}
-                              id={item.startTime}
+                              value={info.time}
+                              id={info.time}
                               className="mx-2"
-                              checked={selectedTime === item.startTime}
+                              disabled={info.availableNumber === 0}
+                              // checked={selectedTime === i.startTime}
                               onChange={handleTimeChange}
-                            />
-                            <label htmlFor={item.startTime}>
-                              {item.startTime} -------  Available
-                            </label>
-                          </div>
-                        </div>
-                      ))
-                    : availableDates?.map((info, i) => (
-                        <p key={info.time}>
-                          <input
-                            type="radio"
-                            name="time"
-                            value={info.time}
-                            id={info.time}
-                            className="mx-2"
-                            disabled={info.availableNumber === 0}
-                            // checked={selectedTime === i.startTime}
-                            onChange={handleTimeChange}
-                          />{" "}
-                          {info.time} ==== 
-                          {/* {availableDates[i + 1]
+                            />{" "}
+                            {info.time} ====
+                            {/* {availableDates[i + 1]
                             ? availableDates[i + 1].time
                             : "Next Hour"}
                           ={" "} */}
-                          <span>
-                            {info.availableNumber == 0
-                              ? "FULL"
-                              : `${info.availableNumber} available slots`}
-                            {/* { info.availableNumber == 0 ? "Full" : ""} */}
-                          </span>
-                          {/* Next Hour */}
-                        </p>
-                      ))}
-                </div>}
+                            <span>
+                              {info.availableNumber == 0
+                                ? "FULL"
+                                : `${info.availableNumber} available slots`}
+                              {/* { info.availableNumber == 0 ? "Full" : ""} */}
+                            </span>
+                            {/* Next Hour */}
+                          </p>
+                        ))}
+                  </div>
+                )}
               </div>
             </div>
             {/* <div className="col">
@@ -1206,7 +1229,7 @@ function MultiStepForm() {
             </div>
           </form>
         )}
-        {step === 6 && (
+        {step === 5 && (
           <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
             <p className="mt-1 text-sm leading-6 text-white">
               PLEASE PREVIEW YOUR INFORMATION BEFORE SUBMITTING AND MAKE
@@ -1511,55 +1534,52 @@ function MultiStepForm() {
 
             <legend>APPOINTMENT INFORMATION</legend>
             <div className=" grid grid-cols-1 gap-x-10 gap-y-2 sm:grid-cols-6 m-0">
-            <div className="col-span-3  lg:col-span-2 lg:my-1">
-                  <label
-                    htmlFor="state"
-                    className="block text-sm font-medium leading-6 text-white">
-                    STATE NAME
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="stateName"
-                      value={stateName}
-                      disabled
-                      // onChange={(e) => setPhoneNumber(e.target.value)}
-                      autoComplete="stateName"
-                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="State name"
-                    />
-                  </div>
+              <div className="col-span-3  lg:col-span-2 lg:my-1">
+                <label
+                  htmlFor="state"
+                  className="block text-sm font-medium leading-6 text-white">
+                  STATE NAME
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="stateName"
+                    value={stateName}
+                    disabled
+                    // onChange={(e) => setPhoneNumber(e.target.value)}
+                    autoComplete="stateName"
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="State name"
+                  />
                 </div>
-                <div className="col-span-3  lg:col-span-2 lg:my-1">
-                  <label
-                    htmlFor="district"
-                    className="block text-sm font-medium leading-6 text-white">
-                    District Name
-                  </label>
-                  <div className="">
-                    <input
-                      type="text"
-                      name="districtName"
-                      value={districtName}
-                      disabled
-                      // onChange={(e) => setPhoneNumber(e.target.value)}
-                      autoComplete="districtName"
-                      className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      placeholder="District Name"
-                    />
-                  </div>
+              </div>
+              <div className="col-span-3  lg:col-span-2 lg:my-1">
+                <label
+                  htmlFor="district"
+                  className="block text-sm font-medium leading-6 text-white">
+                  District Name
+                </label>
+                <div className="">
+                  <input
+                    type="text"
+                    name="districtName"
+                    value={districtName}
+                    disabled
+                    // onChange={(e) => setPhoneNumber(e.target.value)}
+                    autoComplete="districtName"
+                    className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    placeholder="District Name"
+                  />
                 </div>
-          
+              </div>
 
               {/* 1502440 */}
 
               {/* <hr /> */}
               {selectedState?.length > 0 &&
-                  selectedState?.map((item) => (
-                <>
-              <div className="col-span-3  lg:col-span-2 lg:my-1">
-     
-                      
+                selectedState?.map((item) => (
+                  <>
+                    <div className="col-span-3  lg:col-span-2 lg:my-1">
                       <div className="form-group my-2">
                         <label htmlFor="office">Office Name</label>
                         <input
@@ -1570,8 +1590,8 @@ function MultiStepForm() {
                           className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                       </div>
-              </div>
-              <div className="col-span-3  lg:col-span-2 lg:my-1">
+                    </div>
+                    <div className="col-span-3  lg:col-span-2 lg:my-1">
                       <div className="form-group">
                         <label htmlFor="location">Location</label>
                         <textarea
@@ -1597,8 +1617,8 @@ function MultiStepForm() {
                         />
                       </div>
                     </div>
-              </>
-        ))}
+                  </>
+                ))}
               <div className="col-span-3  lg:col-span-1 lg:my-1">
                 <div className="form-group">
                   <label htmlFor="date">Appointment Date</label>
@@ -1610,9 +1630,7 @@ function MultiStepForm() {
                     id=""
                     className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-        
                 </div>
-               
               </div>
               <div className="col-span-3  lg:col-span-1 lg:my-1">
                 <div className="form-group">
@@ -1625,9 +1643,7 @@ function MultiStepForm() {
                     id=""
                     className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-        
                 </div>
-               
               </div>
             </div>
 
@@ -1647,22 +1663,22 @@ function MultiStepForm() {
             </div>
           </div>
         )}
-        {step === 7 && (
-          <form className="shadow-lg mx-6 px-5" style={{height:"596px"}}>
-          <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
-            <p className="mt-1 text-sm leading-6 text-white">
-              PLEASE PROCEED THE PAYMENT INFORMATION TO MAKE YOUR PASSPORT APPOINTMENT SUCCESSFULLY
-            </p>
-            <p className="leading-6 text-white">
-              <b>NB:</b> WE HAVE ONLY PAYMENT METHOD THAT WE CAN GET TO PROCEED YOUR PAYMENT.
-            </p>
+        {step === 6 && (
+          <form className="shadow-lg mx-6 px-5" style={{ height: "596px" }}>
+            <div className="shadow-2xl px-4 border-b border-gray-900/10 pb-6">
+              <p className="mt-1 text-sm leading-6 text-white">
+                PLEASE PROCEED THE PAYMENT INFORMATION TO MAKE YOUR PASSPORT
+                APPOINTMENT SUCCESSFULLY
+              </p>
+              <p className="leading-6 text-white">
+                <b>NB:</b> WE HAVE ONLY PAYMENT METHOD THAT WE CAN GET TO
+                PROCEED YOUR PAYMENT.
+              </p>
 
-            <legend>PAYMENT INFORMATION</legend>
-            <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3  sm:grid-cols-6 m-0">
-      
-
-              {/* payment type */}
-              <div className="col-span-3  lg:col-span-3 lg:my-1">
+              <legend>PAYMENT INFORMATION</legend>
+              <div className="mt-10 grid grid-cols-3 gap-x-10 gap-y-1 lg:gap-y-3  sm:grid-cols-6 m-0">
+                {/* payment type */}
+                <div className="col-span-3  lg:col-span-3 lg:my-1">
                   <label
                     htmlFor="payment"
                     className="block text-sm font-medium leading-6 text-white">
@@ -1675,58 +1691,51 @@ function MultiStepForm() {
                       autoComplete="payment"
                       onChange={(e) => setPayment(e.target.value)}
                       disabled
-                      
                       placeholder="Marital Status"
                       className="block w-full rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
                       <option value={"EVC-PLUS"}>EVC-PLUS </option>
                     </select>
                   </div>
                 </div>
-              {/* pay number */}
-              <div className="col-span-3  lg:col-span-2 ">
-                <label
-                  htmlFor="pob"
-                  className="block text-sm font-medium leading-6 text-white">
-                  Number of payment
-                </label>
-                <div className="">
-                  <input
-                    type="number"
-                    name="paymentNumber"
-                    value={payNumber}
-                    onChange={(e) => setPayNumber(e.target.value)}
-                    disabled
-                    placeholder="Payment Number"
-                    autoComplete="payment number"
-                    className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  />
-       
+                {/* pay number */}
+                <div className="col-span-3  lg:col-span-2 ">
+                  <label
+                    htmlFor="pob"
+                    className="block text-sm font-medium leading-6 text-white">
+                    Number of payment
+                  </label>
+                  <div className="">
+                    <input
+                      type="number"
+                      name="paymentNumber"
+                      value={payNumber}
+                      onChange={(e) => setPayNumber(e.target.value)}
+                      disabled
+                      placeholder="Payment Number"
+                      autoComplete="payment number"
+                      className="block w-full rounded-md border-1 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
                 </div>
               </div>
+              <div className="d-flex justify-content-center align-items-center">
+                <button
+                  type="button"
+                  onClick={handlePrevious}
+                  className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
+                  Proceed
+                </button>
+              </div>
             </div>
-            <div className="d-flex justify-content-center align-items-center">
-              <button
-                type="button"
-                onClick={handlePrevious}
-                className="w-full sm:w-auto rounded-md bg-white w-25 py-2 my-4 text-sm font-semibold text-black shadow-sm hover:bg-slate-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full sm:w-auto rounded-md bg-sky-500 w-25 py-2 mx-3 my-4 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700">
-                Proceed
-              </button>
-            </div>
-           
-
-          
-            
-          </div>
           </form>
         )}
       </div>
-      
     </>
   );
 }
