@@ -50,7 +50,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     const [appointmentDate, setAppointmentDate] = useState();
     const [appointmentTime, setAppointmentTime] = useState();
     const [phoneNumber, setPhoneNumber] = useState();
-    const [image, setImage] = useState();
+    const [image, setImage] = useState([]);
     const [appImage, setAppImage] = useState();
     const [changePassword, setChangePassword] = useState("No");
     const [nationalId, setNationalId] = useState("");
@@ -252,6 +252,8 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       }
     };
     const editPop = (data) => {
+      const id1 =  data?._id;
+      setId(id1);
       const text = data?.fullname;
       const fullname = text?.split(" ");
       const motherName = data?.motherName;
@@ -472,6 +474,21 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     //         })
     //         .catch((err) => console.error(err));
     //     };
+       //handle and convert it in base 64
+       const handleImage = (e) =>{
+        const file = e.target.files[0];
+        setFileToBase(file);
+        console.log(file);
+    }
+
+    const setFileToBase = (file) =>{
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () =>{
+            setImage(reader.result);
+        }
+
+    }
     const handleChangeBg = async () => {
       const apiKey = "77i7YWurRk3wxLQW2MfrMkd4";
       const url = "https://api.remove.bg/v1.0/removebg";
@@ -509,9 +526,12 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     //   console.log(employeeName);
     //   console.log(employeePhone);
     //   console.log(sex);
-    //   console.log(empType);
-      console.log(image);
-    uploadImage(image)
+      console.log(id);
+      // console.log(image);
+      
+        
+      
+    uploadImage({image,id})
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -530,10 +550,10 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       // if(!bgRemove){
       //   toast.error("please select image");
       // }
-      console.log(file)
+      console.log(image)
       const formData = new FormData();
       formData.append('image', image);
-      uploadImage(file)
+      uploadImage(image)
 
 
     }
@@ -868,19 +888,39 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                       />
                     </div>
                   </Col>
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Applicant Image <span className="text-danger">*</span>
-                      </label>
-                      <Input type="file" name="image" onChange={(e) => setImage(e.target.files[0])} />
-                    </div>
-                  </Col>
-                  <Col md={6} sm={12} lg={5}>
-                  <div className="mb-2">
-                  {image && <img className="mt-3" src={URL.createObjectURL(image)} style={{ width: "400px", height: "400px",  }} />}
-                  </div>
-                </Col>
+             <Col md={6} sm={12} lg={4}>
+                <div className="mb-3">
+                  <label className="form-label">
+                    Applicant Image <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    type="file"
+                    name="image"
+                    accept="image/png, image/gif, image/jpeg"
+                    onChange={handleImage}
+                    // onChange={(e) => {
+                    //   const file = e.target.files[0];
+                    //   const reader = new FileReader();
+                    //   reader.readAsDataURL(file);
+                    //   reader.onload = () => {
+                    //     setImage(reader.result);
+                    //   };
+                    // }}
+                  />
+                </div>
+              </Col>
+              <Col md={6} sm={12} lg={5}>
+                <div className="mb-2">
+                  {image && (
+                    <img
+                      className="mt-3"
+                      src={image}
+                      alt="Applicant"
+                      style={{ width: "400px", height: "400px" }}
+                    />
+                  )}
+                </div>
+              </Col>
                 </Row>
 
                 {/* contact information */}

@@ -16,7 +16,7 @@ const path = require("path");
 const multer = require("multer");
 const cron = require("node-cron");
 const Image = require("../models/images");
-const sharp = require("sharp");
+const cloudinary = require("../../cloudinary/upload");
 // Set up multer storage for file uploads
 const mime = require("mime");
 const axios = require("axios");
@@ -509,15 +509,26 @@ exports.updateApplicant = async (req, res) => {
   try {
     let takeDate = new Date();
     takeDate.setDate(takeDate.getDate() + 1);
+    const {image,id} = req.body
+    // console.log(id)
+    // console.log(image)
+    const imageRes = await cloudinary.uploader.upload(image.image, {
+      folder: 'Images'
+    });
+  
     // console.log(takeDate)
     const updated = await Applicant.findByIdAndUpdate(
-      req.params.id,
+      image.id,
       {
         $set: {
-          // imagePath: req.file ? req.file.filename : null,
+          image: {       
+              public_id:imageRes.public_id,
+              url:imageRes.secure_url
+          },
           arrivalDate: takeDate,
           isApproved: true,
           approvedDate: new Date(),
+          ratio:  75
         },
       },
       { new: true }
@@ -529,7 +540,7 @@ exports.updateApplicant = async (req, res) => {
           message: "Error occurred while updating this applicant..",
           status: "fail",
         });
-    const emailBody = `Dear ${
+    const message = `Dear ${
       updated?.fullname
     }, your information has been approved successfully so, you will arrive the office at ${moment(
       takeDate
@@ -537,31 +548,38 @@ exports.updateApplicant = async (req, res) => {
       "DD/MM/YYYY"
     )}, and you will receive email notification when the date is reached. Please arrive earlier to receive your passport, thanks.`;
 
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      host: "smtp.gmail.com",
-      port: 587,
-      secure: true,
-      auth: {
-        user: "myfather8818@gmail.com",
-        pass: "oqsvvrqmzgjhxuux",
-      },
-    });
-    const emailOption = {
-      from: "myfather88818@gmail.com",
-      to: "engabdimalik8818@gmail.com",
-      subject: emailBody,
-      text: "Appointment Scheduled",
-    };
+    // const transport = nodemailer.createTransport({
+    //   service: "gmail",
+    //   host: "smtp.gmail.com",
+    //   port: 587,
+    //   secure: true,
+    //   auth: {
+    //     user: "myfather8818@gmail.com",
+    //     pass: "oqsvvrqmzgjhxuux",
+    //   },
+    // });
+    // const emailOption = {
+    //   from: "myfather88818@gmail.com",
+    //   to: "engabdimalik8818@gmail.com",
+    //   subject: emailBody,
+    //   text: "Appointment Scheduled",
+    // };
 
-    transport.sendMail(emailOption, (error, info) => {
-      if (error) return error.message;
+    // transport.sendMail(emailOption, (error, info) => {
+    //   if (error) return error.message;
 
-      console.log(`The email sent ${info.response}`);
-    });
+    //   console.log(`The email sent ${info.response}`);
+    // });
+    await axios.post(
+      "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+        message +
+        "&rec=" +
+        updated?.phoneNumber +
+        ""
+    );
     return res
       .status(200)
-      .json({ message: "application updated successfully", status: "success" });
+      .json({ message: "application Approved successfully", status: "success" });
   } catch (error) {
     return res.status(500).json({ message: error.message, status: "fail" });
   }

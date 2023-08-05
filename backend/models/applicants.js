@@ -27,7 +27,18 @@ let applicantSchema = new Schema(
     isExpired:{type:Boolean, default:false},
     isTaken:{type:Boolean, default:false},
     isApproved:{type:Boolean, default:false},
-    imagePath:{type:String, default:null},
+    image: {
+      public_id: {
+          type: String,
+          required: true
+      },
+      url: {
+          type: String,
+          required: true
+      }
+  
+  },
+
     arrivalDate:{type:Date, default:null},
     approvedDate:{type:Date, default:null},
     isCanceled:{type:Boolean, default:false},
