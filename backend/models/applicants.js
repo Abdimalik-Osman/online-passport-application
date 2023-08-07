@@ -30,11 +30,11 @@ let applicantSchema = new Schema(
     image: {
       public_id: {
           type: String,
-          required: true
+          // required: true
       },
       url: {
           type: String,
-          required: true
+          // required: true
       }
   
   },
@@ -43,7 +43,19 @@ let applicantSchema = new Schema(
     approvedDate:{type:Date, default:null},
     isCanceled:{type:Boolean, default:false},
     isReady:{type:Boolean, default:false},
-    ratio :{type:Number, default:25}
+    ratio :{type:Number, default:25},
+    fingerPic:{ 
+       public_id: {
+      type: String,
+      // required: true
+  },
+  url: {
+      type: String,
+      // required: true
+  }},
+    
+    fingerData:{type:String, default:null},
+
   },
   { timestamps: true }
 );

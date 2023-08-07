@@ -234,6 +234,12 @@ const Navdata = () => {
                     link: "/cancel",
                     parentId: "setting",
                   },
+                  {
+                    id: "scan",
+                    label: "Scan Applicant Finger",
+                    link: "/scan",
+                    parentId: "setting",
+                  },
                 ]
         },
         // {
@@ -297,6 +303,39 @@ const Navdata = () => {
               
           
             ],
+        },
+        {
+            id: "Report",
+            label: "Reports",
+            icon: "ri-layout-grid-line",
+            link: "/#",
+            click: function (e) {
+                e.preventDefault();
+                setIsReport(!isReport);
+                setIscurrentState('Report');
+                updateIconSidebar(e);
+            },
+            stateVariables: isReport,
+            subItems: [
+                {
+                    id: "dailyApplicants",
+                    label: "Daily Applicants",
+                    link: "/daily",
+                    parentId: "Report",
+                  },
+                  {
+                    id: "monthlyApplicants",
+                    label: "Monthly Applicants",
+                    link: "/monthly",
+                    parentId: "Report",
+                  },
+                  {
+                    id: "applicantList",
+                    label: "Applicant List",
+                    link: "/list",
+                    parentId: "Report",
+                  },
+                ]
         },
         {
             id: "authentication",

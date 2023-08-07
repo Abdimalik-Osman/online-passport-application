@@ -27,22 +27,25 @@ const PORT = process.env.PORT || 3000
 connectDB();
 const app = express();
 app.use(express.json());
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.use(cors())
+// app.use(cors())
 // MIDDLEWARE
 // app.use(morgan('dev'));
-app.use(bodyParser.json({limit: '100mb'}));
+app.use(bodyParser.json({limit: '200mb'}));
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-    limit: '100mb',
+    limit: '200mb',
     extended: true
     }));
 // app.use(cookieParser());
-// app.use(cors());
+app.use(cors());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'],
-})); // Use this after the variable declaration
+  origin: ['http://localhost:3000', 'http://localhost:3001',"http://localhost:4000"],
+  credentials:true,
+  optionsSuccessStatus: 200,
+}));
+// Use this after the variable declaration
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
 //     cb(null, 'uploads/')

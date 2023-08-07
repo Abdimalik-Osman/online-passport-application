@@ -24,9 +24,13 @@ router.post('/cancel/appointment',ApplicantController.cancelAppointment);
 router.patch('/update/appointment/:id',ApplicantController.updateAppointment);
 router.get('/images/:id',ApplicantController.getUserImage);
 router.post('/upload',ApplicantController.updateApplicant);
+router.post('/scan/finger',ApplicantController.scanFingerprint);
 router.get('/appointment/all/:appointmentDate/:districtId',ApplicantController.getAppointmentByDate);
 router.post('/appointments/cancel',ApplicantController.cancelAppointment);
 router.post('/send/message',ApplicantController.sendMessage);
 router.post('/wafi/payment',ApplicantController.wafiAPiPayment);
+router.get('/date/:startDate?/:endDate?/:userId?',ApplicantController.getApplicantList);
+router.get('/today/:userId?',ApplicantController.getApplicantsCreatedToday);
+router.get('/month/:userId?',ApplicantController.getApplicantCreatedThisMonth);
 
 module.exports = router;

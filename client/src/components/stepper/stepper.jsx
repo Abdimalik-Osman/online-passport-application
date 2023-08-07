@@ -150,18 +150,20 @@ function MultiStepForm() {
       toast.success(appMessage?.message);
       // dispatch(appReset());
     }
-    if (appMessage?.message == "Appointment booked successfully" || appMessage?.message === "Appointment booked successfully") {
+    if (appMessage?.message == "Your Application registered successfully" || appMessage?.message === "Your Application registered successfully") {
       // toast.success(appMessage?.message);
-      navigate("/");
+      setTimeout(() => {
+        navigate("/view");
+      }, 2000);
       // dispatch(appReset());
     }
 
     if (isError) {
-      toast.error(error.message);
+      toast.error(error?.message);
       // dispatch(reset());
     }
     if (isSuccess) {
-      toast.success(message.message);
+      toast.success(message?.message);
       // dispatch(reset());
       // dispatch(appReset());
     }
@@ -184,7 +186,7 @@ function MultiStepForm() {
       const fullname = text?.split(" ");
       const motherName = nationalID?.motherName;
       const motherFullname = motherName?.split(" ");
-
+      
       const fname = fullname?.[0];
       const secondName = fullname?.[1];
       firstName = fname?.concat(" ", secondName);
@@ -210,6 +212,7 @@ function MultiStepForm() {
         let time = moment(new Date()).format("DD-MM-YYYY");
         setSelectedDate(time);
       }
+      setPob(nationalID?.POB)
       setMFname(mFirstName);
       setMLname(mLastName);
       setFname(firstName);
@@ -303,13 +306,13 @@ function MultiStepForm() {
     dispatch(getNationalId(nID));
     console.log(error);
     if (error?.status === "fail" || error?.status == false) {
-      toast.error(error.message);
+      toast.error(error?.message);
       return;
     }
     console.log(nationalID)
 
     if (step == 1 && !nationalID) {
-      toast.error(error.message);
+      toast.error(error?.message);
       return;
     }
   };
@@ -364,18 +367,8 @@ function MultiStepForm() {
       toast.error(errorMessage?.message);
     } else {
       toast.success(errorMessage?.message);
-      setIsChecked(false);
-      setSelectedDate("");
-      setSelectedTime("");
-      setEmergencyContactNumber("");
-      setEmergencyContactName("");
-      setDob("");
-      setMLname("");
-      setMFname("");
-      setLName("");
-      setFname("");
-      setNID("");
-      navigate("/");
+     
+      // navigate("/");
     }
   };
 
@@ -400,7 +393,7 @@ function MultiStepForm() {
         nID == "" ||
         mLname == "" ||
         selectedDate == "" ||
-        pob == "")
+        pob == "" || status1 == "" || occupation == "")
     ) {
       console.log(mFname, lName, fName, nID, selectedDate, pob);
       toast.error("please fill the required fields");
@@ -472,8 +465,8 @@ function MultiStepForm() {
         {step === 1 && (
           // personal information form
           <form onSubmit={handleNext} className=" shadow-2xl px-4 ">
-            {!nationalID || !nationalID?.fullname  && (
-              <>
+            
+              <span style={{display:nationalID?.DOB ? "none":"block"}}>
                 <div className="border-b border-gray-900/10 pb-6">
                   <h2 className="text-base font-extrabold leading-9 text-white">
                     NATIONAL IDENTITY AUTHENTICATION
@@ -509,8 +502,8 @@ function MultiStepForm() {
                     </div>
                   </div>
                 </div>
-              </>
-            )}
+              </span>
+            
             {nationalID && nationalID?.fullName && (
               <div className="border-b border-gray-900/10 pb-6">
                 <h2 className="text-base font-extrabold leading-9 text-white">

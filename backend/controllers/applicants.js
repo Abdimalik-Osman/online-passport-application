@@ -1,4 +1,5 @@
 const Applicant = require("../models/applicants");
+const fs = require('fs');
 const CID = require("../models/CID");
 const NationalID = require("../models/nationalProfile");
 const Appointment = require("../models/appointment");
@@ -128,6 +129,60 @@ const Employee = require("../models/employees");
 
 exports.createApplicant = async (req, res) => {
   try {
+    const apiwafiUSD = {
+      schemaVersion: "1.0",
+      requestId: "10111331033",
+      timestamp: "client_timestamp",
+      channelName: "WEB",
+      serviceName: "API_PURCHASE",
+      serviceParams: {
+        merchantUid: "M0910291",
+        apiUserId: "1000416",
+        apiKey: "API-675418888AHX",
+        paymentMethod: "mwallet_account",
+        payerInfo: {
+          accountNo: "252616328920",
+        },
+        transactionInfo: {
+          referenceId: "12334",
+          invoiceId: "7896504",
+          amount: 0.01,
+          currency: "USD",
+          description: "Test USD",
+        },
+      },
+    };
+
+    let apiwafi = await axios.post("https://api.waafipay.net/asm", apiwafiUSD);
+    if (apiwafi.data.responseMsg == "RCS_SUCCESS") {
+      console.log("hello");
+      const apiwafiUSD2 = {
+        schemaVersion: "1.0",
+        requestId: "14636832123312",
+        timestamp: "20181231130916000",
+        channelName: "WEB",
+        serviceName: "API_PREAUTHORIZE_COMMIT",
+        serviceParams: {
+          apiUserId: 1004068,
+          merchantUid: "M0911931",
+          apiKey: "API-532593570AHX",
+          transactionId: apiwafi.data.params.transactionId,
+          description: "Commited",
+          referenceId: "R75641560240445",
+        },
+      };
+      let apiwafi2 = await axios.post(
+        "https://api.waafipay.net/asm",
+        apiwafiUSD2
+      );
+
+      if (!apiwafi2) {
+        return res.status(500).json({message:apiwafi.data.responseMsg, status: "fail" });
+      }
+    
+      
+      // console.log("apiwafi2 " + apiwafi2.data.responseMsg);
+      
     const nationalData = await NationalID.findOne({
       serialNumber: Number(req.body.nID),
     });
@@ -258,6 +313,7 @@ exports.createApplicant = async (req, res) => {
       appointmentDate: req.body.appointmentDate,
       appointmentTime: req.body.appointmentTime,
       applyingDate: new Date(),
+      maritalStatus:req.body.status,
       expireDate: passportExpirationData,
       nID: req.body.nID,
       email: req.body.email,
@@ -336,7 +392,7 @@ exports.createApplicant = async (req, res) => {
       const newPayment = new PaymentLog({
         applicantId: newApplicant._id,
         amount: 150,
-        type: req.body.type,
+        type: "New",
       });
       await newPayment.save();
       if (!newPayment) {
@@ -363,7 +419,16 @@ exports.createApplicant = async (req, res) => {
     //  await axios.post(`https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=${emailBody}&rec=${req.body.phoneNumber}`)
     return res
       .status(201)
-      .json({ message: "Appointment booked successfully", status: "success" });
+      .json({ message: "Your Application registered successfully", status: "success" });
+      // return res
+      //   .status(200)
+      //   .json({ message: apiwafi2.data.responseMsg, success: true });
+    } else {
+      console.log("apiwafi2 " + apiwafi.data.responseMsg);
+      return res
+        .status(499)
+        .json({ message: apiwafi.data.responseMsg, status: "fail" });
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message, status: "fail" });
   }
@@ -509,12 +574,13 @@ exports.updateApplicant = async (req, res) => {
   try {
     let takeDate = new Date();
     takeDate.setDate(takeDate.getDate() + 1);
-    const {image,id} = req.body
+    const {image} = req.body
     // console.log(id)
-    // console.log(image)
+    console.log(image)
     const imageRes = await cloudinary.uploader.upload(image.image, {
       folder: 'Images'
     });
+
   
     // console.log(takeDate)
     const updated = await Applicant.findByIdAndUpdate(
@@ -525,8 +591,9 @@ exports.updateApplicant = async (req, res) => {
               public_id:imageRes.public_id,
               url:imageRes.secure_url
           },
+        
           arrivalDate: takeDate,
-          isApproved: true,
+          // isApproved: true,
           approvedDate: new Date(),
           ratio:  75
         },
@@ -585,6 +652,48 @@ exports.updateApplicant = async (req, res) => {
   }
 };
 
+// scan finger print
+exports.scanFingerprint = async(req,res)=>{
+  try {
+    console.log(req.body)
+    const {img,id} = req.body;
+    const base64Image = 'data:image/bmp;base64,Qk3mNAEAAAAAADYEAAAoAAAABAEAACwBAAABAAgAAAAAALAwAQAAAAAAAAAAAAABAAAAAQAAAAAAAAEBAQACAgIAAwMDAAQEBAAFBQUABgYGAAcHBwAI';
+    const filename = 'image';
+    
+    convertBase64ToImage(img?.img, filename);
+    //     const fingerImages = await cloudinary.uploader.upload(img, {
+    //   folder: 'finger_images'
+    // });
+    // const updated = await Applicant.findByIdAndUpdate(
+    //   id,
+    //   {
+    //     $set: {
+    //       fingerPic: {       
+    //         public_id:fingerImages.public_id,
+    //         url:fingerImages.secure_url
+    //     },
+        
+    //       arrivalDate: takeDate,
+    //       isApproved: true,
+    //       approvedDate: new Date(),
+    //       ratio:  75
+    //     },
+    //   },
+    //   { new: true }
+    // );
+    // if (!updated)
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       message: "Error occurred while approving the applicant finger..",
+    //       status: "fail",
+    //     });
+
+    return res.status(200).json({message:"successfully registered finger", status: "success"});
+  } catch (error) {
+   return res.status(500).json({message:error.message,status:"fail"}); 
+  }
+}
 // update appointment date
 exports.updateAppointment = async (req, res) => {
   try {
@@ -1263,13 +1372,8 @@ exports.wafiAPiPayment = async (req, res) => {
       if (!apiwafi2) {
         return res.status(500).json({ success: false });
       }
-      // const newMerchantLog = new merchantLog({
-      //   phoneNumer:req.body.phoneNumer,
-      //   subscriptionId: req.body.subscriptionId,
-      //   transactionId: apiwafi2.data.params.transactionId,
-      //   amount: req.body.amount
-      // })
-      //            await newMerchantLog.save()
+    
+      
       console.log("apiwafi2 " + apiwafi2.data.responseMsg);
       return res
         .status(200)
@@ -1284,3 +1388,120 @@ exports.wafiAPiPayment = async (req, res) => {
     return res.status(500).json({ message: error.message, status: "fail" });
   }
 };
+
+function convertBase64ToImage(base64Image, filename) {
+  const matches = base64Image.match(/^data:image\/([a-zA-Z0-9]+);base64,(.+)$/);
+
+  if (!matches || matches.length !== 3) {
+    throw new Error('Invalid base64 image format');
+  }
+
+  const fileExtension = matches[1];
+  const fileData = matches[2];
+  const filePath = `/uploads/${filename}.${fileExtension}`;
+
+  fs.writeFileSync(filePath, fileData, 'base64');
+
+  console.log('Image saved successfully:', filePath);
+}
+
+
+// get applicants by date
+exports.getApplicantList = async(req,res)=>{
+  try {
+    let start = moment(req.params.startDate).format("YYYY-MM-DD");
+    let end = moment(req.params.endDate).format("YYYY-MM-DD")
+    const userInfo = await User.findById(req.params.userId);
+    // console.log(userInfo)
+    if( userInfo?.isAdmin == true || userInfo?.isAdmin === true){
+      console.log("here----------------",)
+ 
+      const applicants = await Applicant.aggregate([
+        {
+          $match:{
+            createdAt:{
+              $gte: new Date(start),
+              $lte: new Date(end)
+            }
+          }
+        }
+      ])
+      return res.status(200).json(applicants)
+    }else{
+      const applicants = await Applicant.aggregate([
+        {
+          $match:{
+            createdAt:{
+              $gte: new Date(start),
+              $lte: new Date(end)
+            },
+            districtId:userInfo?.districtId
+          }
+        }
+      ])
+      return res.status(200).json(applicants)
+    }
+  } catch (error) {
+    return res.status(500).json({message: error.message,status:"fail"})
+  }
+}
+
+// get applicants created today
+exports.getApplicantsCreatedToday = async(req,res)=>{
+  try {
+    const userInfo = await User.findById(req.params.userId);
+    // console.log(userInfo)
+    if( userInfo?.isAdmin == true || userInfo?.isAdmin === true){
+    // Get the current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
+
+  // Get the count of customers registered today
+  const applicants =await Applicant.find({ createdAt: { $gte: today } })
+  return res.status(200).json(applicants)
+    }else{
+          // Get the current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
+
+  // Get the count of customers registered today
+  const applicants =await Applicant.find({ createdAt: { $gte: today },districtId:userInfo?.districtId });
+  return res.status(200).json(applicants)
+
+    }
+  } catch (error) {
+    return res.status(500).json({message: error.message,status:"fail"})
+  }
+}
+
+// get applicants registered this month
+exports.getApplicantCreatedThisMonth = async(req,res)=>{
+  try {
+    const userInfo = await User.findById(req.params.userId);
+    // console.log(userInfo)
+    if( userInfo?.isAdmin == true || userInfo?.isAdmin === true){
+      // Get the current date
+  const currentDate = new Date();
+
+  // Create the start and end dates for the current month
+  const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  endOfMonth.setHours(23, 59, 59, 999); // Set the time to 23:59:59:999
+
+  // Get the count of customers created in the current month
+  const applicants = await Applicant.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } })
+  return res.status(200).json(applicants)
+    }else{
+      
+          // Get the current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
+
+  // Get the count of customers registered today
+  const applicants =await Applicant.find({ createdAt: { $gte: today },districtId: userInfo?.districtId})
+  return res.status(200).json(applicants)
+    }
+  } catch (error) {
+    return res.status(500).json({message: error.message,status:"fail"})
+  }
+}

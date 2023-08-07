@@ -21,6 +21,7 @@ import RegisterHolydays from "../pages/RegisterHolyday";
 import UnApprovedApplicants from "../pages/UnApproved";
 import UserRole from "../pages/UserRoles";
 import ApplicantImage from "../pages/applicantImage";
+import ScanFinger from './../pages/Scanfinger/index';
 
 const authProtectedRoutes = [
   
@@ -36,6 +37,7 @@ const authProtectedRoutes = [
   { path: "/new", component: CreateApplicant },
   { path: "/image", component: ApplicantImage },
   { path: "/cancel", component: CancelAppointment },
+  { path: "/scan", component: ScanFinger },
 
   
   //User Profile

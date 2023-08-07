@@ -421,10 +421,11 @@ const updateApplicantInfo = async (data) => {
     console.log(error);
   }
 };
-const uploadImage = async (image,id) => {
+// upload image
+const uploadImage = async (image,id,img) => {
   console.log(image);
   try {
-    const res = await axios.post("/applicants/upload", {image,id});
+    const res = await axios.post("/applicants/upload", {image,id,img});
     
     dispatch({ type: "UPLOAD_IMAGE_SUCCESS" });
     if (res.status == "success") {
@@ -445,7 +446,31 @@ const uploadImage = async (image,id) => {
     });
   }
 };
-
+// scan finger print
+const scanFingerApp = async (img,id) => {
+  // console.log(image);
+  try {
+    const res = await axios.post("/applicants/scan/finger", {img,id});
+    
+    dispatch({ type: "SCAN_FINGER_SUCCESS" });
+    if (res.status == "success") {
+      toast.success(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    } else {
+      console.log(res)
+      toast.error(res.message, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
+    }
+  } catch (error) {
+    dispatch({ type: "scan_FINGER_FAIL" });
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
   // registering district holydays
   const registerDistrictHolydays = async (data) => {
     console.log(data);
@@ -601,7 +626,7 @@ const getAppointment = async (appointmentDate,districtId) => {
         getApplicantImage,
         cancelAppointmentFun,
         getAppointment,
-        
+        scanFingerApp
       }}
     >
       {children}

@@ -1,36 +1,36 @@
 import moment from "moment";
 import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useState
+    useContext,
+    useEffect,
+    useMemo,
+    useState
 } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Col,
-  Container,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  Row
+    Card,
+    CardBody,
+    CardHeader,
+    Col,
+    Container,
+    Input,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    Row
 } from "reactstrap";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import TableContainer from "../../Components/Common/TableContainer";
 import "../Employee/styleEmp.css";
+import { CallSGIFPGetData } from "../services/biometricFun";
 import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   
-  const ApproveApplicants = () => {
+  const ScanFinger = () => {
     const {
       EmployeeRegister, getEmployees, fetchEmployees,   fetchUnapprovedApplicants,fetchSingleUnapprovedApplicant,applicantInfo,
-      unapprovedApplicants, updateApplicantInfo, uploadImage
+      unapprovedApplicants, updateApplicantInfo, uploadImage,scanFingerApp
      
     } = useContext(LoginContext);
     const [fName, setFname] = useState();
@@ -313,7 +313,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
         // setEmployeeId(data);
         
       };
-    document.title = "Approve Applicants";
+    document.title = "Scan Finger Applicants";
     const handleValidDate = (date) => {
       const date1 = moment(new Date(date)).format("DD MMM Y");
       return date1;
@@ -325,11 +325,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
           accessor: "fullname",
           filterable: false,
         },
-        {
-          Header: "Mother Name",
-          accessor: "motherName",
-          filterable: false,
-        },
+     
         {
           Header: "Date of Birth",
           accessor: "DOB",
@@ -352,28 +348,8 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
           accessor: "sex",
           filterable: false,
         },
-        {
-          Header: "Emergency Contact Name",
-          accessor: "emergencyContactName",
-          filterable: false,
-        },
-        {
-          Header: "Emergency Number",
-          accessor: "emergencyContactNumber",
-          filterable: false,
-        },
-        {
-          Header: "Email",
-          accessor:"email",
-          filterable: true,
-        },
+  
        
-        {
-          Header: "Applying Date",
-          accessor: "createdAt",
-          filterable: true,
-          Cell: (cell) => <>{handleValidDate(cell.value)}</>,
-        },
         {
           Header: "Appointment Date",
           accessor: "appointmentDate",
@@ -540,9 +516,9 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       console.log(id);
       // console.log(image);
       
-        // const img = finger_data.img
-      
-    uploadImage({image,id})
+        let img = finger_data
+      console.log(img,id)
+        scanFingerApp(img,id)
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -561,23 +537,23 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       // if(!bgRemove){
       //   toast.error("please select image");
       // }
-      console.log(image)
-      const formData = new FormData();
-      formData.append('image', image);
-      uploadImage(image)
+    //   console.log(image)
+    //   const formData = new FormData();
+    //   formData.append('image', image);
+    //   scanfingerApp(image)
 
 
     }
 
-    // const scanFinger = () => {
-    //   CallSGIFPGetData(
+    const scanFingerprint = () => {
+      CallSGIFPGetData(
         
-    //     setFinger_data,
+        setFinger_data,
        
-    //   )
+      )
       
-    // }
-    // console.log(finger_data)
+    }
+    console.log(finger_data)
     return (
       <React.Fragment>
         <div className="page-content">
@@ -586,8 +562,8 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
               <script src="html2pdf.bundle.min.js"></script>
             </Helmet>
             <BreadCrumb
-              title="Approve Applicants"
-              pageTitle="Approve Applicants"
+              title="Scan Finger Applicants"
+              pageTitle="Scan Finger Applicants"
             />
             <embed
               style={{
@@ -608,34 +584,11 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                         <div>
                           <div>
                             <ToastContainer />
-                            <h4 className="card-title mb-0">Approve Applicants</h4>
+                            <h4 className="card-title mb-0">Scan Finger Applicants</h4>
                           </div>
                         </div>
                       </Col>
-                      <Col className="col-sm">
-                        <div className="d-flex justify-content-sm-end">
-                          <div>
-                            <Button
-                              color="success"
-                              className="add-btn me-1"
-                              onClick={addModal}
-                              id="create-btn">
-                              <i className="ri-add-line align-bottom me-1"></i>{" "}
-                              Add
-                            </Button>
-                          </div>
-                          <div>
-                            <Button
-                              color="primary"
-                              className="add-btn me-1 mx-3 "
-                              onClick={approveModal}
-                              id="create-btn">
-                              <i className="ri-add-line align-bottom me-1"></i>{" "}
-                              APPROVE APPLICANT
-                            </Button>
-                          </div>
-                        </div>
-                      </Col>
+                      
                     </Row>
                   </CardHeader>
                   <CardBody>
@@ -688,262 +641,12 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
               <ModalBody>
               
               
-                <div className="mb-3" id="modal-id" style={{ display: "none" }}>
-                  <label htmlFor="id-field" className="form-label">
-                    ID
-                  </label>
-                  <input
-                    type="text"
-                    id="id-field"
-                    className="form-control"
-                    
-                    readOnly
-                  />
-                </div>
 
                 {/*personal information  */}
                 <Row>
-                <legend  className="text-center">Personal Information</legend>
-                  {/* <Col md={8}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Employee <span className="text-danger">*</span>
-                      </label>
-
-                      <div>
-                        <Select
-                          // className="bg-white"
-                          options={Emp}
-                          onChange={(choice) => setEmployeeId(choice)}
-                          value={Emp?.filter(function (option) {
-                            return option.value === employeeId?.value;
-                          })}
-                          theme={(theme) => ({
-                            ...theme,
-                            borderRadius: 0,
-                            colors: {
-                              ...theme.colors,
-                            },
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </Col> */}
-
-                  <Col md={2}>
-                    <div className="mb-3">
-                      <Label htmlFor="national-id" className="form-label">
-                        National-ID <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="national-id"
-                        type="text"
-                        // placeholder="Enter your National ID"
-                        required
-                        onChange={(e) => setNationalId(e.target.value)}
-                        value={nationalId}
-                      />
-                    </div>
-                  </Col>
-                
-
-                  {/* first name */}
-                  <Col md={6} sm={12} lg={5}>
-                    <div className="mb-2">
-                      <Label htmlFor="firstName" className="form-label">
-                        First Name
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="fName"
-                        type="text"
-                        // placeholder="Enter your first name"
-                        required
-                        value={fName}
-                        onChange={(e)=>setFname(e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  {/* last name */}
-                  <Col md={6} sm={12} lg={5}>
-                    <div className="mb-2">
-                      <Label htmlFor="lastName" className="form-label">
-                        Last Name
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="lName"
-                        type="text"
-                        // placeholder="Enter your last name"
-                        required
-                        value={lName}
-                        onChange={(e)=>setLname(e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  {/* mother first name */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="mFname" className="form-label">
-                        Mother First Name
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="mFname"
-                        type="text"
-                       
-                        required
-                        value={mFname}
-                        onChange={(e)=>setMFname(e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  {/* mother Last name */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="mLname" className="form-label">
-                        Mother Last Name
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="mLname"
-                        type="text"
-                        // placeholder="Mother Last Name"
-                        required
-                        value={mLname}
-                        onChange={(e)=>setMLname(e.target.value)}
-                      />
-                    </div>
-                  </Col>
-                  {/* gender */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Gender <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className="form-select "
-                        id="sex"
-                        required
-                        onChange={(e) => setState(e.target.value)}
-                        value={selectedSex}>
-                        
-                        <option value="">
-                          &hellip; Choose an option &hellip;
-                        </option>
-                        {/* <option> Select Your Gender</option> */}
-                        <option value="Male"> Male</option>
-                        <option value="Female"> Female</option>
-                      </select>
-                    </div>
-                  </Col>
-                  {/* occupation */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Occupation <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className="form-select "
-                        id="sex"
-                        required
-                        onChange={(e) => setOccupation(e.target.value)}
-                        value={occupation}>
-                        <option value="">
-                          &hellip; Choose an option &hellip;
-                        </option>
-                        {/* <option> Select Your Gender</option> */}
-                        <option value="Student"> Student</option>
-                        <option value="Employee"> Employee</option>
-                        <option value="Others"> Others</option>
-                      </select>
-                    </div>
-                  </Col>
-                
-                  {/*marital status */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Marital Status <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className="form-select "
-                        
-                        required
-                        onChange={(e) => setStatus(e.target.value)}
-                        value={status}>
-                        <option value="">
-                          &hellip; Choose an option &hellip;
-                        </option>
-                        {/* <option> Select Your Gender</option> */}
-                        <option value="Single"> Single</option>
-                        <option value="Husband"> Husband</option>
-                        <option value="Wife"> Wife</option>
-                        <option value="Widow"> Widow</option>
-                      </select>
-                    </div>
-                  </Col>
-                
-                  {/* date of birth */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Date of Birth <span className="text-danger">*</span>
-                      </label>
-                      <input type="date" id="dob" className="form-control" value={dob} onChange={(e)=>setDob(e.target.value)} />
-                    </div>
-                  </Col>
-                  {/* place of birth */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Place of Birth <span className="text-danger">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="pob"
-                        className="form-control"
-                        // placeholder="Place of Birth"
-                        value={pob}
-                        onChange={(e)=>setPob(e.target.value)}
-                      />
-                    </div>
-                  </Col>
-             <Col md={6} sm={12} lg={4}>
-                <div className="mb-3">
-                  <label className="form-label">
-                    Applicant Image <span className="text-danger">*</span>
-                  </label>
-                  <Input
-                    type="file"
-                    name="image"
-                    accept="image/png, image/gif, image/jpeg"
-                    onChange={handleImage}
-                    
-                    // onChange={(e) => {
-                    //   const file = e.target.files[0];
-                    //   const reader = new FileReader();
-                    //   reader.readAsDataURL(file);
-                    //   reader.onload = () => {
-                    //     setImage(reader.result);
-                    //   };
-                    // }}
-                  />
-                </div>
-              </Col>
+                <legend  className="text-center">Scan Finger print</legend>
+              
               <Col md={6} sm={12} lg={5} >
-                <div className="mb-2" >
-                  {image && (
-                    <img
-                      className="mt-3"
-                      src={image}
-                      alt="Applicant"
-                      style={{ width: "200px", height: "200px" }}
-                    />
-                  )}
-                </div>
-              </Col>
-              {/* <Col md={6} sm={12} lg={5} >
                 <div className="mb-2 border border-gray-500 border-3" style={{width:"210px",height:"210px"}}>
                   
                   {finger_data?.img && (
@@ -952,210 +655,8 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                     </>
                   )}
                 </div>
-                <button type="button" onClick={scanFinger} className="btn btn-success">Scan</button>
-              </Col> */}
-                </Row>
-
-                {/* contact information */}
-                <Row className="shadow-lg b-3">
-                <legend  className="text-center my-3">Contact Information</legend>
-                  {/* Contact Number */}
-                  <Col md={6} sm={12} lg={6}>
-                    <div className="mb-2">
-                      <Label htmlFor="contactNumber" className="form-label">
-                        Contact Number
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="contactNumber"
-                        type="text"
-                        value={phoneNumber}
-                        onChange={(e)=>setPhoneNumber(e.target.value)}
-                        // placeholder="Contact Number"
-                        required
-                      />
-                    </div>
-                  </Col>
-                  {/* Email */}
-                  <Col md={6} sm={12} lg={6}>
-                    <div className="mb-2">
-                      <Label htmlFor="email" className="form-label">
-                        Contact Email
-                      </Label>
-                      <Input
-                        name="email"
-                        type="email"
-                        value={email}
-                        onChange={(e)=>setEmail(e.target.value)}
-                        // placeholder="Contact Email"
-                        
-                      />
-                    </div>
-                  </Col>
-                  {/* emergency contact name */}
-                  <Col md={6} sm={12} lg={6}>
-                    <div className="mb-2">
-                      <Label htmlFor="emergencyContactName" className="form-label">
-                        Emergency Contact Name
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="emergencyContactName"
-                        type="text"
-                        value={emergencyContactName}
-                        onChange={(e)=>setEmergencyContactName(e.target.value)}
-                        // placeholder="Emergency Contact Name"
-                        required
-                      />
-                    </div>
-                  </Col>
-                  {/* Emergency Contact Number */}
-                  <Col md={6} sm={12} lg={6}>
-                    <div className="mb-2">
-                      <Label htmlFor="emergencyContactNumber" className="form-label">
-                        Emergency Contact Number
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="emergencyContactNumber"
-                        type="Number"
-                        value={emergencyContactNumber}
-                        onChange={(e)=>setEmergencyContactNumber(e.target.value)}
-                        // placeholder="Emergency Contact Number"
-                        required
-                      />
-                    </div>
-                  </Col>
-             
-                </Row>
-                
-                 {/* Passport information */}
-                 <Row className="shadow-lg b-3">
-                <legend  className="text-center my-3">Passport Information</legend>
-                  
-                 {/* type of passport application */}
-                 <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Passport Type Application <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className="form-select "
-                        disabled
-                        required
-                        onChange={(e) => setState(e.target.value)}
-                        value={state}>
-                        {/* <option value="">
-                          &hellip; Choose an option &hellip;
-                        </option> */}
-                        {/* <option> Select Your passport </option> */}
-                        <option value="newPassport" selected readOnly> New Application</option>
-                      </select>
-                    </div>
-                  </Col>
-                  {/* passport type */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Passport Type <span className="text-danger">*</span>
-                      </label>
-                      <select
-                        className="form-select "
-                        disabled
-                        required
-                        onChange={(e) => setState(e.target.value)}
-                        value={state}>
-                        {/* <option value="">
-                          &hellip; Choose an option &hellip;
-                        </option> */}
-                        {/* <option> Select Your passport </option> */}
-                        <option value="Ordinary" selected disabled>Ordinary </option>
-                      </select>
-                    </div>
-                  </Col>
-            
-                  {/* amount */}
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="amount" className="form-label">
-                        Amount
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="amount"
-                        type="Number"
-                        // placeholder="Amount"
-                        value={150}
-                        required
-                        disabled
-                      />
-                    </div>
-                  </Col>
-                </Row>
-
-                {/* appointment information */}
-                <Row>
-                <legend  className="text-center my-3">Appointment Information</legend>
-                {/* <Col md={6} sm={12} lg={6}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Regions <span className="text-danger">*</span>
-                      </label>
-                      <Select
-                        className=""
-                        options={"options"}
-                        value={"selectedOptions"}
-                        // onChange={}
-                />
-                    </div>
-                  </Col>
-                <Col md={6} sm={12} lg={6}>
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Regions <span className="text-danger">*</span>
-                      </label>
-                      <Select
-                        className=""
-                        options={"options"}
-                        value={"selectedOptions"}
-                        // onChange={}
-                />
-                    </div>
-                  </Col> */}
-
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="amount" className="form-label">
-                        Appointment Date
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="appointmentDate"
-                        type="text"
-                        // placeholder="Amount"
-                        value={appointmentDate}
-
-                        required
-                        disabled
-                      />
-                    </div>
-                  </Col>
-                  <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="appointmentTime" className="form-label">
-                        Appointment Time
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="appointmentTime"
-                        type="text"
-                        // placeholder="Amount"
-                        value={appointmentTime}
-                        required
-                        disabled
-                      />
-                    </div>
-                  </Col>
+                <button type="button" onClick={scanFingerprint} className="btn btn-success">Scan</button>
+              </Col>
                 </Row>
               </ModalBody>
 
@@ -1311,7 +812,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     );
   };
   
-  export default ApproveApplicants;
+  export default ScanFinger;
   
 
 //   import { useState } from "react";
