@@ -422,10 +422,10 @@ const updateApplicantInfo = async (data) => {
   }
 };
 // upload image
-const uploadImage = async (image,id,img) => {
+const uploadImage = async (image,id) => {
   console.log(image);
   try {
-    const res = await axios.post("/applicants/upload", {image,id,img});
+    const res = await axios.post("/applicants/upload", {image,id});
     
     dispatch({ type: "UPLOAD_IMAGE_SUCCESS" });
     if (res.status == "success") {

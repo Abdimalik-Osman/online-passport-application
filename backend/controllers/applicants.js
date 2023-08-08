@@ -129,56 +129,56 @@ const Employee = require("../models/employees");
 
 exports.createApplicant = async (req, res) => {
   try {
-    const apiwafiUSD = {
-      schemaVersion: "1.0",
-      requestId: "10111331033",
-      timestamp: "client_timestamp",
-      channelName: "WEB",
-      serviceName: "API_PURCHASE",
-      serviceParams: {
-        merchantUid: "M0910291",
-        apiUserId: "1000416",
-        apiKey: "API-675418888AHX",
-        paymentMethod: "mwallet_account",
-        payerInfo: {
-          accountNo: "252616328920",
-        },
-        transactionInfo: {
-          referenceId: "12334",
-          invoiceId: "7896504",
-          amount: 0.01,
-          currency: "USD",
-          description: "Test USD",
-        },
-      },
-    };
+    // const apiwafiUSD = {
+    //   schemaVersion: "1.0",
+    //   requestId: "10111331033",
+    //   timestamp: "client_timestamp",
+    //   channelName: "WEB",
+    //   serviceName: "API_PURCHASE",
+    //   serviceParams: {
+    //     merchantUid: "M0910291",
+    //     apiUserId: "1000416",
+    //     apiKey: "API-675418888AHX",
+    //     paymentMethod: "mwallet_account",
+    //     payerInfo: {
+    //       accountNo: "252616328920",
+    //     },
+    //     transactionInfo: {
+    //       referenceId: "12334",
+    //       invoiceId: "7896504",
+    //       amount: 0.01,
+    //       currency: "USD",
+    //       description: "Test USD",
+    //     },
+    //   },
+    // };
 
-    let apiwafi = await axios.post("https://api.waafipay.net/asm", apiwafiUSD);
-    if (apiwafi.data.responseMsg == "RCS_SUCCESS") {
-      console.log("hello");
-      const apiwafiUSD2 = {
-        schemaVersion: "1.0",
-        requestId: "14636832123312",
-        timestamp: "20181231130916000",
-        channelName: "WEB",
-        serviceName: "API_PREAUTHORIZE_COMMIT",
-        serviceParams: {
-          apiUserId: 1004068,
-          merchantUid: "M0911931",
-          apiKey: "API-532593570AHX",
-          transactionId: apiwafi.data.params.transactionId,
-          description: "Commited",
-          referenceId: "R75641560240445",
-        },
-      };
-      let apiwafi2 = await axios.post(
-        "https://api.waafipay.net/asm",
-        apiwafiUSD2
-      );
+    // let apiwafi = await axios.post("https://api.waafipay.net/asm", apiwafiUSD);
+    // if (apiwafi.data.responseMsg == "RCS_SUCCESS") {
+    //   console.log("hello");
+    //   const apiwafiUSD2 = {
+    //     schemaVersion: "1.0",
+    //     requestId: "14636832123312",
+    //     timestamp: "20181231130916000",
+    //     channelName: "WEB",
+    //     serviceName: "API_PREAUTHORIZE_COMMIT",
+    //     serviceParams: {
+    //       apiUserId: 1004068,
+    //       merchantUid: "M0911931",
+    //       apiKey: "API-532593570AHX",
+    //       transactionId: apiwafi.data.params.transactionId,
+    //       description: "Commited",
+    //       referenceId: "R75641560240445",
+    //     },
+    //   };
+    //   let apiwafi2 = await axios.post(
+    //     "https://api.waafipay.net/asm",
+    //     apiwafiUSD2
+    //   );
 
-      if (!apiwafi2) {
-        return res.status(500).json({message:apiwafi.data.responseMsg, status: "fail" });
-      }
+    //   if (!apiwafi2) {
+    //     return res.status(500).json({message:apiwafi.data.responseMsg, status: "fail" });
+    //   }
     
       
       // console.log("apiwafi2 " + apiwafi2.data.responseMsg);
@@ -407,15 +407,15 @@ exports.createApplicant = async (req, res) => {
           status: "fail",
         });
     }
-    const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, with ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
+    const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, and appointment Date ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
 
-    await axios.post(
-      "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
-        emailBody +
-        "&rec=" +
-        req.body.phoneNumber +
-        ""
-    );
+    // await axios.post(
+    //   "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+    //     emailBody +
+    //     "&rec=" +
+    //     req.body.phoneNumber +
+    //     ""
+    // );
     //  await axios.post(`https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=${emailBody}&rec=${req.body.phoneNumber}`)
     return res
       .status(201)
@@ -423,12 +423,12 @@ exports.createApplicant = async (req, res) => {
       // return res
       //   .status(200)
       //   .json({ message: apiwafi2.data.responseMsg, success: true });
-    } else {
-      console.log("apiwafi2 " + apiwafi.data.responseMsg);
-      return res
-        .status(499)
-        .json({ message: apiwafi.data.responseMsg, status: "fail" });
-    }
+    // } else {
+    //   console.log("apiwafi2 " + apiwafi.data.responseMsg);
+    //   return res
+    //     .status(499)
+    //     .json({ message: apiwafi.data.responseMsg, status: "fail" });
+    // }
   } catch (error) {
     return res.status(500).json({ error: error.message, status: "fail" });
   }
@@ -574,17 +574,17 @@ exports.updateApplicant = async (req, res) => {
   try {
     let takeDate = new Date();
     takeDate.setDate(takeDate.getDate() + 1);
-    const {image} = req.body
+    // const {image} = req.body
     // console.log(id)
-    console.log(image)
-    const imageRes = await cloudinary.uploader.upload(image.image, {
+    // console.log(req.body)
+    const imageRes = await cloudinary.uploader.upload(req.body.image, {
       folder: 'Images'
     });
 
   
     // console.log(takeDate)
     const updated = await Applicant.findByIdAndUpdate(
-      image.id,
+      req.body.id,
       {
         $set: {
           image: {       
@@ -1457,16 +1457,86 @@ exports.getApplicantsCreatedToday = async(req,res)=>{
   today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
 
   // Get the count of customers registered today
-  const applicants =await Applicant.find({ createdAt: { $gte: today } })
+  // const applicants =await Applicant.find({ createdAt: { $gte: today } })
+  const applicants =await Applicant.aggregate([
+    {
+      $match:{
+        createdAt: { $gte: today },
+        
+      }
+    },
+      {
+        $lookup:{
+          from:"districts",
+          localField:"districtId",
+          foreignField:"districtInfo._id",
+          as:"districtInfo"
+        }
+      },
+      {
+        $unwind:"$districtInfo"
+      },
+      {
+        $unwind:"$districtInfo.districtInfo"
+        
+      },
+      {
+        $group: {
+          _id: "$_id", 
+          fullname: {$first: "$fullname"},
+          motherName: {$first: "$motherName"},
+          POB: {$first: "$POB"}, 
+          DOB: {$first: "$DOB"},
+          createdAt: {$first: "$createdAt"},
+          appointmentDate: {$first: "$appointmentDate"},
+          appointmentTime: {$first: "$appointmentTime"},
+          isApproved: {$first: "$isApproved"},
+          ratio: {$first: "$ratio"},
+          occupation: {$first: "$occupation"},
+          phoneNumber: {$first: "$phoneNumber"},
+          districtName: {$first: "$districtInfo.districtInfo.districtName"}
+        }
+      },
+      {
+        $sort:{createdAt:-1}
+      }
+    ]);
   return res.status(200).json(applicants)
     }else{
           // Get the current date
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
 
-  // Get the count of customers registered today
-  const applicants =await Applicant.find({ createdAt: { $gte: today },districtId:userInfo?.districtId });
-  return res.status(200).json(applicants)
+      // Get the count of customers registered today
+      // const applicants =await Applicant.find({ createdAt: { $gte: today },districtId:userInfo?.districtId });
+      const applicants =await Applicant.aggregate([
+        {
+          $match:{
+            createdAt: { $gte: today },
+            districtId: userInfo?.districtId
+          }
+        },
+          {
+            $lookup:{
+              from:"districts",
+              localField:"districtId",
+              foreignField:"districtInfo._id",
+              as:"districtInfo"
+            }
+          },
+          {
+            $unwind:"$districtInfo"
+            
+          },
+          // {
+          //   $unwind:"$districtInfo.districtInfo"
+            
+          // },
+          {
+            $sort:{createdAt:-1}
+          }
+        ]);
+      return res.status(200).json(applicants)
 
     }
   } catch (error) {
@@ -1478,28 +1548,116 @@ exports.getApplicantsCreatedToday = async(req,res)=>{
 exports.getApplicantCreatedThisMonth = async(req,res)=>{
   try {
     const userInfo = await User.findById(req.params.userId);
+    const currentDate = new Date();
+
+    // Create the start and end dates for the current month
+    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    endOfMonth.setHours(23, 59, 59, 999); // Set the time to 23:59:59:999
     // console.log(userInfo)
     if( userInfo?.isAdmin == true || userInfo?.isAdmin === true){
       // Get the current date
-  const currentDate = new Date();
-
-  // Create the start and end dates for the current month
-  const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-  endOfMonth.setHours(23, 59, 59, 999); // Set the time to 23:59:59:999
+ 
 
   // Get the count of customers created in the current month
-  const applicants = await Applicant.find({ createdAt: { $gte: startOfMonth, $lte: endOfMonth } })
+  // const applicants = await Applicant.find({  })
+  const applicants =await Applicant.aggregate([
+    {
+      $match:{
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+        districtId: userInfo?.districtId
+      }
+    },
+      {
+        $lookup:{
+          from:"districts",
+          localField:"districtId",
+          foreignField:"districtInfo._id",
+          as:"districtInfo"
+        }
+      },
+      {
+        $unwind:"$districtInfo"
+      },
+      {
+        $unwind:"$districtInfo.districtInfo"
+        
+      },
+      {
+        $group: {
+          _id: "$_id", 
+          fullname: {$first: "$fullname"},
+          motherName: {$first: "$motherName"},
+          POB: {$first: "$POB"}, 
+          DOB: {$first: "$DOB"},
+          createdAt: {$first: "$createdAt"},
+          appointmentDate: {$first: "$appointmentDate"},
+          appointmentTime: {$first: "$appointmentTime"},
+          isApproved: {$first: "$isApproved"},
+          ratio: {$first: "$ratio"},
+          occupation: {$first: "$occupation"},
+          phoneNumber: {$first: "$phoneNumber"},
+          districtName: {$first: "$districtInfo.districtInfo.districtName"}
+        }
+      },
+      {
+        $sort:{createdAt:-1}
+      }
+    ]);
   return res.status(200).json(applicants)
     }else{
       
-          // Get the current date
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Set the time to 00:00:00:000
-
-  // Get the count of customers registered today
-  const applicants =await Applicant.find({ createdAt: { $gte: today },districtId: userInfo?.districtId})
-  return res.status(200).json(applicants)
+      const applicants =await Applicant.aggregate([
+        {
+          $match:{
+            createdAt: { $gte: startOfMonth, $lte: endOfMonth },
+            districtId: userInfo?.districtId
+          }
+        },
+          {
+            $lookup:{
+              from:"districts",
+              localField:"districtId",
+              foreignField:"districtInfo._id",
+              as:"districtInfo"
+            }
+          },
+          {
+            $unwind:"$districtInfo"
+          },
+          // {
+          //   $unwind:"$districtInfo.districtInfo"
+            
+          // },
+          // {
+          //   $group: {
+          //     _id: "$_id", 
+          //     fullname: {$first: "$fullname"},
+          //     motherName: {$first: "$motherName"},
+          //     POB: {$first: "$POB"}, 
+          //     DOB: {$first: "$DOB"},
+          //     createdAt: {$first: "$createdAt"},
+          //     appointmentDate: {$first: "$appointmentDate"},
+          //     appointmentTime: {$first: "$appointmentTime"},
+          //     isApproved: {$first: "$isApproved"},
+          //     ratio: {$first: "$ratio"},
+          //     occupation: {$first: "$occupation"},
+          //     phoneNumber: {$first: "$phoneNumber"},
+          //     districtName: {$first: "$districtInfo.districtInfo.districtName"}
+          //   }
+          // },
+          // {
+          //   $project:{
+          //     _id:1,
+              
+          //   }
+          // },
+          {
+            $sort:{createdAt:-1}
+          }
+        ]);
+        
+        return res.status(200).json(applicants)
     }
   } catch (error) {
     return res.status(500).json({message: error.message,status:"fail"})

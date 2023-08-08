@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import Select from "react-select";
+import React, { useContext, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import Select from "react-select";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Button,
   Card,
@@ -9,40 +11,30 @@ import {
   CardHeader,
   Col,
   Container,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
   Input,
   Label,
   Modal,
   ModalBody,
   ModalFooter,
   Row,
-  Spinner,
-  UncontrolledDropdown,
+  Spinner
 } from "reactstrap";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 // action
-import { registerUser, apiError, resetRegisterFlag } from "../../store/actions";
+import { resetRegisterFlag } from "../../store/actions";
 
 //redux
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Link, useHistory } from "react-router-dom";
-import moment from "moment";
+import { useHistory } from "react-router-dom";
 // import BreadCrumb from '../../../Components/Common/BreadCrumb';
-import SimpleBar from "simplebar-react";
 //Import Flatepicker
-import Flatpickr from "react-flatpickr";
 
 // Import Images
 
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
 
-import { Grid, _ } from "gridjs-react";
 
 const CreateUser = () => {
   const history = useHistory();
@@ -63,7 +55,7 @@ const CreateUser = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [stateName, setStateName] = useState("");
-  const [stateId, setStateId] = useState("");
+  const [empDistrict, setEmpDistrict] = useState("");
   const tog_list = () => {
     setmodal_list(!modal_list);
   };
@@ -186,10 +178,11 @@ const CreateUser = () => {
         password: password,
         isAdmin: role == "Yes" ? true : false,
         empId: employeeId?.value,
-        districtId:selectedStateId,
+        districtId:employeeId?.districtId,
         // phoneNumber: phoneNumber,
         status:state
       };
+      // console.log(data)
       registerUser(data);
       setEmployeeId("");
       setState("")
@@ -208,7 +201,7 @@ const CreateUser = () => {
         password: password,
         isAdmin: role == "Yes" ? true : false,
         empId: employeeId?.value,
-        districtId:selectedStateId,
+        districtId:employeeId?.districtId,
         state:state,
         status: changePassword == "Yes" ? true : false,
         id: id,
@@ -264,11 +257,12 @@ const CreateUser = () => {
   ];
 
   const Emp = [];
-
+  
   for (let i = 0; i < getEmployees?.length; i++) {
     // console.log(setEmployeeId[i]._id);
 
     var dropdownList = {
+      districtId:getEmployees[i].districtId,
       value: getEmployees[i]._id,
       label: ` ${getEmployees[i].empName}`,
     };
@@ -276,7 +270,7 @@ const CreateUser = () => {
     Emp.push(dropdownList);
   }
 
-  console.log(Emp);
+  console.log(employeeId);
 
   const sortedUsers = [];
   for (let i = 0; i < allUsers?.length; i++) {
@@ -442,7 +436,10 @@ const CreateUser = () => {
                           options={Emp}
                           onChange={(choice) => setEmployeeId(choice)}
                           value={Emp?.filter(function (option) {
-                            return option.value === employeeId?.value;
+                            // console.log(option)
+                            // setEmpDistrict(option.districtId)
+                            
+                            return option === employeeId 
                           })}
                           theme={(theme) => ({
                             ...theme,

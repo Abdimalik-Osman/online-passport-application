@@ -146,16 +146,23 @@ function MultiStepForm() {
       toast.error(errorMessage?.message);
       // dispatch(appReset());
     }
+    if (isAppError) {
+      toast.error(appMessage?.message);
+      // dispatch(appReset());
+    }
     if (isAppSuccess) {
       toast.success(appMessage?.message);
       // dispatch(appReset());
     }
     if (appMessage?.message == "Your Application registered successfully" || appMessage?.message === "Your Application registered successfully") {
       // toast.success(appMessage?.message);
+      // dispatch(appReset());
+      nationalID: {};
+      dispatch(reset());
       setTimeout(() => {
         navigate("/view");
       }, 2000);
-      // dispatch(appReset());
+      
     }
 
     if (isError) {
@@ -338,7 +345,7 @@ function MultiStepForm() {
       districtId: selectedState1,
       sex: selectedSex,
     };
-    // console.log(data);
+    console.log(data);
     if (
       !appointmentDate ||
       appointmentDate == undefined ||

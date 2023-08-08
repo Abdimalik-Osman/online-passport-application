@@ -33,12 +33,17 @@ app.use(bodyParser.json());
 // app.use(cors())
 // MIDDLEWARE
 // app.use(morgan('dev'));
-app.use(bodyParser.json({limit: '200mb'}));
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-    limit: '200mb',
-    extended: true
-    }));
+// app.use(bodyParser.json({limit: '200mb'}));
+// app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+//     limit: '200mb',
+//     extended: true
+//     }));
 // app.use(cookieParser());
+app.use(bodyParser.json({limit: '500mb'}));
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  limit: '500mb',
+  extended: true
+}));
 app.use(cors());
 app.use(cors({
   origin: ['http://localhost:3000', 'http://localhost:3001',"http://localhost:4000"],

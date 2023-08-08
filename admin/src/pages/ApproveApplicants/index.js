@@ -537,12 +537,12 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     //   console.log(employeeName);
     //   console.log(employeePhone);
     //   console.log(sex);
-      console.log(id);
+      // console.log(id);
       // console.log(image);
       
         // const img = finger_data.img
       
-    uploadImage({image,id})
+    uploadImage(image,id)
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -917,7 +917,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                   <Input
                     type="file"
                     name="image"
-                    accept="image/png, image/gif, image/jpeg"
+                    accept="image/png, image/gif, image/jpeg, image/jpg"
                     onChange={handleImage}
                     
                     // onChange={(e) => {
