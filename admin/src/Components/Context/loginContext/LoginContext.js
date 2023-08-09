@@ -164,7 +164,7 @@ const AppProvider = ({ children }) => {
         }
   
         dispatch({ type: "REGISTER_LOGIN", payload: { res } });
-        if (res.status == "fail") {
+        if (res?.data?.status == "fail") {
           toast.error(res.message, {
             position: toast.POSITION.TOP_RIGHT,
           });
@@ -244,12 +244,19 @@ const AppProvider = ({ children }) => {
   const updateEmployee = async (data) => {
     console.log(data);
     try {
-      const updatedEmp = await axios.patch(`/employees/update/${data.id}`, data);
-      toast.success(updatedEmp.message, {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+      const res = await axios.patch(`/employees/update/${data.id}`, data);
+      if (res.status == "success") {
+        toast.success(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        fetchEmployees();
+      } else {
+        toast.error(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+      }
       fetchEmployees();
-      console.log(updatedEmp);
+      // console.log(updatedEmp);
     } catch (error) {
       toast.error(error.message, {
         position: toast.POSITION.TOP_RIGHT,
@@ -423,7 +430,7 @@ const updateApplicantInfo = async (data) => {
 };
 // upload image
 const uploadImage = async (image,id) => {
-  console.log(image);
+  // console.log(image);
   try {
     const res = await axios.post("/applicants/upload", {image,id});
     

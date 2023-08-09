@@ -576,7 +576,7 @@ exports.updateApplicant = async (req, res) => {
     takeDate.setDate(takeDate.getDate() + 1);
     // const {image} = req.body
     // console.log(id)
-    // console.log(req.body)
+    console.log(req.body.id)
     const imageRes = await cloudinary.uploader.upload(req.body.image, {
       folder: 'Images'
     });

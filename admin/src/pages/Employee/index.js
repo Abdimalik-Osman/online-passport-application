@@ -1,16 +1,13 @@
+import moment from "moment";
 import React, {
-  useState,
-  useEffect,
   useContext,
-  componentDidMount,
-  useRef,
+  useEffect,
   useMemo,
+  useState
 } from "react";
-import {Link} from "react-router-dom";
-import Select from "react-select";
 import { Helmet } from "react-helmet";
-import BreadCrumb from "../../Components/Common/BreadCrumb";
-import TableContainer from "../../Components/Common/TableContainer";
+import { Link } from "react-router-dom";
+import Select from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import {
   Button,
@@ -21,28 +18,21 @@ import {
   Container,
   Input,
   Label,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader,
-  Row,
-  Table,
-  Alert,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  UncontrolledDropdown,
+  Row
 } from "reactstrap";
-import "./styleEmp.css";
+import BreadCrumb from "../../Components/Common/BreadCrumb";
+import TableContainer from "../../Components/Common/TableContainer";
 import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
-import moment from "moment";
+import "./styleEmp.css";
 
 
 const EmployeeRegistration = () => {
   const {
-    EmployeeRegister, getEmployees, fetchEmployees,fetchStates,districts,selectedState,districtData,fetchSelectedState,fetchSingleDistrict
+    EmployeeRegister, getEmployees, fetchEmployees,fetchStates,districts,selectedState,districtData,fetchSelectedState,fetchSingleDistrict,
+    updateEmployee
    
   } = useContext(LoginContext);
   
@@ -63,7 +53,7 @@ const EmployeeRegistration = () => {
 
   const [SiteId, setSiteId] = useState();
   const [UserId, setUserId] = useState();
-  const [hiredate, setHiredate] = useState();
+  const [image, setImage] = useState([]);
   const [checked, setChecked] = useState(true);
 
   const [Disable, setDisable] = useState(true);
@@ -176,10 +166,11 @@ const EmployeeRegistration = () => {
         const data = {
           empName: employeeName,
           isManager: empType == "Manager"? true : false,
-          isActive: status == "Active"? true : false,
+          // isActive: status == "Active"? true : false,
           empPhone: employeePhone,
           sex:sex,
-          districtId:selectedStateId
+          districtId:selectedStateId,
+          image:image
         };
 
         EmployeeRegister(data);
@@ -206,10 +197,11 @@ const EmployeeRegistration = () => {
         const data = {
           empName: employeeName,
           isManager: empType == "Manager"? true : false,
-          isActive: status == "Active"? true : false,
+          // isActive: status == "Active"? true : false,
           empPhone: employeePhone,
           sex:sex,
-          districtId:selectedStateId
+          districtId:selectedStateId,
+          image:image
         };
         EmployeeRegister(data);
         setmodal_list(false);
@@ -228,14 +220,16 @@ const EmployeeRegistration = () => {
 
       if (checked == false) {
         const data = {
+          id:EmployeeId,
           empName: employeeName,
           isManager: empType == "Manager"? true : false,
-          isActive: status == "Active"? true : false,
+          // isActive: status == "Active"? true : false,
           empPhone: employeePhone,
-          sex:sex
+          sex:sex,
+          image:image
         };
         console.log(data);
-        // updateEmployee(data);
+        updateEmployee(data);
         setIsEditing(false);
         setmodal_list(false);
         setEmployeeId("");
@@ -246,14 +240,16 @@ const EmployeeRegistration = () => {
         setStatus("")
       } else {
         const data = {
+          id:EmployeeId,
           empName: employeeName,
           isManager: empType == "Manager"? true : false,
-          isActive: status == "Active"? true : false,
+          // isActive: status == "Active"? true : false,
           empPhone: employeePhone,
-          sex:sex
+          sex:sex,
+          image: image
         };
         console.log(data);
-        // updateEmployee(data);
+        updateEmployee(data);
         setIsEditing(false);
         setmodal_list(false);
         setEmployeeId("");
@@ -270,10 +266,14 @@ const EmployeeRegistration = () => {
     setSelectedState(data.districtId);
     setEmployeeId(data._id);
     setEmployeeName(data.empName);
+    setImage(data.image);
     setSex(data.sex);
     setEmployeePhone(data.empPhone);
-    setEmpType(data.isManager);
-    setStatus(data.isActive);
+    // setEmpType(data.isManager);
+    // setStatus(data.isActive);
+    const isManager1 = data.isManager ? "manager":"employee";
+    setEmpType(isManager1)
+    setImage(data?.image.url)
 
 
     // if (data.siteId == null || data.siteId == ""){
@@ -318,11 +318,11 @@ console.log(districts);
         accessor: (row) => (row.isManager ? "Manager" : "Employee"),
         filterable: false,
       },
-      {
-        Header: "Status",
-        accessor: (row) => (row.isActive ? "Active" : "In Active"),
-        filterable: true,
-      },
+      // {
+      //   Header: "Status",
+      //   accessor: (row) => (row.isActive ? "Active" : "In Active"),
+      //   filterable: true,
+      // },
      
       {
         Header: "Hired Date",
@@ -377,7 +377,20 @@ console.log(districts);
       position: toast.POSITION.TOP_RIGHT,
     });
   };
+  const handleImage = (e) =>{
+    const file = e.target.files[0];
+    setFileToBase(file);
+    console.log(file);
+}
 
+const setFileToBase = (file) =>{
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () =>{
+        setImage(reader.result);
+    }
+
+}
   const addModal = () => {
     tog_list();
     setEmployeeId("");
@@ -522,6 +535,43 @@ console.log(districts);
                 />
               </div>
               <Row>
+              <Col md={6} sm={12} lg={4}>
+                <div className="mb-3">
+                  <label className="form-label">
+                    Applicant Image <span className="text-danger">*</span>
+                  </label>
+                  <Input
+                    type="file"
+                    name="image"
+                    accept="image/png, image/gif, image/jpeg, image/jpg"
+                    onChange={handleImage}
+                    
+                    // onChange={(e) => {
+                    //   const file = e.target.files[0];
+                    //   const reader = new FileReader();
+                    //   reader.readAsDataURL(file);
+                    //   reader.onload = () => {
+                    //     setImage(reader.result);
+                    //   };
+                    // }}
+                  />
+                </div>
+              </Col>
+              <Col md={6} sm={12} lg={4} >
+                <div className="mb-2">
+                  {image && (
+                    <img
+                     
+                      className="mt-3"
+                      src={image}
+                      alt="Applicant"
+                      style={{ width: "200px", height: "200px",borderRadius:"50%", border:"3px solid gray" }}
+                    />
+                  )}
+                </div>
+              </Col>
+              </Row>
+              <Row>
                 <Col md={6}>
                   <div className="mb-3">
                     <label className="form-label">Employee Name</label>
@@ -561,7 +611,7 @@ console.log(districts);
                   </div>
                 </Col>
                 <Col lg={6}>
-                  <div className="input-group">
+                  <div className="input-group mb-3">
                     <Label
                       className="input-group-text"
                       htmlFor="inputGroupSelect01">
@@ -583,8 +633,8 @@ console.log(districts);
                     </Label>
                     <select className="form-select" id="inputGroupSelect01" name="empType" value={empType} onChange={(e)=>setEmpType(e.target.value)}>
                       <option>Employee Type..</option>
-                      <option defaultValue="manager">Manager</option>
-                      <option defaultValue="employee">Employee</option>
+                      <option value="manager">Manager</option>
+                      <option Value="employee">Employee</option>
                     </select>
                   </div>
                 </Col>
@@ -592,7 +642,7 @@ console.log(districts);
              
 
               <Row>
-                <Col lg={4} md={6} sm={12}>
+                {/* <Col lg={4} md={6} sm={12}>
                   <div className="input-group my-4">
                     <Label
                       className="input-group-text"
@@ -601,11 +651,11 @@ console.log(districts);
                     </Label>
                     <select className="form-select" id="inputGroupSelect01" name="status" value={status} onChange={(e)=> setStatus(e.target.value)}>
                       <option>Status...</option>
-                      <option defaultValue="Active">Active</option>
-                      <option defaultValue="inActive">In Active</option>
+                      <option Value="Active">Active</option>
+                      <option Value="inActive">In Active</option>
                     </select>
                   </div>
-                </Col>
+                </Col> */}
                 <Col lg={4} md={6} sm={12}>
                     <div className="my-2">
                       <label className="form-label">

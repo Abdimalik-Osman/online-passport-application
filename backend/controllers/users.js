@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/users");
+const Employee = require("../models/employees");
 
 // generate new token
 const generateToken = (user) => {
@@ -10,7 +11,8 @@ const generateToken = (user) => {
 
 // Create new user
 exports.register = async (req, res) => {
-  const { empId, isAdmin,username, password, userStatus,districtId } = req.body;
+ try {
+  const { empId, isAdmin,username, password, status,districtId } = req.body;
   
   //check if the user is already registered
   const userExists = await User.findOne({username});
@@ -19,17 +21,28 @@ exports.register = async (req, res) => {
     return res.status(400).json({ message: "User already exists", status:"fail" });
   }
 //create new user
-  const user = await User.create({ username, password,empId,isAdmin, userStatus,districtId });
+  const user = await User.create({ username, password,empId,isAdmin, status,districtId });
 
   if (user) {
+    // const empInfo = Employee.findById(empId);
     res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      token: generateToken(user),
+      message:"New User Created successfully",
+      status:"success",
+      // data:{
+      // _id: user._id,
+      // empId,
+      // image:empInfo?.image?.url,
+      // username: user.username,
+      // token: generateToken(user),
+      // districtId
+      // }
     });
   } else {
-    res.status(400).json({ message: "Invalid user data", status:"fail" });
+    res.status(400).json({ message: "Error occurred while creating new user", status:"fail" });
   }
+ } catch (error) {
+  return res.status(500).json({message: error.message,status:"fail"});
+ }
 };
 
 // login user
@@ -39,7 +52,13 @@ exports.login = async (req, res) => {
   const user = await User.findOne({ username });
 
   if (user && (await user.comparePassword(password))) {
-    res.json({
+    if(user?.status === "inActive" || user.status == "inActive"){
+      return res.status({message:"You are not active please contact the administrator.",status: "fail"})
+    }
+    const empInfo = await Employee.findById(user.empId);
+    console.log(empInfo)
+   return res.json({
+      message:"successfully logged in",
       data:{
       _id: user._id,
       username: user.username,
@@ -48,11 +67,12 @@ exports.login = async (req, res) => {
       userStatus:user.status,
       districtId:user.districtId,
       token: generateToken(user),
+      image:empInfo.image?.url,
       status: "success"
       },
     });
   } else {
-    res.status(401).json({ message: "Invalid email or password",status:"fail" });
+   return res.status(401).json({ message: "Invalid email or password",status:"fail" });
   }
 };
 

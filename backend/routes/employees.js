@@ -7,6 +7,6 @@ const router = express.Router();
 router.post('/add',EmployeeController.createEmployee)
 router.get('/all',EmployeeController.getAllEmployees)
 router.get('single/:id',EmployeeController.getSingleEmployee)
-router.patch('update/:id',EmployeeController.updateEmployee)
-router.delete('delete/:id',EmployeeController.deleteEmployee)
+router.patch('/update/:id',EmployeeController.updateEmployee)
+router.delete('/delete/:id',EmployeeController.deleteEmployee)
 module.exports = router;

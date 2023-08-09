@@ -202,8 +202,8 @@ const CreateUser = () => {
         isAdmin: role == "Yes" ? true : false,
         empId: employeeId?.value,
         districtId:employeeId?.districtId,
-        state:state,
-        status: changePassword == "Yes" ? true : false,
+        status:state,
+        // status: changePassword == "Yes" ? true : false,
         id: id,
       };
       UpdateUser(data);
@@ -255,7 +255,11 @@ const CreateUser = () => {
       
     },
   ];
-
+  const handleEmployeeChange = (choice) => {
+    setEmployeeId(choice);
+    setEmpDistrict(choice.districtId);
+    // console.log(choice.districtId)
+  };
   const Emp = [];
   
   for (let i = 0; i < getEmployees?.length; i++) {
@@ -434,12 +438,12 @@ const CreateUser = () => {
                         <Select
                           // className="bg-white"
                           options={Emp}
-                          onChange={(choice) => setEmployeeId(choice)}
+                          onChange={(choice) => handleEmployeeChange(choice)}
                           value={Emp?.filter(function (option) {
                             // console.log(option)
                             // setEmpDistrict(option.districtId)
                             
-                            return option === employeeId 
+                            return option.value === employeeId.value 
                           })}
                           theme={(theme) => ({
                             ...theme,

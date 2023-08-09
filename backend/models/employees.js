@@ -8,6 +8,17 @@ let EmployeeSchema = new Schema(
     sex: { type:String, default:"Male"},
     isManager: { type:Boolean, default: false},
     districtId: { type:Schema.Types.ObjectId, ref:"districts", default: false},
+    image: {
+      public_id: {
+          type: String,
+          // required: true
+      },
+      url: {
+          type: String,
+          // required: true
+      }
+  
+  },
   },
   { timestamps: true }
 );
