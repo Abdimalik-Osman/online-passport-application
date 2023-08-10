@@ -1,6 +1,5 @@
 let secugen_lic = "";
 export function CallSGIFPGetData(
-
   setFinger_data,
   setMatchScore,
   data,
@@ -12,11 +11,11 @@ export function CallSGIFPGetData(
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       let fpobject = JSON.parse(xmlhttp.responseText);
       // console.log("here is the first template: " , fpobject);
-    //   console.log("data", data);
+      console.log("data", data);
       
-        //   data?.map((finger) =>
-        //     matchingfingers(fpobject.TemplateBase64, finger, setMatchScore)
-        //   );
+          data?.map((finger) =>
+            matchingfingers(fpobject.TemplateBase64, finger, setMatchScore)
+          );
 
         setFinger_data((prev) => ({
           ...prev,
@@ -45,11 +44,10 @@ export function CallSGIFPGetData(
   xmlhttp.send(params);
 }
 
-function matchingfingers(
+ function matchingfingers(
   user_data,
   fingerprint,
   setMatchScore,
-  is_lost = false
 ) {
   console.log("heeeeeeeeeere");
   var uri = "https://localhost:8443/SGIMatchScore";
@@ -57,7 +55,7 @@ function matchingfingers(
 
   var params = "Timeout=" + "100000";
   params += "&Template1=" + encodeURIComponent(user_data);
-  params += "&Template2=" + encodeURIComponent(fingerprint.fingerprint_data);
+  params += "&Template2=" + encodeURIComponent(fingerprint.fingerData);
 
   params += "&TemplateFormat=" + "ISO ";
   xmlhttp.open("POST", uri, true);
@@ -66,11 +64,10 @@ function matchingfingers(
   xmlhttp.onreadystatechange = function () {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
       var fpobjecttt = JSON.parse(xmlhttp.responseText);
-      if (is_lost && fpobjecttt.MatchingScore > 75) {
-        setMatchScore(fingerprint);
-      } else if (!is_lost) {
+      console.log("==============hhhhhhhhhhhh=========",fingerprint)
         setMatchScore(fpobjecttt.MatchingScore);
-      }
+        
+        // setSuspected(fingerprint)
       // if (fpobjecttt.MatchingScore > 75) {
       // }
       // console.log("matching response::::: ", fpobjecttt);

@@ -463,6 +463,25 @@ exports.getAllApplicants = async (req, res) => {
     return res.status(500).json({ message: err.message, status: "fail" });
   }
 };
+exports.fetchApprovedApplicants = async (req, res) => {
+  try {
+    let applicants;
+    
+      applicants = await Applicant.find({
+        isApproved: true,
+        isCanceled: false,
+      });
+      if (!applicants) {
+        return res
+          .status(400)
+          .json({ message: "no applicants found", status: "fail" });
+      }
+      return res.status(200).json(applicants);
+    
+  } catch (err) {
+    return res.status(500).json({ message: err.message, status: "fail" });
+  }
+};
 
 // get single applicant
 exports.getSingleApplicant = async (req, res) => {
@@ -594,7 +613,7 @@ exports.updateApplicant = async (req, res) => {
         
           arrivalDate: takeDate,
           // isApproved: true,
-          approvedDate: new Date(),
+          // approvedDate: new Date(),
           ratio:  75
         },
       },
@@ -655,40 +674,55 @@ exports.updateApplicant = async (req, res) => {
 // scan finger print
 exports.scanFingerprint = async(req,res)=>{
   try {
-    console.log(req.body)
+    // console.log(req.body)
+    let takeDate = new Date();
+    takeDate.setDate(takeDate.getDate() + 1);
     const {img,id} = req.body;
-    const base64Image = 'data:image/bmp;base64,Qk3mNAEAAAAAADYEAAAoAAAABAEAACwBAAABAAgAAAAAALAwAQAAAAAAAAAAAAABAAAAAQAAAAAAAAEBAQACAgIAAwMDAAQEBAAFBQUABgYGAAcHBwAI';
-    const filename = 'image';
+    // const base64Image = 'data:image/bmp;base64,Qk3mNAEAAAAAADYEAAAoAAAABAEAACwBAAABAAgAAAAAALAwAQAAAAAAAAAAAAABAAAAAQAAAAAAAAEBAQACAgIAAwMDAAQEBAAFBQUABgYGAAcHBwAI';
+    // const filename = 'image';
     
-    convertBase64ToImage(img?.img, filename);
-    //     const fingerImages = await cloudinary.uploader.upload(img, {
-    //   folder: 'finger_images'
-    // });
-    // const updated = await Applicant.findByIdAndUpdate(
-    //   id,
-    //   {
-    //     $set: {
-    //       fingerPic: {       
-    //         public_id:fingerImages.public_id,
-    //         url:fingerImages.secure_url
-    //     },
-        
-    //       arrivalDate: takeDate,
-    //       isApproved: true,
-    //       approvedDate: new Date(),
-    //       ratio:  75
-    //     },
-    //   },
-    //   { new: true }
-    // );
-    // if (!updated)
-    //   return res
-    //     .status(400)
-    //     .json({
-    //       message: "Error occurred while approving the applicant finger..",
-    //       status: "fail",
-    //     });
-
+    // convertBase64ToImage(img?.img, filename);
+        const fingerImages = await cloudinary.uploader.upload(img.img, {
+      folder: 'finger_images'
+    });
+    const updated = await Applicant.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          fingerPic: {       
+            public_id:fingerImages.public_id,
+            url:fingerImages.secure_url
+        },
+          fingerData:img.template,
+          arrivalDate: takeDate,
+          isApproved: true,
+          approvedDate: new Date(),
+          ratio:  75
+        },
+      },
+      { new: true }
+    );
+    if (!updated)
+      return res
+        .status(400)
+        .json({
+          message: "Error occurred while approving the applicant finger..",
+          status: "fail",
+        });
+        const message = `Dear ${
+          updated?.fullname
+        }, your information has been approved successfully so, you will arrive the office at ${moment(
+          takeDate
+        ).format(
+          "DD/MM/YYYY"
+        )}, and you will receive email notification when the date is reached. Please arrive earlier to receive your passport, thanks.`;
+        await axios.post(
+          "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+            message +
+            "&rec=" +
+            updated?.phoneNumber +
+            ""
+        );
     return res.status(200).json({message:"successfully registered finger", status: "success"});
   } catch (error) {
    return res.status(500).json({message:error.message,status:"fail"}); 

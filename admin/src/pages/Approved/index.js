@@ -1,49 +1,29 @@
+import moment from "moment";
 import React, {
-    useState,
-    useEffect,
-    useContext,
-    componentDidMount,
-    useRef,
-    useMemo,
-  } from "react";
-  import Select from "react-select";
-  import {Link} from "react-router-dom"
-  import { Helmet } from "react-helmet";
-  import BreadCrumb from "../../Components/Common/BreadCrumb";
-  import TableContainer from "../../Components/Common/TableContainer";
-  import { ToastContainer, toast } from "react-toastify";
-  import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Row,
-    Table,
-    Alert,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    UncontrolledDropdown,
-  
-  } from "reactstrap";
-  import "../Employee/styleEmp.css"
-  import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
-  import moment from "moment";
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import { Helmet } from "react-helmet";
+import { toast } from "react-toastify";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Row
+} from "reactstrap";
+import BreadCrumb from "../../Components/Common/BreadCrumb";
+import TableContainer from "../../Components/Common/TableContainer";
+import "../Employee/styleEmp.css";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   
   const ApprovedApplicants = () => {
     const {
       EmployeeRegister, getEmployees, fetchEmployees,   fetchUnapprovedApplicants,fetchSingleUnapprovedApplicant,applicantInfo,
-      unapprovedApplicants, updateApplicantInfo, fetchApprovedApplicants,approvedApplicants
+      unapprovedApplicants, updateApplicantInfo, getAllApprovedApplicants,approvedApplicants
      
     } = useContext(LoginContext);
     const [fName, setFname] = useState();
@@ -114,7 +94,7 @@ import React, {
     }
     useEffect(()=>{
         // fetchUnapprovedApplicants()
-        fetchApprovedApplicants(data)
+        getAllApprovedApplicants(data)
     },[])
     const tog_list = () => {
       setChecked(false);

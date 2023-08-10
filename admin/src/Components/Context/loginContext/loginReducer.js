@@ -185,6 +185,12 @@ if (action.type === GET_ALL_USER) {
         appointments: action.payload.data,     
       };
     }
+    if (action.type === "GET_APPROVED") {
+      return {
+        ...state,
+        allApproved: action.payload.data,     
+      };
+    }
       //register
   //       if (action.type === REGISTER_EMPLOYEE_SUCCESS) {
   //   return {

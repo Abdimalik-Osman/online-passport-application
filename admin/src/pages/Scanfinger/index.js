@@ -1,25 +1,26 @@
 import moment from "moment";
 import React, {
-    useContext,
-    useEffect,
-    useMemo,
-    useState
+  useContext,
+  useEffect,
+  useMemo,
+  useState
 } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import {
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    Row
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  Progress,
+  Row
 } from "reactstrap";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import TableContainer from "../../Components/Common/TableContainer";
@@ -30,7 +31,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
   const ScanFinger = () => {
     const {
       EmployeeRegister, getEmployees, fetchEmployees,   fetchUnapprovedApplicants,fetchSingleUnapprovedApplicant,applicantInfo,
-      unapprovedApplicants, updateApplicantInfo, uploadImage,scanFingerApp
+      unapprovedApplicants, updateApplicantInfo, uploadImage,scanFingerApp,approvedApplicants,GetApprovedApplicants,allApproved
      
     } = useContext(LoginContext);
     const [fName, setFname] = useState();
@@ -74,7 +75,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     const [EmployeeDepartment, setEmployeeDepartment] = useState("");
     const [Branch, setBranch] = useState();
     const [groupId, setGroup] = useState();
-    const [zoonId, setZone] = useState();
+    const [suspected, setSuspected] = useState();
   
     const [passNid, setPassNid] = useState();
     const [passPhoneNumber, setPassPhoneNumber] = useState();
@@ -89,6 +90,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     const [modal_list, setmodal_list] = useState(false);
     const [approveModalList, setApproveModalList] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [matchScore, setIsMatchScore] = useState();
     const [bgRemove, setBgRemove] = useState("");
     const [finger_data, setFinger_data] = useState({
       template: "",
@@ -110,8 +112,9 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       userId:userId
     }
     useEffect(()=>{
-        fetchUnapprovedApplicants(data)
+      GetApprovedApplicants()
     },[])
+    console.log("this is the match score ",matchScore);
     const tog_list = () => {
       setChecked(false);
       setmodal_list(!modal_list);
@@ -124,7 +127,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     const tog_delete = () => {
       setmodal_delete(!modal_delete);
     };
-  
+  console.log(approvedApplicants)
     const handleChange = () => {
       setChecked(!checked);
       // setDisable(!Disable);
@@ -513,9 +516,11 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     //   console.log(employeeName);
     //   console.log(employeePhone);
     //   console.log(sex);
-      console.log(id);
+      // console.log(id);
       // console.log(image);
-      
+      if(finger_data.quality <= 70){
+       return toast.error("Your finger quality is too low or too poor, please try again")
+      }
         let img = finger_data
       console.log(img,id)
         scanFingerApp(img,id)
@@ -547,13 +552,16 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
 
     const scanFingerprint = () => {
       CallSGIFPGetData(
-        
         setFinger_data,
-       
+        setIsMatchScore,
+        allApproved,
+        
       )
       
     }
-    console.log(finger_data)
+   
+    // console.log(finger_data)
+    // console.log("suspected applicant",suspected);
     return (
       <React.Fragment>
         <div className="page-content">
@@ -648,14 +656,16 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
               
               <Col md={6} sm={12} lg={5} >
                 <div className="mb-2 border border-gray-500 border-3" style={{width:"210px",height:"210px"}}>
-                  
+                <div>
+                  <Progress value={finger_data.quality} color={finger_data.quality <= 50?"danger":"success"} className="animated-progess custom-progress progress-label" ><div className="label">{finger_data.quality}%</div> </Progress>
+                </div>
                   {finger_data?.img && (
                     <>
                       <img src={finger_data?.img}  alt=""  style={{width:"200px",height:"200px"}} />
                     </>
                   )}
                 </div>
-                <button type="button" onClick={scanFingerprint} className="btn btn-success">Scan</button>
+                <button type="button" onClick={scanFingerprint} className="btn btn-success mt-2 px-5">Scan</button>
               </Col>
                 </Row>
               </ModalBody>

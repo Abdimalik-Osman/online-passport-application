@@ -94,7 +94,8 @@ const initialState = {
   applicantInfo:{},
   districtHolydays:[],
   applicantImage:{},
-  appointments:[]
+  appointments:[],
+  allApproved:[]
   // isLoading: false,
 };
 
@@ -126,7 +127,7 @@ const AppProvider = ({ children }) => {
       try {
         const data = await axios.get("/users/all");
         dispatch({ type: GET_ALL_USER, payload: { data } });
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         console.log(error);
       }
@@ -189,7 +190,7 @@ const AppProvider = ({ children }) => {
     };
   // registering users
   const EmployeeRegister = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.post("/employees/add", data);
       fetchEmployees();
@@ -217,7 +218,7 @@ const AppProvider = ({ children }) => {
     try {
       const data = await axios.get("/employees/all");
       dispatch({ type: GET_EMPLOYEE__SUCCESS, payload: { data } });
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -242,7 +243,7 @@ const AppProvider = ({ children }) => {
 
   // Update Employee
   const updateEmployee = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.patch(`/employees/update/${data.id}`, data);
       if (res.status == "success") {
@@ -271,7 +272,7 @@ const AppProvider = ({ children }) => {
       const data = await axios.get(`/employees/single/${id}`);
       dispatch({ type: FETCH_SINGLE_EMPLOYEE, payload: { data } });
       // registerItemType();
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -296,7 +297,7 @@ const AppProvider = ({ children }) => {
       try {
         const data = await axios.get(`/districts/single/${id}`);
         dispatch({ type: FETCH_SINGLE_DISTRICT, payload: { data } });
-        console.log(data);
+        // console.log(data);
       } catch (error) {
         console.log(error);
         toast.error(error.message, {
@@ -368,6 +369,19 @@ const fetchNationalId = async (id) => {
     });
   }
 };
+// fetch all approved applocants
+const GetApprovedApplicants = async () => {
+  try {
+    const data = await axios.get(`/applicants/data/all`);
+    dispatch({ type: "GET_APPROVED", payload: { data } });
+    // console.log(data);
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message, {
+      position: toast.POSITION.TOP_RIGHT,
+    });
+  }
+};
 
   // fetch unapproved applications
 const fetchUnapprovedApplicants = async (user) => {
@@ -383,7 +397,7 @@ const fetchUnapprovedApplicants = async (user) => {
     }
 };
   // fetch approved applications
-  const fetchApprovedApplicants = async (user) => {
+  const getAllApprovedApplicants = async (user) => {
     try {
       const data = await axios.get(`/applicants/approved/all/${user.districtId}/${user.userId}`);
       dispatch({ type: FETCH_APPROVED_APPLICANTS, payload: { data } });
@@ -480,7 +494,7 @@ const scanFingerApp = async (img,id) => {
 };
   // registering district holydays
   const registerDistrictHolydays = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       const res = await axios.post("/districtHolydays/add", data);
       fetchDistrictHolydays();
@@ -509,7 +523,7 @@ const scanFingerApp = async (img,id) => {
     try {
       const data = await axios.get("/districtHolydays/all");
       dispatch({ type: FETCH_DISTRICT_HOLYDAYS, payload: { data } });
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -534,7 +548,7 @@ const scanFingerApp = async (img,id) => {
 
   // Update district holyday
   const updateDistrictHolyday = async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       const updateDistrictHolyday = await axios.patch(`/districtHolydays/update/${data.id}`, data);
       toast.success(updateDistrictHolyday.message, {
@@ -627,13 +641,14 @@ const getAppointment = async (appointmentDate,districtId) => {
         fetchStates,
         fetchUnapprovedApplicants,
         fetchSingleUnapprovedApplicant,
-        fetchApprovedApplicants,
+        getAllApprovedApplicants,
         updateApplicantInfo,registerDistrictHolydays,fetchDistrictHolydays,deleteDistrictHolyday,updateDistrictHolyday,
         uploadImage,
         getApplicantImage,
         cancelAppointmentFun,
         getAppointment,
-        scanFingerApp
+        scanFingerApp,
+        GetApprovedApplicants
       }}
     >
       {children}

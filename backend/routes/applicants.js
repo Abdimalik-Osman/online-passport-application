@@ -8,6 +8,7 @@ const router = express.Router();
 // create an applicant
 router.post('/add',ApplicantController.createApplicant)
 router.get('/approved/all/:districtId/:userId',ApplicantController.getAllApplicants)
+router.get('/data/all',ApplicantController.fetchApprovedApplicants)
 router.get('/single/:id',ApplicantController.getSingleApplicant)
 router.get('/districts/single/:id/:userId',ApplicantController.getSingleDistrictApplicants)
 router.get('/date/unavailable/all/:id',ApplicantController.getUnavailableDates)
