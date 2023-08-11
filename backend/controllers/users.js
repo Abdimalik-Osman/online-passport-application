@@ -47,17 +47,19 @@ exports.register = async (req, res) => {
 
 // login user
 exports.login = async (req, res) => {
-  const {username, password } = req.body;
+  try {
+    const {username, password } = req.body;
 
   const user = await User.findOne({ username });
 
   if (user && (await user.comparePassword(password))) {
     if(user?.status === "inActive" || user.status == "inActive"){
-      return res.status({message:"You are not active please contact the administrator.",status: "fail"})
+      return res.json({message:"You are not active please contact the administrator.",status: "fail",success: false})
     }
     const empInfo = await Employee.findById(user.empId);
-    console.log(empInfo)
+    // console.log(empInfo)
    return res.json({
+      success:true,
       message:"successfully logged in",
       data:{
       _id: user._id,
@@ -72,7 +74,10 @@ exports.login = async (req, res) => {
       },
     });
   } else {
-   return res.status(401).json({ message: "Invalid email or password",status:"fail" });
+   return res.json({ message: "Invalid email or password",status:"fail",success:false });
+  }
+  } catch (error) {
+    return res.json({message: error.message,status:"fail", success:false});
   }
 };
 

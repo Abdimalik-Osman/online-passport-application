@@ -95,7 +95,9 @@ const initialState = {
   districtHolydays:[],
   applicantImage:{},
   appointments:[],
-  allApproved:[]
+  allApproved:[],
+  dailyApplicants:[],
+  monthlyApplicants:[],
   // isLoading: false,
 };
 
@@ -155,31 +157,60 @@ const AppProvider = ({ children }) => {
     // login user
     const loginUser = async (user) => {
       // console.log(user);
-      dispatch({ type: "REGISTER_LOGIN_BEGIN" });
+      let res;
       try {
-        const res = await axios.post("/users/login", user);
-        console.log(res);
-        // console.log(res);
-        if (res?.data?.status == "success") {
+        dispatch({ type: "LOGIN_BEGIN" });
+         res = await axios.post("/users/login", user);
+        console.log(res)
+        dispatch({ type: "LOGIN_SUCCESS",payload: { res } });
+        if (res?.success == true) {
           addToLocalStorage(res);
-        }
-  
-        dispatch({ type: "REGISTER_LOGIN", payload: { res } });
-        if (res?.data?.status == "fail") {
-          toast.error(res.message, {
-            position: toast.POSITION.TOP_RIGHT,
-          });
-          console.log("ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-          return;
-        } else {
           toast.success(res.message, {
             position: toast.POSITION.TOP_RIGHT,
           });
-          console.log("sucesssssssssssssssssssssssssssssssssss");
+          
+        }else if(res.success == false || res.success === false) {
+          toast.error(res.message, {
+                position: toast.POSITION.TOP_RIGHT,
+              });
         }
+        // dispatch({ type: "LOGIN_FAIL"});
+        // if(res.status =="fail") {
+        //   toast.error(res.message, {
+        //     position: toast.POSITION.TOP_RIGHT,
+        //   });
+        // }
       } catch (error) {
-        console.log(error);
+        dispatch({ type: "LOGIN_FAIL"});
+        console.log(res);
+        toast.error(res.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       }
+      // try {
+      //   const res = await axios.post("/users/login", user);
+      //   console.log(res);
+      //   // console.log(res);
+      //   if (res?.data?.status == "success") {
+      //     addToLocalStorage(res);
+      //   }
+  
+      //   dispatch({ type: "LOGIN_SUCCESS", payload: { res } });
+      //   if (res?.status == "fail") {
+      //     toast.error(res.message, {
+      //       position: toast.POSITION.TOP_RIGHT,
+      //     });
+      //     console.log("ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+      //     return;
+      //   } else {
+      //     toast.success(res.message, {
+      //       position: toast.POSITION.TOP_RIGHT,
+      //     });
+      //     console.log("sucesssssssssssssssssssssssssssssssssss");
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     };
 
     const logoutUser = () => {
@@ -617,6 +648,28 @@ const getAppointment = async (appointmentDate,districtId) => {
     }
   };
 
+  // fetch daily applicants
+  const fetchDailyApplicants = async (userId) => {
+    try {
+      const data = await axios.get(`/applicants/today/${userId}`);
+      dispatch({ type: "FETCH_DAILY", payload: { data } });
+      // registerItemType();
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // fetch monthly applicants
+  const fetchMonthlyApplicants = async (userId) => {
+    try {
+      const data = await axios.get(`/applicants/month/${userId}`);
+      dispatch({ type: "FETCH_MONTHLY", payload: { data } });
+      // registerItemType();
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // 
   return (
     <LoginContext.Provider
@@ -648,7 +701,9 @@ const getAppointment = async (appointmentDate,districtId) => {
         cancelAppointmentFun,
         getAppointment,
         scanFingerApp,
-        GetApprovedApplicants
+        GetApprovedApplicants,
+        fetchMonthlyApplicants,
+        fetchDailyApplicants
       }}
     >
       {children}

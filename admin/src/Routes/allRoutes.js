@@ -16,7 +16,9 @@ import UserProfile from "../pages/Authentication/user-profile";
 import CancelAppointment from "../pages/CancelAppointment";
 import CreateApplicant from "../pages/CreateNewApplicant";
 import CreateUser from "../pages/CreateUser/index";
+import DailyApplicants from "../pages/DailyApplicants";
 import EmployeeRegistration from "../pages/Employee";
+import MonthlyApplicants from "../pages/MonthlyApplicants";
 import RegisterHolydays from "../pages/RegisterHolyday";
 import UnApprovedApplicants from "../pages/UnApproved";
 import UserRole from "../pages/UserRoles";
@@ -38,6 +40,8 @@ const authProtectedRoutes = [
   { path: "/image", component: ApplicantImage },
   { path: "/cancel", component: CancelAppointment },
   { path: "/scan", component: ScanFinger },
+  { path: "/daily", component: DailyApplicants },
+  { path: "/monthly", component: MonthlyApplicants },
 
   
   //User Profile

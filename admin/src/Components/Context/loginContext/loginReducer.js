@@ -26,13 +26,13 @@ const reducer = (state, action) => {
    User:""
   };
 }
-if (action.type === "REGISTER_LOGIN_BEGIN") {
+if (action.type === "LOGIN_BEGIN") {
   return {
     ...state,
    isLoading:true
   };
 }
-if (action.type === "REGISTER_LOGIN") {
+if (action.type === "LOGIN_SUCCESS") {
   return {
     ...state,
     User: action.payload.res.data,
@@ -40,7 +40,7 @@ if (action.type === "REGISTER_LOGIN") {
 
   };
 }
-if (action.type === "REGISTER_LOGIN_Fail") {
+if (action.type === "LOGIN_FAIL") {
   return {
     ...state,
    
@@ -189,6 +189,22 @@ if (action.type === GET_ALL_USER) {
       return {
         ...state,
         allApproved: action.payload.data,     
+      };
+    }
+    // fetch daily applicants
+    if (action.type === "FETCH_DAILY") {
+      return {
+        ...state,
+        dailyApplicants: action.payload.data,   
+        isLoading:false,  
+      };
+    }
+    // fetch monthly applicants
+    if (action.type === "FETCH_MONTHLY") {
+      return {
+        ...state,
+        monthlyApplicants: action.payload.data,   
+        isLoading:false,  
       };
     }
       //register

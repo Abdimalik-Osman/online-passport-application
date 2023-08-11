@@ -3,15 +3,15 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import moment from "moment";
 import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    Row,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Label,
+  Row,
 } from "reactstrap";
 
 import DataTable from "react-data-table-component";
@@ -21,7 +21,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import { LoginContex } from "../../context/loginContext/LoginContext";
-const TicketSupervisorReport = () => {
+const ApplicantList = () => {
   const [modal_list, setmodal_list] = useState(false);
   const [status, setStatus] = useState("");
   const [info, setInfo] = useState("");
@@ -722,4 +722,4 @@ console.log(ticketSupervisorReport)
   );
 };
 
-export default TicketSupervisorReport;
+export default ApplicantList;

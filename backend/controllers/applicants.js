@@ -1562,10 +1562,27 @@ exports.getApplicantsCreatedToday = async(req,res)=>{
             $unwind:"$districtInfo"
             
           },
-          // {
-          //   $unwind:"$districtInfo.districtInfo"
+          {
+            $unwind:"$districtInfo.districtInfo"
             
-          // },
+          },
+          {
+            $group: {
+              _id: "$_id", 
+              fullname: {$first: "$fullname"},
+              motherName: {$first: "$motherName"},
+              POB: {$first: "$POB"}, 
+              DOB: {$first: "$DOB"},
+              createdAt: {$first: "$createdAt"},
+              appointmentDate: {$first: "$appointmentDate"},
+              appointmentTime: {$first: "$appointmentTime"},
+              isApproved: {$first: "$isApproved"},
+              ratio: {$first: "$ratio"},
+              occupation: {$first: "$occupation"},
+              phoneNumber: {$first: "$phoneNumber"},
+              districtName: {$first: "$districtInfo.districtInfo.districtName"}
+            }
+          },
           {
             $sort:{createdAt:-1}
           }
@@ -1659,33 +1676,27 @@ exports.getApplicantCreatedThisMonth = async(req,res)=>{
           {
             $unwind:"$districtInfo"
           },
-          // {
-          //   $unwind:"$districtInfo.districtInfo"
+          {
+            $unwind:"$districtInfo.districtInfo"
             
-          // },
-          // {
-          //   $group: {
-          //     _id: "$_id", 
-          //     fullname: {$first: "$fullname"},
-          //     motherName: {$first: "$motherName"},
-          //     POB: {$first: "$POB"}, 
-          //     DOB: {$first: "$DOB"},
-          //     createdAt: {$first: "$createdAt"},
-          //     appointmentDate: {$first: "$appointmentDate"},
-          //     appointmentTime: {$first: "$appointmentTime"},
-          //     isApproved: {$first: "$isApproved"},
-          //     ratio: {$first: "$ratio"},
-          //     occupation: {$first: "$occupation"},
-          //     phoneNumber: {$first: "$phoneNumber"},
-          //     districtName: {$first: "$districtInfo.districtInfo.districtName"}
-          //   }
-          // },
-          // {
-          //   $project:{
-          //     _id:1,
-              
-          //   }
-          // },
+          },
+          {
+            $group: {
+              _id: "$_id", 
+              fullname: {$first: "$fullname"},
+              motherName: {$first: "$motherName"},
+              POB: {$first: "$POB"}, 
+              DOB: {$first: "$DOB"},
+              createdAt: {$first: "$createdAt"},
+              appointmentDate: {$first: "$appointmentDate"},
+              appointmentTime: {$first: "$appointmentTime"},
+              isApproved: {$first: "$isApproved"},
+              ratio: {$first: "$ratio"},
+              occupation: {$first: "$occupation"},
+              phoneNumber: {$first: "$phoneNumber"},
+              districtName: {$first: "$districtInfo.districtInfo.districtName"}
+            }
+          },
           {
             $sort:{createdAt:-1}
           }
