@@ -1,44 +1,29 @@
 import React, {
-    useState,
-    useEffect,
-    useContext,
-    componentDidMount,
-    useRef,
-    useMemo,
-  } from "react";
-  import Flatpickr from "react-flatpickr";
-  import {Link} from "react-router-dom";
-  import Select from "react-select";
-  import { Helmet } from "react-helmet";
-  import BreadCrumb from "../../Components/Common/BreadCrumb";
-  import TableContainer from "../../Components/Common/TableContainer";
-  import { ToastContainer, toast } from "react-toastify";
-  import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Row,
-    Table,
-    Alert,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    UncontrolledDropdown,
-  } from "reactstrap";
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  Row
+} from "reactstrap";
+import BreadCrumb from "../../Components/Common/BreadCrumb";
 //   import "./styleEmp.css";
-  import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   import moment from "moment";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   
   
   const RegisterHolydays = () => {
@@ -353,7 +338,7 @@ import React, {
                   </CardHeader>
                   <CardBody>
                     <div id="Purchasestable">
-                      <Row className="g-4 mb-3"></Row>
+                      {/* <Row className="g-4 mb-3"></Row>
                       
                       <TableContainer
                         columns={columns}
@@ -364,7 +349,7 @@ import React, {
                         className="custom-header-css"
                     
                           pagination={{ enabled: true, limit: 10 }}
-                        /> 
+                        />  */}
                     </div>
   
                     {/* end of container */}

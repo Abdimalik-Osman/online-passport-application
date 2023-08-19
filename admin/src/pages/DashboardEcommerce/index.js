@@ -1,27 +1,26 @@
-import React, { useContext } from "react";
-import { useEffect } from "react";
-import { Container, Label } from "reactstrap";
+import React, { useContext, useEffect } from "react";
+import { Container } from "reactstrap";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
-import moment from "moment";
 // import { LoginContex } from "../../context/loginContext/LoginContext";
 // import AppLogout from "../Authentication/AppLogout";
 import CountUp from "react-countup";
-import { Link } from "react-router-dom";
+import Flatpickr from "react-flatpickr";
 import {
   Card,
   CardBody,
-  Col,
-  Row,
-  DropdownItem,
   CardHeader,
-  DropdownMenu,
-  DropdownToggle,
-  UncontrolledDropdown,
+  Col,
+  Row
 } from "reactstrap";
-import { ecomWidgets, dealsStatus } from "../../common/data";
-import Flatpickr from "react-flatpickr";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
 
 const DashboardEcommerce = () => {
+  const {
+    fetchMonthlyApplicants, fetchDailyApplicants,monthlyApplicants,dailyApplicants,
+    isLoading,fetchUnapprovedApplicants,unapprovedApplicants,fetchEmployees,
+    getEmployees
+
+  } = useContext(LoginContext);
   document.title = "Dashboard";
   // const {
   //   User,
@@ -59,16 +58,29 @@ const DashboardEcommerce = () => {
   // const activeUsers = allUsers.filter((user) => {
   //   return user.userStatus == "Active";
   // });
-
+  const myItemString = localStorage.getItem('user');
+  const user = JSON.parse(myItemString);
+  const district = user?.data.districtId;
+  const userId1 = user?.data._id;
+  const data = {
+    districtId:district,
+    userId:userId1
+  }
+  useEffect(() => {
+    fetchMonthlyApplicants(userId1)
+    fetchDailyApplicants(userId1)
+    fetchUnapprovedApplicants(data)
+    fetchEmployees()
+  }, []);
   const widgets = [
     {
       id: 1,
       cardColor: "success",
-      label: "Total Applicants",
+      label: "Monthly Applicants Applicants",
       badge: "ri-arrow-right-up-line",
       badgeClass: "success",
       // percentage: "+29.08",
-      counter: 9,
+      counter: monthlyApplicants?.length,
       link: "See details",
       bgcolor: "warning",
       icon: "bx bx-user-circle",
@@ -84,7 +96,7 @@ const DashboardEcommerce = () => {
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",
-      counter: 8,
+      counter: unapprovedApplicants?.length,
       link: "View all orders",
       bgcolor: "info",
       icon: " bx bx-tv",
@@ -100,7 +112,7 @@ const DashboardEcommerce = () => {
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",
-      counter: 7,
+      counter: dailyApplicants?.length,
       link: "View all orders",
       bgcolor: "info",
       icon: " bx bx-alarm-off",
@@ -117,7 +129,7 @@ const DashboardEcommerce = () => {
       badge: "ri-arrow-right-down-line",
       badgeClass: "danger",
       percentage: "-3.57",
-      counter: 9,
+      counter: getEmployees?.length,
       link: "View all orders",
       bgcolor: "info",
       icon: "bx bx-message-alt",

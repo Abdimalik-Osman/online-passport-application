@@ -1,44 +1,24 @@
+import moment from "moment";
 import React, {
-    useState,
-    useEffect,
-    useContext,
-    componentDidMount,
-    useRef,
-    useMemo,
-  } from "react";
-  import Select from "react-select";
-  import {Link} from "react-router-dom"
-  import { Helmet } from "react-helmet";
-  import BreadCrumb from "../../Components/Common/BreadCrumb";
-  import TableContainer from "../../Components/Common/TableContainer";
-  import { ToastContainer, toast } from "react-toastify";
-  import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Label,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    Row,
-    Table,
-    Alert,
-    DropdownItem,
-    DropdownMenu,
-    DropdownToggle,
-    UncontrolledDropdown,
-  
-  } from "reactstrap";
-  import "../Employee/styleEmp.css"
-  import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
-  import moment from "moment";
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
+import { Helmet } from "react-helmet";
+import { toast } from "react-toastify";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Row
+} from "reactstrap";
+import BreadCrumb from "../../Components/Common/BreadCrumb";
+import TableContainer from "../../Components/Common/TableContainer";
+import "../Employee/styleEmp.css";
+import { LoginContext } from './../../Components/Context/loginContext/LoginContext';
   
   const UnApprovedApplicants = () => {
     const {
@@ -103,9 +83,16 @@ import React, {
     const [approveModalList, setApproveModalList] = useState(false);
     const [isError, setIsError] = useState(false);
     const [bgRemove, setBgRemove] = useState("");
-  
+    const myItemString = localStorage.getItem('user');
+    const user = JSON.parse(myItemString);
+    const district = user?.data.districtId;
+    const userId = user?.data._id;
+    const data = {
+      districtId:district,
+      userId:userId
+    }
     useEffect(()=>{
-        fetchUnapprovedApplicants()
+        fetchUnapprovedApplicants(data)
     },[])
     const tog_list = () => {
       setChecked(false);
@@ -306,7 +293,7 @@ import React, {
         // setEmployeeId(data);
         
       };
-    document.title = "Employee Registration  ";
+    document.title = "Un Approved  ";
     const handleValidDate = (date) => {
       const date1 = moment(new Date(date)).format("DD MMM Y");
       return date1;
@@ -516,8 +503,8 @@ import React, {
               <script src="html2pdf.bundle.min.js"></script>
             </Helmet>
             <BreadCrumb
-              title="Applicants "
-              pageTitle="Un Approved Applicants"
+              title="Un Approved Applicants"
+              pageTitle=" Applicants"
             />
             <embed
               style={{

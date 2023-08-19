@@ -3,6 +3,7 @@ export function CallSGIFPGetData(
   setFinger_data,
   setMatchScore,
   data,
+  setFoundedApp
 ) {
   var uri = "https://localhost:8443/SGIFPCapture";
 
@@ -14,7 +15,7 @@ export function CallSGIFPGetData(
       console.log("data", data);
       
           data?.map((finger) =>
-            matchingfingers(fpobject.TemplateBase64, finger, setMatchScore)
+            matchingfingers(fpobject.TemplateBase64, finger, setMatchScore,setFoundedApp)
           );
 
         setFinger_data((prev) => ({
@@ -48,6 +49,7 @@ export function CallSGIFPGetData(
   user_data,
   fingerprint,
   setMatchScore,
+  setFoundedApp
 ) {
   console.log("heeeeeeeeeere");
   var uri = "https://localhost:8443/SGIMatchScore";
@@ -68,8 +70,9 @@ export function CallSGIFPGetData(
         setMatchScore(fpobjecttt.MatchingScore);
         
         // setSuspected(fingerprint)
-      // if (fpobjecttt.MatchingScore > 75) {
-      // }
+      if (fpobjecttt.MatchingScore > 75) {
+        setFoundedApp(fingerprint)
+      }
       // console.log("matching response::::: ", fpobjecttt);
       // callback(fpobjecttt); // Call the callback with the result
     } else if (xmlhttp.status == 404) {

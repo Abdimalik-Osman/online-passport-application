@@ -216,12 +216,12 @@ const Navdata = () => {
                     link: "/unApproved",
                     parentId: "setting",
                   },
-                  {
-                    id: "CheckApplicantData",
-                    label: "Check Applicant Data",
-                    link: "/CheckApplicant",
-                    parentId: "setting",
-                  },
+                //   {
+                //     id: "CheckApplicantData",
+                //     label: "Check Applicant Data",
+                //     link: "/CheckApplicant",
+                //     parentId: "setting",
+                //   },
                   {
                     id: "approveApplicantData",
                     label: "Approve Applicant Data",
@@ -356,18 +356,18 @@ const Navdata = () => {
                     link: "/register",
                     parentId: "setting",
                   },
-                  {
-                    id: "Setup",
-                    label: "Setups",
-                    link: "/Promotion",
-                    parentId: "setting",
-                  },
-                  {
-                    id: "User Role",
-                    label: "User Roles",
-                    link: "/UserRole",
-                    parentId: "setting",
-                  },
+                //   {
+                //     id: "Setup",
+                //     label: "Setups",
+                //     link: "/Promotion",
+                //     parentId: "setting",
+                //   },
+                //   {
+                //     id: "User Role",
+                //     label: "User Roles",
+                //     link: "/UserRole",
+                //     parentId: "setting",
+                //   },
           
             ],
         },

@@ -2,15 +2,12 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import SimpleBar from "simplebar-react";
 //import logo
-import logoSm from "../assets/images/logo-sm.png";
-import logoDark from "../assets/images/logo-dark.png";
-import logoLight from "../assets/images/logo-light.png";
 
 //Import Components
-import VerticalLayout from "./VerticalLayouts";
-import TwoColumnLayout from "./TwoColumnLayout";
 import { Container } from "reactstrap";
 import HorizontalLayout from "./HorizontalLayout";
+import TwoColumnLayout from "./TwoColumnLayout";
+import VerticalLayout from "./VerticalLayouts";
 
 const Sidebar = ({ layoutType }) => {
 
@@ -39,19 +36,28 @@ const Sidebar = ({ layoutType }) => {
         <div className="navbar-brand-box">
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">
-              <img src={logoSm} alt="" height="22" />
+            <h2 className="text-white mt-3">SOPA</h2>
+            {/* <b className="text-white " style={{width:"99px",height:"22px"}}>SOPAS</b> */}
+              {/* <img src={logoSm} alt="" height="22" /> */}
             </span>
             <span className="logo-lg">
-              <img src={logoDark} alt="" height="17" />
+            <h2 className="text-white mt-3">SOPA</h2>
+            {/* <b className="text-white" style={{width:"99px",height:"22px"}}>SOPAS</b> */}
+              {/* <img src={logoDark} alt="" height="17" /> */}
             </span>
           </Link>
 
           <Link to="/" className="logo logo-light">
             <span className="logo-sm">
-              <img src={logoSm} alt="" height="22" />
+            <h2 className="text-white mt-3">SOPA</h2>
+            {/* <b className="text-white p-5" style={{width:"99px",height:"22px"}}>SOPAS</b>
+             */}
+              {/* <img src={logoSm} alt="" height="22" /> */}
             </span>
             <span className="logo-lg">
-              <img src={logoLight} alt="" height="17" />
+            {/* <b className="text-white" style={{width:"99px",height:"22px"}}>SOPAS</b> */}
+             <h2 className="text-white mt-3">SOPA</h2>
+              {/* <img src={logoLight} alt="" height="17" /> */}
             </span>
           </Link>
           <button

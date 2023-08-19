@@ -102,7 +102,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     });
     const [acknow_id, setAcknow_id] = useState("");
     const [acknowModel, setAcknowModel] = useState(false);
-    const [index, setIndex] = useState(0);
+    const [foundedApp, setFoundedApp] = useState();
     const myItemString = localStorage.getItem('user');
     const user = JSON.parse(myItemString);
     const district = user?.data.districtId;
@@ -113,6 +113,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     }
     useEffect(()=>{
       GetApprovedApplicants()
+      // console.log(foundedApp)
     },[])
     console.log("this is the match score ",matchScore);
     const tog_list = () => {
@@ -127,7 +128,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     const tog_delete = () => {
       setmodal_delete(!modal_delete);
     };
-  console.log(approvedApplicants)
+  // console.log(approvedApplicants)
     const handleChange = () => {
       setChecked(!checked);
       // setDisable(!Disable);
@@ -551,11 +552,21 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     }
 
     const scanFingerprint = () => {
+      setFoundedApp()
+      setIsMatchScore()
+      setFinger_data({
+        template: "",
+        
+        img: "",
+        
+        quality: "",
+        
+      });
       CallSGIFPGetData(
         setFinger_data,
         setIsMatchScore,
         allApproved,
-        
+        setFoundedApp
       )
       
     }
@@ -667,6 +678,17 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                 </div>
                 <button type="button" onClick={scanFingerprint} className="btn btn-success mt-2 px-5">Scan</button>
               </Col>
+              <Col md={6} sm={12} lg={5} >
+                <div className="mb-2 border border-gray-500 border-3" style={{width:"210px",height:"210px"}}>
+               
+                  {foundedApp?.fingerPic && (
+                    <>
+                      <img src={foundedApp?.fingerPic?.url}  alt=""  style={{width:"200px",height:"200px"}} />
+                    </>
+                  )}
+                </div>
+                {/* <button type="button" onClick={scanFingerprint} className="btn btn-success mt-2 px-5">Scan</button> */}
+              </Col>
                 </Row>
               </ModalBody>
 
@@ -683,7 +705,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                     type="submit"
                     className="btn btn-success"
                     id="add-btn">
-                    {isEditing ? "Update" : "Save"}
+                    {isEditing ? "Approve" : "Save"}
                   </button>
                 </div>
               </ModalFooter>

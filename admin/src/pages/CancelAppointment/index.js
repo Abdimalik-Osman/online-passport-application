@@ -147,7 +147,7 @@ const CancelAppointment = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <BreadCrumb title="Open Card Report " pageTitle="Report" />
+          <BreadCrumb title="Cancel Appointment " pageTitle="Cancel" />
           <Row>
             <Col lg={12}>
               <Card>

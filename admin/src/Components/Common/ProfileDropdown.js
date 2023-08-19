@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Dropdown,
@@ -8,10 +8,10 @@ import {
 } from "reactstrap";
 
 //import images
-import avatar1 from "../../assets/images/users/avatar-1.jpg";
 import { LoginContext } from "../Context/loginContext/LoginContext";
 
 
+  
 const ProfileDropdown = () => {
     const { logoutUser, User, getAllUsers } = useContext(LoginContext);
   const { user } = useSelector((state) => ({
@@ -24,7 +24,10 @@ const ProfileDropdown = () => {
   // console.log(User?.user.fullName);
 
   const [userName, setUserName] = useState("Admin");
-
+  const myItemString = localStorage.getItem('user');
+  const user1 = JSON.parse(myItemString);
+  const district = user1?.data.districtId;
+  const userId = user1?.data._id;
   useEffect(() => {
     if (sessionStorage.getItem("authUser")) {
       const obj = JSON.parse(sessionStorage.getItem("authUser"));
@@ -52,7 +55,7 @@ const ProfileDropdown = () => {
           <span className="d-flex align-items-center">
              <img
               className="rounded-circle header-profile-user"
-              src={avatar1}
+              src={user1?.data?.image}
               alt="Header Avatar"
             /> 
 
@@ -65,8 +68,8 @@ const ProfileDropdown = () => {
           </span>
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
-          <h6 className="dropdown-header">Welcome {userName}!</h6> 
-         <DropdownItem href="/#">
+          <h6 className="dropdown-header">Welcome {user1?.data?.username}!</h6> 
+         {/* <DropdownItem href="/#">
             <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
             <span className="align-middle">Profile</span>
           </DropdownItem> 
@@ -98,7 +101,7 @@ const ProfileDropdown = () => {
           <DropdownItem href="#">
             <i className="mdi mdi-lock text-muted fs-16 align-middle me-1"></i>{" "}
             <span className="align-middle">Lock screen</span>
-          </DropdownItem> 
+          </DropdownItem>  */}
           <DropdownItem href="/logout" onClick={logoutUser}>
             <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{" "}
             <span className="align-middle h6 text-danger" data-key="t-logout">

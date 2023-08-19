@@ -129,56 +129,56 @@ const Employee = require("../models/employees");
 
 exports.createApplicant = async (req, res) => {
   try {
-    // const apiwafiUSD = {
-    //   schemaVersion: "1.0",
-    //   requestId: "10111331033",
-    //   timestamp: "client_timestamp",
-    //   channelName: "WEB",
-    //   serviceName: "API_PURCHASE",
-    //   serviceParams: {
-    //     merchantUid: "M0910291",
-    //     apiUserId: "1000416",
-    //     apiKey: "API-675418888AHX",
-    //     paymentMethod: "mwallet_account",
-    //     payerInfo: {
-    //       accountNo: "252616328920",
-    //     },
-    //     transactionInfo: {
-    //       referenceId: "12334",
-    //       invoiceId: "7896504",
-    //       amount: 0.01,
-    //       currency: "USD",
-    //       description: "Test USD",
-    //     },
-    //   },
-    // };
+    const apiwafiUSD = {
+      schemaVersion: "1.0",
+      requestId: "10111331033",
+      timestamp: "client_timestamp",
+      channelName: "WEB",
+      serviceName: "API_PURCHASE",
+      serviceParams: {
+        merchantUid: "M0910291",
+        apiUserId: "1000416",
+        apiKey: "API-675418888AHX",
+        paymentMethod: "mwallet_account",
+        payerInfo: {
+          accountNo: "252616328920",
+        },
+        transactionInfo: {
+          referenceId: "12334",
+          invoiceId: "7896504",
+          amount: 0.01,
+          currency: "USD",
+          description: "Test USD",
+        },
+      },
+    };
 
-    // let apiwafi = await axios.post("https://api.waafipay.net/asm", apiwafiUSD);
-    // if (apiwafi.data.responseMsg == "RCS_SUCCESS") {
-    //   console.log("hello");
-    //   const apiwafiUSD2 = {
-    //     schemaVersion: "1.0",
-    //     requestId: "14636832123312",
-    //     timestamp: "20181231130916000",
-    //     channelName: "WEB",
-    //     serviceName: "API_PREAUTHORIZE_COMMIT",
-    //     serviceParams: {
-    //       apiUserId: 1004068,
-    //       merchantUid: "M0911931",
-    //       apiKey: "API-532593570AHX",
-    //       transactionId: apiwafi.data.params.transactionId,
-    //       description: "Commited",
-    //       referenceId: "R75641560240445",
-    //     },
-    //   };
-    //   let apiwafi2 = await axios.post(
-    //     "https://api.waafipay.net/asm",
-    //     apiwafiUSD2
-    //   );
+    let apiwafi = await axios.post("https://api.waafipay.net/asm", apiwafiUSD);
+    if (apiwafi.data.responseMsg == "RCS_SUCCESS") {
+      console.log("hello");
+      const apiwafiUSD2 = {
+        schemaVersion: "1.0",
+        requestId: "14636832123312",
+        timestamp: "20181231130916000",
+        channelName: "WEB",
+        serviceName: "API_PREAUTHORIZE_COMMIT",
+        serviceParams: {
+          apiUserId: 1004068,
+          merchantUid: "M0911931",
+          apiKey: "API-532593570AHX",
+          transactionId: apiwafi.data.params.transactionId,
+          description: "Commited",
+          referenceId: "R75641560240445",
+        },
+      };
+      let apiwafi2 = await axios.post(
+        "https://api.waafipay.net/asm",
+        apiwafiUSD2
+      );
 
-    //   if (!apiwafi2) {
-    //     return res.status(500).json({message:apiwafi.data.responseMsg, status: "fail" });
-    //   }
+      if (!apiwafi2) {
+        return res.status(500).json({message:apiwafi.data.responseMsg, status: "fail" });
+      }
     
       
       // console.log("apiwafi2 " + apiwafi2.data.responseMsg);
@@ -409,26 +409,26 @@ exports.createApplicant = async (req, res) => {
     }
     const emailBody = `Dear ${newApplicant?.fullname}, your appointment has been scheduled with appointment number ${appointmentNumber}, and appointment Date ${req.body.appointmentDate} at time ${req.body.appointmentTime}`;
 
-    // await axios.post(
-    //   "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
-    //     emailBody +
-    //     "&rec=" +
-    //     req.body.phoneNumber +
-    //     ""
-    // );
+    await axios.post(
+      "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+        emailBody +
+        "&rec=" +
+        req.body.phoneNumber +
+        ""
+    );
     //  await axios.post(`https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=${emailBody}&rec=${req.body.phoneNumber}`)
     return res
       .status(201)
       .json({ message: "Your Application registered successfully", status: "success" });
-      // return res
-      //   .status(200)
-      //   .json({ message: apiwafi2.data.responseMsg, success: true });
-    // } else {
-    //   console.log("apiwafi2 " + apiwafi.data.responseMsg);
-    //   return res
-    //     .status(499)
-    //     .json({ message: apiwafi.data.responseMsg, status: "fail" });
-    // }
+      return res
+        .status(200)
+        .json({ message: apiwafi2.data.responseMsg, success: true });
+    } else {
+      console.log("apiwafi2 " + apiwafi.data.responseMsg);
+      return res
+        .status(499)
+        .json({ message: apiwafi.data.responseMsg, status: "fail" });
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message, status: "fail" });
   }
@@ -1268,12 +1268,12 @@ exports.cancelAppointment = async (req, res) => {
           app?.phoneNumber
       );
       // console.log(canceled)
-      // await axios.post(
-      //   "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
-      //   message+
-      //   "&rec=" +
-      //   app?.phoneNumber +
-      //   "")
+      await axios.post(
+        "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+        message+
+        "&rec=" +
+        app?.phoneNumber +
+        "")
     });
     await Promise.all(promise);
     return res

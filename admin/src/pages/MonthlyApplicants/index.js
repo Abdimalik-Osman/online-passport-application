@@ -2,13 +2,13 @@ import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import {
-    Card,
-    CardBody,
-    CardHeader,
-    Col,
-    Container,
-    Input,
-    Row
+  Card,
+  CardBody,
+  CardHeader,
+  Col,
+  Container,
+  Input,
+  Row
 } from "reactstrap";
 // import BreadCrumb from '../../../Components/Common/BreadCrumb';
 
@@ -51,7 +51,7 @@ const MonthlyApplicants = () => {
     fetchMonthlyApplicants(userId1)
   }, []);
 
-  document.title = "Auto charge ";
+  document.title = "Monthly Applicants";
 //   let userId = User?.data?.user?._id || User?.user?._id;
 //   console.log(auto[0]?.requestBody.billInfo.invoiceId);
 //   const columns = useMemo(
@@ -299,7 +299,7 @@ const load = () => {
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
-          <BreadCrumb title="Auto charge" pageTitle="Billing" />
+          <BreadCrumb title="Monthly Applicants" pageTitle="Applicants" />
           <Row>
             <Col lg={12}>
               <Card>
@@ -309,7 +309,7 @@ const load = () => {
                       <div>
                         <div>
                           <ToastContainer />
-                          <h4 className="card-title mb-0">Auto charge</h4>
+                          <h4 className="card-title mb-0">Monthly Applicants</h4>
                         </div>
                       </div>
                     </Col>
