@@ -14,8 +14,6 @@ import {
   CardHeader,
   Col,
   Container,
-  Input,
-  Label,
   Modal,
   ModalBody,
   ModalFooter,
@@ -31,7 +29,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
   const ScanFinger = () => {
     const {
       EmployeeRegister, getEmployees, fetchEmployees,   fetchUnapprovedApplicants,fetchSingleUnapprovedApplicant,applicantInfo,
-      unapprovedApplicants, updateApplicantInfo, uploadImage,scanFingerApp,approvedApplicants,GetApprovedApplicants,allApproved
+      unapprovedApplicants, updateApplicantInfo, uploadImage,scanFingerApp,getAllApprovedApplicants,approvedApplicants,GetApprovedApplicants,allApproved
      
     } = useContext(LoginContext);
     const [fName, setFname] = useState();
@@ -114,8 +112,9 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     useEffect(()=>{
       GetApprovedApplicants()
       // console.log(foundedApp)
+      fetchUnapprovedApplicants(data)
     },[])
-    console.log("this is the match score ",matchScore);
+    // console.log("this is the match score ",matchScore);
     const tog_list = () => {
       setChecked(false);
       setmodal_list(!modal_list);
@@ -514,17 +513,18 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
     
     const handleSubmit = (e)=>{
       e.preventDefault();
-    //   console.log(employeeName);
-    //   console.log(employeePhone);
-    //   console.log(sex);
-      // console.log(id);
-      // console.log(image);
+    
+      console.log(matchScore);
       if(finger_data.quality <= 70){
        return toast.error("Your finger quality is too low or too poor, please try again")
       }
+      if(matchScore > 90){
+        
+        return toast.error("these fingers looks like same person, please try again")
+      }
         let img = finger_data
       console.log(img,id)
-        scanFingerApp(img,id)
+        // scanFingerApp(img,id)
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -686,6 +686,8 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
                       <img src={foundedApp?.fingerPic?.url}  alt=""  style={{width:"200px",height:"200px"}} />
                     </>
                   )}
+                  <span><b>{foundedApp?.fullname}</b></span>
+                 {foundedApp?.image?.url && <img src={foundedApp?.image?.url} className="mx-5"  style={{width:"60px",height:"60px"}}/>}
                 </div>
                 {/* <button type="button" onClick={scanFingerprint} className="btn btn-success mt-2 px-5">Scan</button> */}
               </Col>
@@ -713,131 +715,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
           </Modal>
   
           {/* approve */}
-              
-          <Modal
-            isOpen={approveModalList}
-            toggle={() => {
-              tog_list();
-            }}
-            centered
-            size="lg"
-            backdrop={"static"}>
-            <div className="bg-light p-3 modal-header">
-              <h5 className="modal-title">
-                {" "}
-                {isEditing ? "Approve Applicant" : "Add New Applicant"}{" "}
-              </h5>
-
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => {
-                  setApproveModalList(false);
-               }}
-                aria-label="Close"></button>
-            </div>
-            <form onSubmit={handleApproveApplicant}>
-              <ModalBody>
-               <Row>
-              <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="nID" className="form-label">
-                       Enter Applicant National ID
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="nID"
-                        type="Number"
-                        placeholder="National ID"
-                        value={passNid}
-                        onChange={(e)=>setPassNid(e.target.value)}
-                        required
-                        
-                      />
-                    </div>
-              </Col>
-              <Col md={6} sm={12} lg={4}>
-                    <div className="mb-2">
-                      <Label htmlFor="passNumber" className="form-label">
-                       Enter Applicant Phone Number
-                        <span className="text-danger">*</span>
-                      </Label>
-                      <Input
-                        name="passNumber"
-                        type="Number"
-                        placeholder="Phone Number"
-                        value={passPhoneNumber}
-                        onChange={(e)=>setPassPhoneNumber(e.target.value)}
-                        
-                        
-                      />
-                    </div>
-              </Col>
-              <Col md={6} sm={12} lg={4}>
-                    <div className="mt-4">
-                    <button
-                    type="button"
-                    onClick={getApplicantInfo}
-                    className="btn btn-success"
-                    id="update-btn">
-                    GET APPLICANT
-                  </button>
-                    </div>
-              </Col>
-              </Row>
-              <Row>
-              <Col md={6} sm={12} lg={4}>
-                    <div className="my-3">
-                    <Input type="file" name="image" onChange={(e) => setFile(e.target.files[0])} />
-                   
-                   </div>
-
-              </Col>
-              <Col md={6} sm={12} lg={4}>
-                    <div className="mt-4">
-                    <button
-                    type="button"
-                    onClick={handleChangeBg}
-                    className="btn btn-success"
-                    id="update-btn">
-                    REMOVE BACKGROUND
-                  </button>
-                    </div>
-              </Col>
-              </Row>
-              <Row>
-                <Col md={6} sm={12} lg={5}>
-                  <div className="mb-2">
-                  {file && <img className="mt-3" src={URL.createObjectURL(file)} style={{ width: "400px", height: "400px",  }} />}
-                  </div>
-                </Col>
-                <Col md={6} sm={12} lg={5}>
-                  <div className="mb-2">
-                  {bgRemove && <img className="mt-3" src={bgRemove} style={{ width: "400px", height: "400px", marginLeft:"80px"  }} />}
-                  </div>
-                </Col>
-              </Row>
-              </ModalBody>
-
-              <ModalFooter>
-                <div className="hstack gap-2 justify-content-end">
-                  <button
-                    type="button"
-                    className="btn btn-light"
-                    onClick={() => setApproveModalList(false)}
-                    >
-                    Close
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-success"
-                    id="add-btn">
-                    Approve Applicant
-                  </button>
-                </div>
-              </ModalFooter>
-            </form>
-          </Modal>
+     
           
         </div>
       </React.Fragment>
