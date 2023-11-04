@@ -127,6 +127,8 @@ const Employee = require("../models/employees");
 //   }
 // //}
 
+
+// create new applicant
 exports.createApplicant = async (req, res) => {
   try {
     const apiwafiUSD = {
@@ -435,7 +437,6 @@ exports.createApplicant = async (req, res) => {
 };
 
 // get all applicants
-
 exports.getAllApplicants = async (req, res) => {
   try {
     let applicants;
@@ -463,6 +464,7 @@ exports.getAllApplicants = async (req, res) => {
     return res.status(500).json({ message: err.message, status: "fail" });
   }
 };
+// fetch available applicants
 exports.fetchApprovedApplicants = async (req, res) => {
   try {
     let applicants;
@@ -656,13 +658,13 @@ exports.updateApplicant = async (req, res) => {
 
     //   console.log(`The email sent ${info.response}`);
     // });
-    await axios.post(
-      "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
-        message +
-        "&rec=" +
-        updated?.phoneNumber +
-        ""
-    );
+    // await axios.post(
+    //   "https://tabaarakict.so/SendSMS.aspx?user=Just&pass=Team@23!&cont=" +
+    //     message +
+    //     "&rec=" +
+    //     updated?.phoneNumber +
+    //     ""
+    // );
     return res
       .status(200)
       .json({ message: "application Approved successfully", status: "success" });
@@ -676,7 +678,7 @@ exports.scanFingerprint = async(req,res)=>{
   try {
     // console.log(req.body)
     let takeDate = new Date();
-    takeDate.setDate(takeDate.getDate() + 1);
+    takeDate.setDate(takeDate.getDate() + 15);
     const {img,id} = req.body;
     // const base64Image = 'data:image/bmp;base64,Qk3mNAEAAAAAADYEAAAoAAAABAEAACwBAAABAAgAAAAAALAwAQAAAAAAAAAAAAABAAAAAQAAAAAAAAEBAQACAgIAAwMDAAQEBAAFBQUABgYGAAcHBwAI';
     // const filename = 'image';
@@ -1084,7 +1086,7 @@ exports.getApplicantsFromRange = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
+// send sms to applicants
 exports.sendSmsToApplicants = async (req, res) => {
   try {
     let from = new Date();
@@ -1181,6 +1183,7 @@ exports.sendSmsToApplicants = async (req, res) => {
   }
 };
 
+// get applicant's image
 exports.getUserImage = async (req, res) => {
   try {
     const image = await Image.findById(req.params.id);
