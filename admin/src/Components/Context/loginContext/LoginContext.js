@@ -480,6 +480,7 @@ const uploadImage = async (image,id) => {
     const res = await axios.post("/applicants/upload", {image,id});
     
     dispatch({ type: "UPLOAD_IMAGE_SUCCESS" });
+
     if (res.status == "success") {
       toast.success(res.message, {
         position: toast.POSITION.TOP_RIGHT,
@@ -505,6 +506,7 @@ const scanFingerApp = async (img,id) => {
     const res = await axios.post("/applicants/scan/finger", {img,id});
     
     dispatch({ type: "SCAN_FINGER_SUCCESS" });
+    
     if (res.status == "success") {
       toast.success(res.message, {
         position: toast.POSITION.TOP_RIGHT,
