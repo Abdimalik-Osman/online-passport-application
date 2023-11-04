@@ -524,7 +524,11 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       }
         let img = finger_data
       console.log(img,id)
-        // scanFingerApp(img,id)
+        scanFingerApp(img,id)
+        setmodal_list(false);
+        GetApprovedApplicants()
+        fetchUnapprovedApplicants(data)
+        
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {

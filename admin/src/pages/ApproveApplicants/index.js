@@ -286,7 +286,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
         setAppointmentDate(moment(data.appointmentDate).format("YYYY-MM-DD"));
         setEmergencyContactName(data.emergencyContactName);
         setEmergencyContactNumber(data.emergencyContactNumber);
-       
+        setStatus(data.maritalStatus);
         setDob(moment(data.DOB).format("YYYY-MM-DD"));
         setPob(data.POB);
         setEmail(data.email);
@@ -543,6 +543,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
         // const img = finger_data.img
       
     uploadImage(image,id)
+    setmodal_list(false)
     }
     // console.log(unapprovedApplicants)
     const getApplicantInfo = () => {
@@ -566,7 +567,7 @@ import { LoginContext } from './../../Components/Context/loginContext/LoginConte
       formData.append('image', image);
       uploadImage(image)
 
-
+      setmodal_list(false)
     }
 
     // const scanFinger = () => {
