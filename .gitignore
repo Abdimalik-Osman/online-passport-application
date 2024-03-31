@@ -4,4 +4,4 @@
 /.env
 /admin/.env
 /cloudinary
-/backend/controllers
+/backend/controllers/
