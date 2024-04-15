@@ -23,6 +23,9 @@ const DistrictHolydayRouter = require("./backend/routes/districtHolydays")
 const moment = require("moment");
 const sharp = require('sharp');
 const Image = require('./backend/models/images');
+const jsonfile = require('jsonfile')
+const simpleGit = require('simple-git')
+const filePath = './data.json'
 const PORT = process.env.PORT || 3000
 connectDB();
 const app = express();
@@ -44,6 +47,51 @@ const app = express();
 //   limit: '500mb',
 //   extended: true
 // }));
+//const makeCommit = async(n) =>{
+  //   const random = await import('random');
+  //   if(n == 0) return simpleGit().push()
+  //   x = random.default.int(0,54);
+  //   y = random.default.int(0,6);
+  // const DATE = moment().subtract(1,'d').add(x,'w').add(y,'d').format()
+  // const data  = {
+  //   date:DATE
+  // }
+  // // cosnole.log(DATE)
+  // jsonfile.writeFile(filePath,data,()=>{
+  // // git commit 
+  // simpleGit().add([filePath]).commit(DATE,{'--date':DATE},makeCommit.bind(this,--n));
+  // })
+  // }
+  
+  // makeCommit(100)
+  const makeCommit = async (n) => {
+    const random = await import('random')
+  
+    if (n == 0) return simpleGit().push();
+  
+    const currentYear = moment().year(); // Get the current year
+    const startDate = moment(`${currentYear}-01-01`); // January 1st of the current year
+    const endDate = moment(`${currentYear}-03-31`); // March 31st of the current year
+  
+    let commitDate = startDate.clone().add(random.default.int(0, 89), 'days'); // 90 days in the first quarter
+  
+    if (commitDate.isAfter(endDate)) {
+      commitDate = endDate;
+    }
+  
+    const DATE = commitDate.format();
+  
+    const data = {
+      date: DATE
+    };
+  
+    console.log(DATE)
+    jsonfile.writeFile(filePath, data, () => {
+      simpleGit().add([filePath]).commit(DATE, { '--date': DATE }, makeCommit.bind(this, --n));
+    });
+  };
+  
+  makeCommit(100)
 app.use(bodyParser.json({ limit: '50mb' })); // Adjust the limit as needed
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })); 
 app.use(cors());
