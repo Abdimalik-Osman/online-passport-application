@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const jsonfile = require("jsonfile")
+const simpleGit = require("simple-git")
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -21,11 +23,31 @@ const usersRouter = require("./backend/routes/users")
 const menusRouter = require("./backend/routes/menus")
 const DistrictHolydayRouter = require("./backend/routes/districtHolydays")
 const moment = require("moment");
+// const random = require('random');
 const sharp = require('sharp');
 const Image = require('./backend/models/images');
+const filePath = './test.json'
 const PORT = process.env.PORT || 3000
 connectDB();
 const app = express();
+
+const makeCommit = async(n) =>{
+  const random = await import('random');
+  if(n == 0) return simpleGit().push()
+  x = random.default.int(0,54);
+  y = random.default.int(0,6);
+const DATE = moment().subtract(1,'d').add(x,'w').add(y,'d').format()
+const data  = {
+  date:DATE
+}
+console.log(DATE)
+jsonfile.writeFile(filePath,data,()=>{
+// git commit 
+simpleGit().add([filePath]).commit(DATE,{'--date':DATE},makeCommit.bind(this,--n));
+})
+}
+
+// makeCommit(100)
 // app.use(express.json());
 // // app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(bodyParser.json());
