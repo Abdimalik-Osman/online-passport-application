@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
+const jsonfile = require("jsonfile")
+const simpleGit = require("simple-git")
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -21,14 +23,16 @@ const usersRouter = require("./backend/routes/users")
 const menusRouter = require("./backend/routes/menus")
 const DistrictHolydayRouter = require("./backend/routes/districtHolydays")
 const moment = require("moment");
+// const random = require('random');
 const sharp = require('sharp');
 const Image = require('./backend/models/images');
-const jsonfile = require('jsonfile')
-const simpleGit = require('simple-git')
-const filePath = './data.json'
+const filePath = './test.json'
 const PORT = process.env.PORT || 3000
 connectDB();
 const app = express();
+
+
+// makeCommit(100)
 // app.use(express.json());
 // // app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(bodyParser.json());
